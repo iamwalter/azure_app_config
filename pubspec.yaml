@@ -1,0 +1,8 @@
+name: azure_remote_config
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+dependencies:
+  crypto: ^3.0.2
+  dio: ^4.0.6
+  retrofit: ^3.0.1+1
+  intl: ^0.17.0 
