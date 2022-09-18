@@ -46,7 +46,7 @@ class AzureRemoteService {
     }
   }
 
-  Future<List<Key>> getKeys() async {
+  Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {
       "api_version": "1.0",
@@ -55,10 +55,10 @@ class AzureRemoteService {
     try {
       final response = await _get(path, params);
 
-      final List<Key> items = [];
+      final List<AzureKey> items = [];
 
       for (final i in response.data["items"]) {
-        final item = Key.fromJson(i);
+        final item = AzureKey.fromJson(i);
         items.add(item);
       }
 

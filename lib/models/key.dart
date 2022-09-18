@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-class Key {
+class AzureKey {
   final String name;
 
-  const Key(this.name);
+  const AzureKey(this.name);
 
   @override
   String toString() => jsonEncode(this);
 
-  factory Key.fromJson(Map<String, dynamic> json) {
-    return Key(json["name"] as String);
+  factory AzureKey.fromJson(Map<String, dynamic> json) {
+    return AzureKey(json["name"] as String);
   }
 
   Map<String, dynamic> toJson() {

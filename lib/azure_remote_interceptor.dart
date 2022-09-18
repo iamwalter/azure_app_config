@@ -44,7 +44,7 @@ class AzureRemoteInterceptor extends Interceptor {
 
     final signature = _signature(message);
 
-    var signedHeaders = "x-ms-date;host;x-ms-content-sha256";
+    final signedHeaders = "x-ms-date;host;x-ms-content-sha256";
 
     options.headers["x-ms-date"] = utcString;
     options.headers["x-ms-content-sha256"] = contentHash;
