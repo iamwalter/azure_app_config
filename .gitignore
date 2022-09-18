@@ -28,3 +28,4 @@ doc/api/
 .flutter-plugins-dependencies
 
 example/
+.idea

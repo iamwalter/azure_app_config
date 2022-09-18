@@ -1,13 +1,8 @@
-// var credential = "Vqun-l9-s0:6Nnb+djRMh41P4ZQV+2L"; // Id
-// var secret = "j4tlgYuIrIvz4VAUyLWB+9fTK2oIoaXzZ2VH/+w8JiI="; // Value
-
 library azure_remote_config;
 
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:azure_remote_config/models/key.dart';
-import 'package:azure_remote_config/models/key_value.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -24,57 +19,6 @@ class AzureRemoteConfig {
     required this.secret,
     required this.host,
   });
-
-  Future<KeyValue> getKeyValue(String key, String label) async {
-    final url = "/kv/$key?label=$label&api_version=1.0";
-
-    final headers = _signRequest(
-      host: host,
-      method: "GET",
-      url: url,
-      body: "",
-    );
-
-    final path = "https://$host$url";
-
-    print(path);
-    try {
-      final dioResponse =
-          await dio.get(path, options: Options(headers: headers));
-
-      if (dioResponse.data == null) {
-        return Future.error(ApiError("data was null"));
-      }
-
-      return KeyValue.fromJson(dioResponse.data);
-    } on DioError catch (e) {
-      return Future.error(ApiError(e.message));
-    }
-  }
-
-  Future<List<Key>> getKeys() async {
-    final url = "/keys?api-version=1.0";
-
-    final headers = _signRequest(
-      host: host,
-      method: "GET",
-      url: url,
-      body: "",
-    );
-
-    final path = "https://$host$url";
-
-    final response = await dio.get(path, options: Options(headers: headers));
-
-    final List<Key> items = [];
-
-    for (final i in response.data["items"]) {
-      final item = Key.fromJson(i);
-      items.add(item);
-    }
-
-    return items;
-  }
 
   String _formatDate(DateTime date) {
     // Format to something like: "Thu, 15 Sep 2022 23:59:24 GMT"
@@ -94,9 +38,8 @@ class AzureRemoteConfig {
   }
 
   Map<String, String> _signRequest({
-    required String host,
     required String method, // GET, PUT, POST, DELETE
-    required String url, // path+query
+    required String params, // path+query
     required String body, // request body (undefined of none)
   }) {
     final verb = method.toUpperCase();
@@ -108,7 +51,7 @@ class AzureRemoteConfig {
 
     var message = verb +
         '\n' + // VERB
-        url +
+        params +
         '\n' + // path_and_query
         utcNow +
         ';' +
@@ -133,13 +76,18 @@ class AzureRemoteConfig {
 
     return headers;
   }
-}
 
-class ApiError {
-  final String error;
+  Future<Response> get(String params) {
+    final path = "https://$host$params";
 
-  const ApiError(this.error);
+    print(path);
 
-  @override
-  String toString() => error;
+    final headers = _signRequest(
+      method: "GET",
+      params: params,
+      body: "",
+    );
+
+    return dio.get(path, options: Options(headers: headers));
+  }
 }
