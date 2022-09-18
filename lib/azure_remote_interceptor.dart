@@ -5,13 +5,14 @@ import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
 class AzureRemoteInterceptor extends Interceptor {
-  final String credential; // access key id
-  final String secret; // access key value (base64 encoded)
+  final String _credential; // access key id
+  final String _secret; // access key value (base64 encoded)
 
   AzureRemoteInterceptor({
-    required this.credential,
-    required this.secret,
-  });
+    required String credential,
+    required String secret,
+  })  : _credential = credential,
+        _secret = secret;
 
   @override
   void onRequest(
@@ -48,7 +49,7 @@ class AzureRemoteInterceptor extends Interceptor {
     options.headers["x-ms-date"] = utcString;
     options.headers["x-ms-content-sha256"] = contentHash;
     options.headers["Authorization"] = "HMAC-SHA256 Credential=" +
-        credential +
+        _credential +
         "&SignedHeaders=" +
         signedHeaders +
         "&Signature=" +
@@ -71,7 +72,7 @@ class AzureRemoteInterceptor extends Interceptor {
   }
 
   String _signature(String msg) {
-    final hmac = Hmac(sha256, base64.decode(secret));
+    final hmac = Hmac(sha256, base64.decode(_secret));
     final digest = hmac.convert(utf8.encode(msg));
 
     return base64.encode(digest.bytes);
