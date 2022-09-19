@@ -1,5 +1,6 @@
 import 'package:azure_remote_config/azure_remote_interceptor.dart';
 import 'package:azure_remote_config/models/azure_error.dart';
+import 'package:azure_remote_config/models/feature_flag.dart';
 import 'package:azure_remote_config/models/key.dart';
 import 'package:azure_remote_config/models/key_value.dart';
 import 'package:dio/dio.dart';
@@ -31,7 +32,47 @@ class AzureRemoteService {
     );
   }
 
-  Future<KeyValue> getKeyValue(String key, String label) async {
+  Future<FeatureFlag> getFeatureFlag(String key, String label) async {
+    final path = "/kv/.appconfig.featureflag/$key";
+    final params = {
+      "label": label,
+      "api_version": "1.0",
+    };
+
+    final response = await _get(path, params);
+
+    final KeyValue keyValue = KeyValue.fromJson(response.data);
+
+    print(keyValue.value);
+
+    // return FeatureFlag(response.data);
+    return FeatureFlag(
+      id: "id",
+      description: "description",
+      enabled: false,
+      conditions: "conditions",
+    );
+  }
+
+  Future<List<KeyValue>> getKeyValues() async {
+    final path = "/kv/";
+    final params = {
+      "label": "*",
+      "api_version": "1.0",
+    };
+
+    final response = await _get(path, params);
+
+    final items = <KeyValue>[];
+
+    response.data["items"].forEach((json) {
+      items.add(KeyValue.fromJson(json));
+    });
+
+    return items;
+  }
+
+  Future<KeyValue> getConfigurationSetting(String key, String label) async {
     final path = "/kv/$key";
     final params = {
       "label": label,
