@@ -50,7 +50,7 @@ class AzureRemoteService {
       id: "id",
       description: "description",
       enabled: false,
-      conditions: "conditions",
+      conditions: [],
     );
   }
 

@@ -44,7 +44,7 @@ class FeatureFlag {
       id: map['id'] as String,
       description: map['description'] as String,
       enabled: map['enabled'] as bool,
-      conditions: List<dynamic>.from((map['conditions'] as List<dynamic>),
+      conditions: List<dynamic>.from((map['conditions'] as List<dynamic>)),
     );
   }
 
@@ -62,12 +62,11 @@ class FeatureFlag {
   bool operator ==(covariant FeatureFlag other) {
     if (identical(this, other)) return true;
     final listEquals = const DeepCollectionEquality().equals;
-  
-    return 
-      other.id == id &&
-      other.description == description &&
-      other.enabled == enabled &&
-      listEquals(other.conditions, conditions);
+
+    return other.id == id &&
+        other.description == description &&
+        other.enabled == enabled &&
+        listEquals(other.conditions, conditions);
   }
 
   @override
