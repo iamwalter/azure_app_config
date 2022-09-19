@@ -27,7 +27,7 @@ class AzureRemoteService {
 
   Future<Response> _get(String path, Map<String, String> queryParams) async {
     return await dio.get(
-      "https://$host$path",
+      "$host$path",
       queryParameters: queryParams,
     );
   }
