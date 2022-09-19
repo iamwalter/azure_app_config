@@ -1,8 +1,7 @@
-import 'package:azure_remote_config/azure_remote_interceptor.dart';
-import 'package:azure_remote_config/models/azure_error.dart';
-import 'package:azure_remote_config/models/feature_flag.dart';
-import 'package:azure_remote_config/models/key.dart';
-import 'package:azure_remote_config/models/key_value.dart';
+import 'package:azure_app_config/azure_remote_interceptor.dart';
+import 'package:azure_app_config/models/feature_flag.dart';
+import 'package:azure_app_config/models/key.dart';
+import 'package:azure_app_config/models/key_value.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteService {

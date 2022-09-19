@@ -1,4 +1,4 @@
-name: azure_remote_config
+name: azure_app_config
 environment:
   sdk: '>=2.12.0 <3.0.0'
 dependencies:
