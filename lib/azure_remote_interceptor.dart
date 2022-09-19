@@ -55,7 +55,8 @@ class AzureRemoteInterceptor extends Interceptor {
         "&Signature=" +
         signature;
 
-    print('AZURE REQUEST[${options.method}] => PATH: ${options.path}');
+    print(
+        'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}');
 
     handler.next(options);
   }

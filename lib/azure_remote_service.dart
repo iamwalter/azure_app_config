@@ -1,4 +1,5 @@
 import 'package:azure_remote_config/azure_remote_interceptor.dart';
+import 'package:azure_remote_config/models/azure_error.dart';
 import 'package:azure_remote_config/models/key.dart';
 import 'package:azure_remote_config/models/key_value.dart';
 import 'package:dio/dio.dart';
@@ -23,8 +24,8 @@ class AzureRemoteService {
 
   final Dio dio = Dio();
 
-  Future<Response> _get(String path, Map<String, String> queryParams) {
-    return dio.get(
+  Future<Response> _get(String path, Map<String, String> queryParams) async {
+    return await dio.get(
       "https://$host$path",
       queryParameters: queryParams,
     );
@@ -37,13 +38,9 @@ class AzureRemoteService {
       "api_version": "1.0",
     };
 
-    try {
-      final response = await _get(path, params);
+    final response = await _get(path, params);
 
-      return KeyValue.fromJson(response.data);
-    } catch (e) {
-      return Future.error(e);
-    }
+    return KeyValue.fromJson(response.data);
   }
 
   Future<List<AzureKey>> getKeys() async {
@@ -52,19 +49,15 @@ class AzureRemoteService {
       "api_version": "1.0",
     };
 
-    try {
-      final response = await _get(path, params);
+    final response = await _get(path, params);
 
-      final List<AzureKey> items = [];
+    final List<AzureKey> items = [];
 
-      for (final i in response.data["items"]) {
-        final item = AzureKey.fromJson(i);
-        items.add(item);
-      }
-
-      return items;
-    } catch (e) {
-      return Future.error(e);
+    for (final i in response.data["items"]) {
+      final item = AzureKey.fromJson(i);
+      items.add(item);
     }
+
+    return items;
   }
 }
