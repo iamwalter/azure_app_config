@@ -7,7 +7,7 @@ class FeatureFlag {
   final String id;
   final String description;
   final bool enabled;
-  final List<dynamic> conditions;
+  final Map<String, dynamic> conditions;
 
   FeatureFlag({
     required this.id,
@@ -20,7 +20,7 @@ class FeatureFlag {
     String? id,
     String? description,
     bool? enabled,
-    List<dynamic>? conditions,
+    Map<String, dynamic>? conditions,
   }) {
     return FeatureFlag(
       id: id ?? this.id,
@@ -41,11 +41,12 @@ class FeatureFlag {
 
   factory FeatureFlag.fromMap(Map<String, dynamic> map) {
     return FeatureFlag(
-      id: map['id'] as String,
-      description: map['description'] as String,
-      enabled: map['enabled'] as bool,
-      conditions: List<dynamic>.from((map['conditions'] as List<dynamic>)),
-    );
+        id: map['id'] as String,
+        description: map['description'] as String,
+        enabled: map['enabled'] as bool,
+        conditions: Map<String, dynamic>.from(
+          (map['conditions'] as Map<String, dynamic>),
+        ));
   }
 
   String toJson() => json.encode(toMap());
@@ -61,12 +62,12 @@ class FeatureFlag {
   @override
   bool operator ==(covariant FeatureFlag other) {
     if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
+    final mapEquals = const DeepCollectionEquality().equals;
 
     return other.id == id &&
         other.description == description &&
         other.enabled == enabled &&
-        listEquals(other.conditions, conditions);
+        mapEquals(other.conditions, conditions);
   }
 
   @override

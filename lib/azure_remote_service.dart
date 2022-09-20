@@ -31,6 +31,12 @@ class AzureRemoteService {
     );
   }
 
+  Future<bool> getFeatureEnabled(String key, String label) async {
+    final feature = await getFeatureFlag(key, label);
+
+    return feature.enabled;
+  }
+
   Future<FeatureFlag> getFeatureFlag(String key, String label) async {
     final path = "/kv/.appconfig.featureflag/$key";
     final params = {
@@ -42,15 +48,7 @@ class AzureRemoteService {
 
     final KeyValue keyValue = KeyValue.fromJson(response.data);
 
-    print(keyValue.value);
-
-    // return FeatureFlag(response.data);
-    return FeatureFlag(
-      id: "id",
-      description: "description",
-      enabled: false,
-      conditions: [],
-    );
+    return FeatureFlag.fromJson(keyValue.value);
   }
 
   Future<List<KeyValue>> getKeyValues() async {
