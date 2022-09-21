@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:clock/clock.dart';
+
 abstract class FeatureFilter {
   final String name;
 
@@ -9,8 +11,8 @@ abstract class FeatureFilter {
   bool evaluate(Map<String, dynamic> parameters);
 }
 
-class Targeting extends FeatureFilter {
-  Targeting() : super(name: "Percentage");
+class Percentage extends FeatureFilter {
+  Percentage() : super(name: "Percentage");
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
@@ -23,11 +25,13 @@ class Targeting extends FeatureFilter {
 }
 
 class TimeWindow extends FeatureFilter {
-  TimeWindow() : super(name: "Microsoft.TimeWindow");
+  final DateTime Function() getTime;
+
+  TimeWindow(this.getTime) : super(name: "Microsoft.TimeWindow");
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
-    final now = DateTime.now();
+    final now = Clock(getTime).now();
 
     final String? startTime = parameters['Start'];
     final String? endTime = parameters['End'];

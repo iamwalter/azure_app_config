@@ -26,8 +26,8 @@ class AzureRemoteService {
     );
 
     // Add Standard Filters
-    addFeatureFilter(Targeting());
-    addFeatureFilter(TimeWindow());
+    addFeatureFilter(Percentage());
+    addFeatureFilter(TimeWindow(() => DateTime.now()));
   }
 
   void addFeatureFilter(FeatureFilter filter) {
