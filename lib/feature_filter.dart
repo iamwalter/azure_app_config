@@ -53,6 +53,6 @@ class TimeWindow extends FeatureFilter {
       return now.isAfter(start);
     }
 
-    return now.isAfter(start) || now.isBefore(end);
+    return now.isAfter(start) && now.isBefore(end);
   }
 }
