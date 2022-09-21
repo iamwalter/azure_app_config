@@ -17,9 +17,7 @@ Creating an instance of AzureRemoteService:
 To get if a feature is enabled, use the `getFeatureEnabled` method.
 
     final enabled = await getFeatureEnabled("example_key", "example_tag");
-
-If an error occurs during a call, `null` will be returned.
-
+    
 ---
 
 ### FeatureFilters

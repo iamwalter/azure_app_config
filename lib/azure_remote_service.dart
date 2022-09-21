@@ -41,14 +41,14 @@ class AzureRemoteService {
     );
   }
 
-  Future<bool?> getFeatureEnabled(String key, String label) async {
+  Future<bool> getFeatureEnabled(String key, String label) async {
     final feature = await getFeatureFlag(key, label);
 
     final clientFilters = feature.conditions['client_filters'];
 
-    bool? enabled = null;
+    bool enabled = feature.enabled;
 
-    if (feature.enabled == false) return false;
+    if (enabled == false) return false;
 
     for (final filter in clientFilters) {
       final String name = filter['name'];
@@ -61,6 +61,8 @@ class AzureRemoteService {
         }
       }
     }
+
+    print("$enabled");
 
     return enabled;
   }
