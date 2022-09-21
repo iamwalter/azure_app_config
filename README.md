@@ -14,7 +14,7 @@ Creating an instance of AzureRemoteService:
         secret: "<YOUR_SECRET>,
       ); 
 
-To get if a feature is enabled, use the `isFeatureEnabled` method.
+To get if a feature is enabled, use the `getFeatureEnabled` method.
 
     final enabled = await getFeatureEnabled("example_key", "example_tag");
 
@@ -35,6 +35,8 @@ This will enable the flag to `Value` percentage of users.
 
 
 #### Microsoft.TimeWindow
+If current time is inbetween start and end time, return true. 
+
     "parameters": {
        	"Start": "Wed, 21 Sep 2022 00:25:00 GMT",
        	"End": "Wed, 21 Sep 2022 01:15:00 GMT"
@@ -55,6 +57,7 @@ This package enables you to create custom FeatureFilters by extending the Featur
         return random;
       }
     }
+
 
 Afterwards, register the FeatureFilter by calling `service.addFeatureFilter(filter);`. The filters above are automatically registered.
 
