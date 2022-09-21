@@ -17,10 +17,9 @@ class Percentage extends FeatureFilter {
   @override
   bool evaluate(Map<String, dynamic> parameters) {
     final value = parameters['Value'] as int;
+    final random = Random().nextInt(100);
 
-    final random = Random().nextInt(101) < value;
-
-    return random;
+    return random < value;
   }
 }
 
