@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
@@ -24,7 +25,7 @@ class AzureRemoteInterceptor extends Interceptor {
     final pathAndParams = "$path?$params";
 
     final method = options.method.toUpperCase();
-    final utcString = _getUtcString();
+    final utcString = HttpDate.format(DateTime.now());
 
     final body = "";
 
@@ -59,17 +60,6 @@ class AzureRemoteInterceptor extends Interceptor {
         'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}');
 
     handler.next(options);
-  }
-
-  String _getUtcString() {
-    final time = DateTime.now().toUtc();
-    // Format to something like: "Thu, 15 Sep 2022 23:59:24 GMT"
-    final format = DateFormat("E, d MMM y", "en_US").add_Hms();
-
-    String str = format.format(time);
-    str = str + " " + "GMT";
-
-    return str;
   }
 
   String _signature(String msg) {

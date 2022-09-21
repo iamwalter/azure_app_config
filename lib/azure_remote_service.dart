@@ -1,6 +1,5 @@
 import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:azure_app_config/feature_filter.dart';
-import 'package:azure_app_config/models/client_filter.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
@@ -25,6 +24,10 @@ class AzureRemoteService {
         secret: secret,
       ),
     );
+
+    // Add Standard Filters
+    addFeatureFilter(Targeting());
+    addFeatureFilter(TimeWindow());
   }
 
   void addFeatureFilter(FeatureFilter filter) {
@@ -45,16 +48,16 @@ class AzureRemoteService {
 
     bool? enabled = null;
 
-    enabled = feature.enabled;
+    if (feature.enabled == false) return false;
 
-    for (final f in clientFilters) {
-      final String name = f['name'];
-      final Map<String, dynamic> params = f['parameters'];
+    for (final filter in clientFilters) {
+      final String name = filter['name'];
+      final Map<String, dynamic> params = filter['parameters'];
 
       for (final filter in _featureFilters) {
         if (filter.name == name) {
-          print("evaluating $name...");
           enabled = filter.evaluate(params);
+          print("AZURE FILTER [$key] => $name");
         }
       }
     }
