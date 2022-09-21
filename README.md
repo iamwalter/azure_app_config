@@ -11,13 +11,13 @@ Creating an instance of AzureRemoteService:
       final service = AzureRemoteService(
         host: "https://test.database.com",
         credential: "<YOUR_CREDENTIAL>",
-        secret: "<YOUR_SECRET>,
+        secret: "<YOUR_SECRET>",
       ); 
 
 To get if a feature is enabled, use the `getFeatureEnabled` method.
 
     final enabled = await getFeatureEnabled("example_key", "example_tag");
-    
+
 ---
 
 ### FeatureFilters
@@ -40,6 +40,7 @@ If current time is inbetween start and end time, return true.
        	"End": "Wed, 21 Sep 2022 01:15:00 GMT"
        }
 
+### Custom FeatureFilter
 
 This package enables you to create custom FeatureFilters by extending the FeatureFilter class. For example, this is how the Percentage filter is implemented:
 
@@ -57,8 +58,8 @@ This package enables you to create custom FeatureFilters by extending the Featur
     }
 
 
-Afterwards, register the FeatureFilter by calling `service.addFeatureFilter(filter);`. The filters above are automatically registered.
+Register the FeatureFilter by calling `service.addFeatureFilter(filter)`. The filters above are automatically registered.
 
 
-
+---
 

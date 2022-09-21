@@ -6,7 +6,7 @@ import 'package:azure_app_config/models/key_value.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteService {
-  final String API_VERSION = "api_version=1.0";
+  final String API_VERSION = "1.0";
   final Dio dio = Dio();
 
   final String host;
@@ -62,8 +62,6 @@ class AzureRemoteService {
       }
     }
 
-    print("$enabled");
-
     return enabled;
   }
 
@@ -71,7 +69,7 @@ class AzureRemoteService {
     final path = "/kv/.appconfig.featureflag/$key";
     final params = {
       "label": label,
-      "api_version": "1.0",
+      "api_version": API_VERSION,
     };
 
     final response = await _get(path, params);
@@ -86,7 +84,7 @@ class AzureRemoteService {
     final path = "/kv/";
     final params = {
       "label": "*",
-      "api_version": "1.0",
+      "api_version": API_VERSION,
     };
 
     final response = await _get(path, params);
@@ -104,7 +102,7 @@ class AzureRemoteService {
     final path = "/kv/$key";
     final params = {
       "label": label,
-      "api_version": "1.0",
+      "api_version": API_VERSION,
     };
 
     final response = await _get(path, params);
