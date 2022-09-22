@@ -30,32 +30,36 @@ class TimeWindow extends FeatureFilter {
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
-    final now = Clock(getTime).now();
+    try {
+      final now = Clock(getTime).now();
 
-    final String? startTime = parameters['Start'];
-    final String? endTime = parameters['End'];
+      final String? startTime = parameters['Start'];
+      final String? endTime = parameters['End'];
 
-    DateTime? start;
-    DateTime? end;
+      DateTime? start;
+      DateTime? end;
 
-    if (startTime != null) {
-      start = HttpDate.parse(startTime);
+      if (startTime != null) {
+        start = HttpDate.parse(startTime);
+      }
+
+      if (endTime != null) {
+        end = HttpDate.parse(endTime);
+      }
+
+      if (start == null && end == null) return true;
+
+      if (start == null) {
+        return now.isBefore(end!);
+      }
+
+      if (end == null) {
+        return now.isAfter(start);
+      }
+
+      return now.isAfter(start) && now.isBefore(end);
+    } catch (e) {
+      return true;
     }
-
-    if (endTime != null) {
-      end = HttpDate.parse(endTime);
-    }
-
-    if (start == null && end == null) return false;
-
-    if (start == null) {
-      return now.isBefore(end!);
-    }
-
-    if (end == null) {
-      return now.isAfter(start);
-    }
-
-    return now.isAfter(start) && now.isBefore(end);
   }
 }
