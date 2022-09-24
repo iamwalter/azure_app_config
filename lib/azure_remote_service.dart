@@ -22,9 +22,14 @@ class AzureRemoteService {
   final Dio dio = Dio();
 
   final String host;
-  final LoadingStrategy loadingStrategy;
+  LoadingStrategy loadingStrategy;
 
   List<FeatureFilter> _featureFilters = [];
+
+  void switchStrategy(LoadingStrategy strat) {
+    print("setting to $strat");
+    loadingStrategy = strat;
+  }
 
   AzureRemoteService({
     required this.host,
@@ -40,8 +45,8 @@ class AzureRemoteService {
     );
 
     // Add Standard Filters
-    addFeatureFilter(Percentage());
-    addFeatureFilter(TimeWindow(() => DateTime.now()));
+    addFeatureFilter(FeatureFilter.percentage());
+    addFeatureFilter(FeatureFilter.timeWindow());
   }
 
   void addFeatureFilter(FeatureFilter filter) {

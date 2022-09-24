@@ -8,6 +8,9 @@ abstract class FeatureFilter {
 
   FeatureFilter({required this.name});
 
+  factory FeatureFilter.percentage() => Percentage();
+  factory FeatureFilter.timeWindow() => TimeWindow(() => DateTime.now());
+
   bool evaluate(Map<String, dynamic> parameters);
 }
 
