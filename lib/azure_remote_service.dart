@@ -9,8 +9,11 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum LoadingStrategy {
-  ALWAYS_ONLINE,
-  OFFLINE_CACHE_ONLINE,
+  /// Check if the key has already been saved to storage.
+  OFFLINE_FIRST,
+
+  /// Always check the latest value
+  ONLINE_ALWAYS,
 }
 
 class AzureRemoteService {
@@ -27,7 +30,7 @@ class AzureRemoteService {
     required this.host,
     required String credential,
     required String secret,
-    this.loadingStrategy = LoadingStrategy.ALWAYS_ONLINE,
+    this.loadingStrategy = LoadingStrategy.ONLINE_ALWAYS,
   }) {
     dio.interceptors.add(
       AzureRemoteInterceptor(
@@ -45,16 +48,20 @@ class AzureRemoteService {
     _featureFilters.add(filter);
   }
 
+  Future<bool> clearStorage() async {
+    final storage = await SharedPreferences.getInstance();
+    return storage.clear();
+  }
+
   Future<Map<String, dynamic>> _get(
       String path, Map<String, String> queryParams) async {
     final storage = await SharedPreferences.getInstance();
 
     final String storageKey = "$path$queryParams";
-
     final String? data = storage.getString(storageKey);
 
-    if (data != null) {
-      print("AZURE LOCAL REQUEST[GET] => $path");
+    if (loadingStrategy == LoadingStrategy.OFFLINE_FIRST && data != null) {
+      print("AZURE LOCAL REQUEST[GET] => $path ($queryParams)");
       return json.decode(data);
     } else {
       final networkResponse = await dio.get(
