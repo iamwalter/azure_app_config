@@ -15,11 +15,11 @@ abstract class FeatureFilter {
 }
 
 class Percentage extends FeatureFilter {
-  Percentage() : super(name: "Percentage");
+  Percentage() : super(name: "Microsoft.Targeting");
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
-    final value = parameters['Value'] as int;
+    final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
     final random = Random().nextInt(100);
 
     return random < value;

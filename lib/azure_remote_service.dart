@@ -1,3 +1,5 @@
+library azure_app_config;
+
 import 'dart:convert';
 
 import 'package:azure_app_config/azure_remote_interceptor.dart';
@@ -67,6 +69,7 @@ class AzureRemoteService {
 
     if (loadingStrategy == LoadingStrategy.OFFLINE_FIRST && data != null) {
       print("AZURE LOCAL REQUEST[GET] => $path ($queryParams)");
+
       return json.decode(data);
     } else {
       final networkResponse = await dio.get(
@@ -104,8 +107,24 @@ class AzureRemoteService {
     return enabled;
   }
 
+  Future<List<FeatureFlag>> getFeatureFlags() async {
+    final returned = <FeatureFlag>[];
+    final features = await getKeyValues();
+
+    for (final kv in features) {
+      if (kv.content_type ==
+          "application/vnd.microsoft.appconfig.ff+json;charset=utf-8") {
+        final feature = await getFeatureFlag(kv.key, kv.label ?? "");
+
+        returned.add(feature);
+      }
+    }
+
+    return returned;
+  }
+
   Future<FeatureFlag> getFeatureFlag(String key, String label) async {
-    final path = "/kv/.appconfig.featureflag/$key";
+    final path = "/kv/$key";
     final params = {
       "label": label,
       "api_version": API_VERSION,
