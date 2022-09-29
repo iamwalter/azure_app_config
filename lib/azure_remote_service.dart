@@ -19,19 +19,12 @@ enum LoadingStrategy {
 }
 
 class AzureRemoteService {
-  final String API_VERSION = "1.0";
-
+  final String apiVersion = "1.0";
   final Dio dio = Dio();
-
   final String host;
+
   LoadingStrategy loadingStrategy;
-
   List<FeatureFilter> _featureFilters = [];
-
-  void switchStrategy(LoadingStrategy strat) {
-    print("setting to $strat");
-    loadingStrategy = strat;
-  }
 
   AzureRemoteService({
     required this.host,
@@ -49,6 +42,11 @@ class AzureRemoteService {
     // Add Standard Filters
     addFeatureFilter(FeatureFilter.percentage());
     addFeatureFilter(FeatureFilter.timeWindow());
+  }
+
+  void switchStrategy(LoadingStrategy strategy) {
+    print("Changing strategy to $strategy");
+    loadingStrategy = strategy;
   }
 
   void addFeatureFilter(FeatureFilter filter) {
@@ -83,6 +81,7 @@ class AzureRemoteService {
     }
   }
 
+  /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
   Future<bool> getFeatureEnabled(String key, String label) async {
     final feature = await getFeatureFlag(key, label);
 
@@ -107,6 +106,7 @@ class AzureRemoteService {
     return enabled;
   }
 
+  /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final returned = <FeatureFlag>[];
     final features = await getKeyValues();
@@ -123,11 +123,12 @@ class AzureRemoteService {
     return returned;
   }
 
+  /// Retrieve a specified feature flag.
   Future<FeatureFlag> getFeatureFlag(String key, String label) async {
     final path = "/kv/$key";
     final params = {
       "label": label,
-      "api_version": API_VERSION,
+      "api_version": apiVersion,
     };
 
     final data = await _get(path, params);
@@ -138,11 +139,12 @@ class AzureRemoteService {
     return featureFlag;
   }
 
+  /// Retrieve a list of key-values.
   Future<List<KeyValue>> getKeyValues() async {
     final path = "/kv/";
     final params = {
       "label": "*",
-      "api_version": API_VERSION,
+      "api_version": apiVersion,
     };
 
     final data = await _get(path, params);
@@ -156,11 +158,12 @@ class AzureRemoteService {
     return items;
   }
 
+  /// Get a specific key-value
   Future<KeyValue> getKeyValue(String key, String label) async {
     final path = "/kv/$key";
     final params = {
       "label": label,
-      "api_version": API_VERSION,
+      "api_version": apiVersion,
     };
 
     final data = await _get(path, params);
@@ -168,6 +171,7 @@ class AzureRemoteService {
     return KeyValue.fromJson(data);
   }
 
+  /// Get a specific key-value
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {

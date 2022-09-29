@@ -28,5 +28,3 @@ doc/api/
 .flutter-plugins-dependencies
 
 .idea
-.env
-!.env.example

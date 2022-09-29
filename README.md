@@ -45,15 +45,14 @@ If current time is inbetween start and end time, return true.
 This package enables you to create custom FeatureFilters by extending the FeatureFilter class. For example, this is how the Percentage filter is implemented:
 
     class Percentage extends FeatureFilter {
-      Percentage() : super(name: "Percentage");
-    
+      Percentage() : super(name: "Microsoft.Targeting");
+
       @override
       bool evaluate(Map<String, dynamic> parameters) {
-        final value = parameters['Value'] as int;
-    
-        final random = Random().nextInt(101) < value;
-    
-        return random;
+        final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
+        final random = Random().nextInt(100);
+
+        return random < value;
       }
     }
 
