@@ -83,7 +83,11 @@ class AzureRemoteService {
 
   /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
   Future<bool> getFeatureEnabled(String key, String label) async {
-    final feature = await getFeatureFlag(key, label);
+    final keyValue = await getKeyValue(key, label);
+
+    final FeatureFlag? feature = keyValue.asFeatureFlag();
+
+    if (feature == null) return Future.error("Could not find KeyValue");
 
     final clientFilters = feature.conditions['client_filters'];
 
@@ -108,35 +112,16 @@ class AzureRemoteService {
 
   /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
-    final returned = <FeatureFlag>[];
+    final featureFlags = <FeatureFlag>[];
     final features = await getKeyValues();
 
     for (final kv in features) {
-      if (kv.content_type ==
-          "application/vnd.microsoft.appconfig.ff+json;charset=utf-8") {
-        final feature = await getFeatureFlag(kv.key, kv.label ?? "");
+      final FeatureFlag? featureFlag = kv.asFeatureFlag();
 
-        returned.add(feature);
-      }
+      if (featureFlag != null) featureFlags.add(featureFlag);
     }
 
-    return returned;
-  }
-
-  /// Retrieve a specified feature flag.
-  Future<FeatureFlag> getFeatureFlag(String key, String label) async {
-    final path = "/kv/$key";
-    final params = {
-      "label": label,
-      "api_version": apiVersion,
-    };
-
-    final data = await _get(path, params);
-
-    final KeyValue keyValue = KeyValue.fromJson(data);
-    final FeatureFlag featureFlag = FeatureFlag.fromJson(keyValue.value);
-
-    return featureFlag;
+    return featureFlags;
   }
 
   /// Retrieve a list of key-values.
@@ -151,9 +136,9 @@ class AzureRemoteService {
 
     final items = <KeyValue>[];
 
-    data["items"].forEach((json) {
+    for (final json in data["items"]) {
       items.add(KeyValue.fromJson(json));
-    });
+    }
 
     return items;
   }
@@ -182,8 +167,8 @@ class AzureRemoteService {
 
     final List<AzureKey> items = [];
 
-    for (final i in data["items"]) {
-      final item = AzureKey.fromJson(i);
+    for (final json in data["items"]) {
+      final item = AzureKey.fromJson(json);
       items.add(item);
     }
 

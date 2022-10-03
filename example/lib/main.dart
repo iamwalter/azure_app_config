@@ -1,5 +1,6 @@
 import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:example/azure_feature_flag.dart';
+import 'package:azure_app_config/models/feature_flag.dart';
+import 'package:azure_app_config/models/key_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -36,7 +37,7 @@ class MyHomePage extends StatefulWidget {
       host: host,
       credential: credential ?? "",
       secret: secret ?? "",
-      loadingStrategy: LoadingStrategy.OFFLINE_FIRST,
+      loadingStrategy: LoadingStrategy.ONLINE_ALWAYS,
     );
   }
 
@@ -57,48 +58,51 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: Column(
             children: [
-              AzureFeatureFlagList(
-                  service: widget.service,
-                  builder: (context, data) {
-                    final widgets = <Widget>[];
-
-                    if (data == null) {
-                      return const Text("No feature flags!");
-                    }
-
-                    for (final ff in data) {
-                      widgets.add(ListTile(
-                        title: Text(ff.id),
-                        subtitle: Text(ff.conditions.toString()),
-                        leading: Text(ff.description),
-                        trailing:
-                            Switch(value: ff.enabled, onChanged: (val) {}),
-                      ));
-                    }
-
-                    return Column(children: widgets);
-                  }),
-              AzureKeyList(
-                service: widget.service,
-                builder: (context, keyValues) {
+              FutureBuilder(
+                future: widget.service.getKeyValues(),
+                builder: (context, data) {
                   final listTiles = <Widget>[];
 
-                  if (keyValues == null) {
-                    return Text("No Data!");
+                  if (data.hasError) {
+                    return Text("${data.error}");
                   }
 
-                  listTiles.add(ListTile(
-                    title: Text("Total tiles: ${keyValues.length}"),
-                  ));
+                  if (data.hasData == false) {
+                    return const Text("No Data!");
+                  }
+
+                  final List<KeyValue> keyValues = data.data!;
+
+                  final String title =
+                      "Total tiles: ${keyValues.length}, ${widget.service.loadingStrategy}";
+
+                  listTiles.add(
+                    ListTile(
+                      title: Text(title),
+                    ),
+                  );
 
                   for (final kv in keyValues) {
+                    FeatureFlag? ff = kv.asFeatureFlag();
+
                     listTiles.add(
                       ListTile(
                         title: Text(kv.key),
                         subtitle: Text(kv.value ?? "No label"),
                         leading: Text(kv.last_modified),
+                        trailing: Text(kv.tags.toString()),
                       ),
                     );
+
+                    if (ff != null) {
+                      listTiles.add(ListTile(
+                        title: Text("${ff.id} => ${ff.description}"),
+                        subtitle: Text(ff.conditions.toString()),
+                        leading: Text(kv.key),
+                        trailing:
+                            Switch(value: ff.enabled, onChanged: (val) {}),
+                      ));
+                    }
                   }
 
                   return Column(children: listTiles);
