@@ -32,7 +32,6 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title}) {
     service = AzureRemoteService(
       connectionString: AZURE_CONNECTION_STRING,
-      loadingStrategy: LoadingStrategy.ONLINE_ALWAYS,
     );
   }
 
@@ -68,8 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   final List<KeyValue> keyValues = data.data!;
 
-                  final String title =
-                      "Total tiles: ${keyValues.length}, ${widget.service.loadingStrategy}";
+                  final String title = "Total tiles: ${keyValues.length}";
 
                   listTiles.add(
                     ListTile(
@@ -115,18 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {});
             },
             child: const Icon(Icons.refresh),
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              if (widget.service.loadingStrategy ==
-                  LoadingStrategy.ONLINE_ALWAYS) {
-                widget.service.switchStrategy(LoadingStrategy.OFFLINE_FIRST);
-              } else {
-                widget.service.switchStrategy(LoadingStrategy.ONLINE_ALWAYS);
-              }
-            },
-            tooltip: 'Increment',
-            child: const Icon(Icons.swap_calls),
           ),
         ],
       ),
