@@ -34,11 +34,7 @@ class MyHomePage extends StatefulWidget {
     const host = "https://ac-cz-test-eigenrisico.azconfig.io";
 
     service = AzureRemoteService(
-      host: host,
-      credential: credential ?? "",
-      secret: secret ?? "",
-      loadingStrategy: LoadingStrategy.ONLINE_ALWAYS,
-    );
+        host: host, credential: credential ?? "", secret: secret ?? "");
   }
 
   final String title;
@@ -73,8 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   final List<KeyValue> keyValues = data.data!;
 
-                  final String title =
-                      "Total tiles: ${keyValues.length}, ${widget.service.loadingStrategy}";
+                  final String title = "Total tiles: ${keyValues.length}";
 
                   listTiles.add(
                     ListTile(
@@ -120,18 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {});
             },
             child: const Icon(Icons.refresh),
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              if (widget.service.loadingStrategy ==
-                  LoadingStrategy.ONLINE_ALWAYS) {
-                widget.service.switchStrategy(LoadingStrategy.OFFLINE_FIRST);
-              } else {
-                widget.service.switchStrategy(LoadingStrategy.ONLINE_ALWAYS);
-              }
-            },
-            tooltip: 'Increment',
-            child: const Icon(Icons.swap_calls),
           ),
         ],
       ),
