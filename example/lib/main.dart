@@ -1,6 +1,7 @@
 import 'package:azure_app_config/azure_remote_service.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key_value.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -29,12 +30,11 @@ class MyHomePage extends StatefulWidget {
   late final AzureRemoteService service;
 
   MyHomePage({super.key, required this.title}) {
-    final credential = dotenv.env['CREDENTIAL'];
-    final secret = dotenv.env["SECRET"]; // Value
-    const host = "https://ac-cz-test-eigenrisico.azconfig.io";
+    final connectionString = dotenv.env["CONNECTION_STRING"];
 
     service = AzureRemoteService(
-        host: host, credential: credential ?? "", secret: secret ?? "");
+      connectionString: connectionString ?? "",
+    );
   }
 
   final String title;

@@ -5,20 +5,33 @@ import 'package:azure_app_config/feature_filter.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
+import 'package:azure_app_config/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteService {
   final String apiVersion = "1.0";
   final Dio dio = Dio();
-  final String host;
+
+  late String endpoint;
 
   List<FeatureFilter> _featureFilters = [];
 
   AzureRemoteService({
-    required this.host,
-    required String credential,
-    required String secret,
+    required String connectionString,
   }) {
+    Map<String, String> azureValues = parseConnectionString(connectionString);
+
+    if (azureValues['Id'] == null ||
+        azureValues['Secret'] == null ||
+        azureValues['Endpoint'] == null) {
+      throw Exception("Invalid connection string");
+    }
+
+    String credential = azureValues['Id']!;
+    String secret = azureValues['Secret']!;
+
+    endpoint = azureValues['Endpoint']!;
+
     dio.interceptors.add(
       AzureRemoteInterceptor(
         credential: credential,
@@ -38,7 +51,7 @@ class AzureRemoteService {
   Future<Map<String, dynamic>> _get(
       String path, Map<String, String> queryParams) async {
     final networkResponse = await dio.get(
-      "$host$path",
+      "$endpoint$path",
       queryParameters: queryParams,
     );
 
@@ -47,7 +60,7 @@ class AzureRemoteService {
 
   /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
   Future<bool> getFeatureEnabled(String key, String label) async {
-    final keyValue = await getKeyValue(key, label);
+    final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
     final FeatureFlag? feature = keyValue.asFeatureFlag();
 
@@ -124,7 +137,7 @@ class AzureRemoteService {
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {
-      "api_version": "1.0",
+      "api_version": apiVersion,
     };
 
     final data = await _get(path, params);
