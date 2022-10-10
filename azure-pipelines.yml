@@ -12,5 +12,9 @@ pool:
 
 steps:
   - script: |
-      flutter test
-    displayName: 'Run flutter test'
+      brew install dart
+    displayName: 'Install dart using homebrew'
+
+  - script: |
+      dart test
+    displayName: 'Run dart test'
