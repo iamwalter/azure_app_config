@@ -1,7 +1,7 @@
 import 'package:azure_app_config/azure_remote_service.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key_value.dart';
-import 'package:example/keys.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -30,8 +30,10 @@ class MyHomePage extends StatefulWidget {
   late final AzureRemoteService service;
 
   MyHomePage({super.key, required this.title}) {
+    final connectionString = dotenv.env["CONNECTION_STRING"];
+
     service = AzureRemoteService(
-      connectionString: AZURE_CONNECTION_STRING,
+      connectionString: connectionString ?? "",
     );
   }
 
