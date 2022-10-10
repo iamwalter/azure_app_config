@@ -1,0 +1,21 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  - master
+  - develop
+
+pool:
+  vmImage: macOS-11
+
+steps:
+  - script: |
+      brew tap dart-lang/dart
+      brew install dart
+    displayName: 'Install dart using homebrew'
+
+  - script: |
+      dart test
+    displayName: 'Run dart test'
