@@ -7,6 +7,7 @@ import 'package:azure_app_config/feature_filter.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
+import 'package:connection_string_parser/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,20 +29,26 @@ class AzureRemoteService {
 
   AzureRemoteService({
     required this.host,
-    required String credential,
-    required String secret,
+    required String connectionString,
     this.loadingStrategy = LoadingStrategy.ONLINE_ALWAYS,
   }) {
-    dio.interceptors.add(
-      AzureRemoteInterceptor(
-        credential: credential,
-        secret: secret,
-      ),
-    );
+    Map<String, String> azureValues = parseConnectionString(connectionString);
 
-    // Add Standard Filters
-    addFeatureFilter(FeatureFilter.percentage());
-    addFeatureFilter(FeatureFilter.timeWindow());
+    String? credential = azureValues['Id'];
+    String? secret = azureValues['Secret'];
+
+    if (credential != null && secret != null) {
+      dio.interceptors.add(
+        AzureRemoteInterceptor(
+          credential: credential,
+          secret: secret,
+        ),
+      );
+
+      // Add Standard Filters
+      addFeatureFilter(FeatureFilter.percentage());
+      addFeatureFilter(FeatureFilter.timeWindow());
+    }
   }
 
   void switchStrategy(LoadingStrategy strategy) {
