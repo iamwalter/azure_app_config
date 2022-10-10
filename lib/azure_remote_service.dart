@@ -1,22 +1,36 @@
+library azure_app_config;
+
+import 'dart:convert';
+
 import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:azure_app_config/feature_filter.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+enum LoadingStrategy {
+  /// Check if the key has already been saved to storage.
+  OFFLINE_FIRST,
+
+  /// Always check the latest value
+  ONLINE_ALWAYS,
+}
 
 class AzureRemoteService {
-  final String API_VERSION = "1.0";
+  final String apiVersion = "1.0";
   final Dio dio = Dio();
-
   final String host;
 
+  LoadingStrategy loadingStrategy;
   List<FeatureFilter> _featureFilters = [];
 
   AzureRemoteService({
     required this.host,
     required String credential,
     required String secret,
+    this.loadingStrategy = LoadingStrategy.ONLINE_ALWAYS,
   }) {
     dio.interceptors.add(
       AzureRemoteInterceptor(
@@ -26,23 +40,54 @@ class AzureRemoteService {
     );
 
     // Add Standard Filters
-    addFeatureFilter(Percentage());
-    addFeatureFilter(TimeWindow(() => DateTime.now()));
+    addFeatureFilter(FeatureFilter.percentage());
+    addFeatureFilter(FeatureFilter.timeWindow());
+  }
+
+  void switchStrategy(LoadingStrategy strategy) {
+    print("Changing strategy to $strategy");
+    loadingStrategy = strategy;
   }
 
   void addFeatureFilter(FeatureFilter filter) {
     _featureFilters.add(filter);
   }
 
-  Future<Response> _get(String path, Map<String, String> queryParams) async {
-    return await dio.get(
-      "$host$path",
-      queryParameters: queryParams,
-    );
+  Future<bool> clearStorage() async {
+    final storage = await SharedPreferences.getInstance();
+    return storage.clear();
   }
 
+  Future<Map<String, dynamic>> _get(
+      String path, Map<String, String> queryParams) async {
+    final storage = await SharedPreferences.getInstance();
+
+    final String storageKey = "$path$queryParams";
+    final String? data = storage.getString(storageKey);
+
+    if (loadingStrategy == LoadingStrategy.OFFLINE_FIRST && data != null) {
+      print("AZURE LOCAL REQUEST[GET] => $path ($queryParams)");
+
+      return json.decode(data);
+    } else {
+      final networkResponse = await dio.get(
+        "$host$path",
+        queryParameters: queryParams,
+      );
+
+      await storage.setString(storageKey, json.encode(networkResponse.data));
+
+      return networkResponse.data;
+    }
+  }
+
+  /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
   Future<bool> getFeatureEnabled(String key, String label) async {
-    final feature = await getFeatureFlag(key, label);
+    final keyValue = await getKeyValue(key, label);
+
+    final FeatureFlag? feature = keyValue.asFeatureFlag();
+
+    if (feature == null) return Future.error("Could not find KeyValue");
 
     final clientFilters = feature.conditions['client_filters'];
 
@@ -65,63 +110,65 @@ class AzureRemoteService {
     return enabled;
   }
 
-  Future<FeatureFlag> getFeatureFlag(String key, String label) async {
-    final path = "/kv/.appconfig.featureflag/$key";
-    final params = {
-      "label": label,
-      "api_version": API_VERSION,
-    };
+  /// Retrieve a list of all feature flags.
+  Future<List<FeatureFlag>> getFeatureFlags() async {
+    final featureFlags = <FeatureFlag>[];
+    final features = await getKeyValues();
 
-    final response = await _get(path, params);
+    for (final kv in features) {
+      final FeatureFlag? featureFlag = kv.asFeatureFlag();
 
-    final KeyValue keyValue = KeyValue.fromJson(response.data);
-    final FeatureFlag featureFlag = FeatureFlag.fromJson(keyValue.value);
+      if (featureFlag != null) featureFlags.add(featureFlag);
+    }
 
-    return featureFlag;
+    return featureFlags;
   }
 
+  /// Retrieve a list of key-values.
   Future<List<KeyValue>> getKeyValues() async {
     final path = "/kv/";
     final params = {
       "label": "*",
-      "api_version": API_VERSION,
+      "api_version": apiVersion,
     };
 
-    final response = await _get(path, params);
+    final data = await _get(path, params);
 
     final items = <KeyValue>[];
 
-    response.data["items"].forEach((json) {
+    for (final json in data["items"]) {
       items.add(KeyValue.fromJson(json));
-    });
+    }
 
     return items;
   }
 
-  Future<KeyValue> getConfigurationSetting(String key, String label) async {
+  /// Get a specific key-value
+  Future<KeyValue> getKeyValue(String key, String label) async {
     final path = "/kv/$key";
     final params = {
       "label": label,
-      "api_version": API_VERSION,
+      "api_version": apiVersion,
     };
 
-    final response = await _get(path, params);
+    final data = await _get(path, params);
 
-    return KeyValue.fromJson(response.data);
+    return KeyValue.fromJson(data);
   }
 
+  /// Get a specific key-value
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {
       "api_version": "1.0",
     };
 
-    final response = await _get(path, params);
+    final data = await _get(path, params);
 
     final List<AzureKey> items = [];
 
-    for (final i in response.data["items"]) {
-      final item = AzureKey.fromJson(i);
+    for (final json in data["items"]) {
+      final item = AzureKey.fromJson(json);
       items.add(item);
     }
 

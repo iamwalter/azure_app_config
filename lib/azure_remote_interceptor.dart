@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
 
 class AzureRemoteInterceptor extends Interceptor {
   final String _credential; // access key id

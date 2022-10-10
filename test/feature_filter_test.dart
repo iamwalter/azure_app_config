@@ -1,9 +1,6 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:azure_app_config/feature_filter.dart';
-import 'package:azure_app_config/models/azure_error.dart';
-import 'package:azure_app_config/models/key_value.dart';
 import 'package:test/test.dart';
 
 void main() {
