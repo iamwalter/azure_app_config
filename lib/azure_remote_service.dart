@@ -22,13 +22,12 @@ enum LoadingStrategy {
 class AzureRemoteService {
   final String apiVersion = "1.0";
   final Dio dio = Dio();
-  final String host;
+  late final String? endpoint;
 
   LoadingStrategy loadingStrategy;
   List<FeatureFilter> _featureFilters = [];
 
   AzureRemoteService({
-    required this.host,
     required String connectionString,
     this.loadingStrategy = LoadingStrategy.ONLINE_ALWAYS,
   }) {
@@ -36,6 +35,7 @@ class AzureRemoteService {
 
     String? credential = azureValues['Id'];
     String? secret = azureValues['Secret'];
+    endpoint = azureValues['Endpoint'];
 
     if (credential != null && secret != null) {
       dio.interceptors.add(
@@ -78,7 +78,7 @@ class AzureRemoteService {
       return json.decode(data);
     } else {
       final networkResponse = await dio.get(
-        "$host$path",
+        "$endpoint$path",
         queryParameters: queryParams,
       );
 
