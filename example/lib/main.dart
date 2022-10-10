@@ -29,14 +29,9 @@ class MyHomePage extends StatefulWidget {
   late final AzureRemoteService service;
 
   MyHomePage({super.key, required this.title}) {
-    final credential = dotenv.env['CREDENTIAL'];
-    final secret = dotenv.env["SECRET"]; // Value
-    const host = "https://ac-cz-test-eigenrisico.azconfig.io";
-
     service = AzureRemoteService(
-      host: host,
-      credential: credential ?? "",
-      secret: secret ?? "",
+      connectionString:
+          'Endpoint=https://ac-cz-test-eigenrisico.azconfig.io;Id=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN;Secret=7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=',
       loadingStrategy: LoadingStrategy.ONLINE_ALWAYS,
     );
   }

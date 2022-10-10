@@ -90,7 +90,7 @@ class AzureRemoteService {
 
   /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
   Future<bool> getFeatureEnabled(String key, String label) async {
-    final keyValue = await getKeyValue(key, label);
+    final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
     final FeatureFlag? feature = keyValue.asFeatureFlag();
 
