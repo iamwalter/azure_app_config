@@ -12,6 +12,7 @@ pool:
 
 steps:
   - script: |
+      brew tap dart-lang/dart
       brew install dart
     displayName: 'Install dart using homebrew'
 
