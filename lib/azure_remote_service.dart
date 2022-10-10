@@ -5,13 +5,14 @@ import 'package:azure_app_config/feature_filter.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
-import 'package:connection_string_parser/connection_string_parser.dart';
+import 'package:azure_app_config/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteService {
   final String apiVersion = "1.0";
   final Dio dio = Dio();
-  late final String? endpoint;
+
+  late String endpoint;
 
   List<FeatureFilter> _featureFilters = [];
 
@@ -20,22 +21,27 @@ class AzureRemoteService {
   }) {
     Map<String, String> azureValues = parseConnectionString(connectionString);
 
-    String? credential = azureValues['Id'];
-    String? secret = azureValues['Secret'];
-    endpoint = azureValues['Endpoint'];
-
-    if (credential != null && secret != null) {
-      dio.interceptors.add(
-        AzureRemoteInterceptor(
-          credential: credential,
-          secret: secret,
-        ),
-      );
-
-      // Add Standard Filters
-      addFeatureFilter(FeatureFilter.percentage());
-      addFeatureFilter(FeatureFilter.timeWindow());
+    if (azureValues['Id'] == null ||
+        azureValues['Secret'] == null ||
+        azureValues['Endpoint'] == null) {
+      throw Exception("Invalid connection string");
     }
+
+    String credential = azureValues['Id']!;
+    String secret = azureValues['Secret']!;
+
+    endpoint = azureValues['Endpoint']!;
+
+    dio.interceptors.add(
+      AzureRemoteInterceptor(
+        credential: credential,
+        secret: secret,
+      ),
+    );
+
+    // Add Standard Filters
+    addFeatureFilter(FeatureFilter.percentage());
+    addFeatureFilter(FeatureFilter.timeWindow());
   }
 
   void addFeatureFilter(FeatureFilter filter) {
@@ -131,7 +137,7 @@ class AzureRemoteService {
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {
-      "api_version": "1.0",
+      "api_version": apiVersion,
     };
 
     final data = await _get(path, params);

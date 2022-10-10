@@ -50,13 +50,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
-  connection_string_parser:
-    dependency: "direct main"
-    description:
-      name: connection_string_parser
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   convert:
     dependency: transitive
     description:
