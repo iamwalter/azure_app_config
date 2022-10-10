@@ -1,6 +1,7 @@
 import 'package:azure_app_config/azure_remote_service.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key_value.dart';
+import 'package:example/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -30,8 +31,7 @@ class MyHomePage extends StatefulWidget {
 
   MyHomePage({super.key, required this.title}) {
     service = AzureRemoteService(
-      connectionString:
-          'Endpoint=https://ac-cz-test-eigenrisico.azconfig.io;Id=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN;Secret=7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=',
+      connectionString: AZURE_CONNECTION_STRING,
       loadingStrategy: LoadingStrategy.ONLINE_ALWAYS,
     );
   }
