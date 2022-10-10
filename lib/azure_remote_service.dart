@@ -64,7 +64,9 @@ class AzureRemoteService {
 
     final FeatureFlag? feature = keyValue.asFeatureFlag();
 
-    if (feature == null) return Future.error("Could not find KeyValue");
+    if (feature == null) {
+      return Future.error("KeyValue is not parsable as feature flag");
+    }
 
     final clientFilters = feature.conditions['client_filters'];
 
@@ -90,9 +92,9 @@ class AzureRemoteService {
   /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final featureFlags = <FeatureFlag>[];
-    final features = await getKeyValues();
+    final keyValues = await getKeyValues();
 
-    for (final kv in features) {
+    for (final kv in keyValues) {
       final FeatureFlag? featureFlag = kv.asFeatureFlag();
 
       if (featureFlag != null) featureFlags.add(featureFlag);
