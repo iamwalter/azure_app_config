@@ -9,10 +9,21 @@ To use this plugin, add `azure_app_config` to your `pubspec.yaml` file
 Creating an instance of AzureRemoteService:
 
       final service = AzureRemoteService(
-        host: "https://test.database.com",
-        credential: "<YOUR_CREDENTIAL>",
-        secret: "<YOUR_SECRET>",
+        connectionString: "<CONNECTION_STRING>",
       ); 
+
+
+**To get all KeyValues**:
+
+    final keyValue = await service.getKeyValues()
+
+**... or a specific keyValue:**
+
+    final keyValue = await service.getKeyValue("key", "label")
+
+To convert a KeyValue to a feature flag entity use the method 
+
+    keyValue.asFeatureFlag()
 
 To get if a feature is enabled, use the `getFeatureEnabled` method.
 
@@ -54,10 +65,10 @@ This package enables you to create custom FeatureFilters by extending the Featur
 
         return random < value;
       }
-    }
+    
 
 
-Register the FeatureFilter by calling `service.addFeatureFilter(filter)`. The filters above are automatically registered.
+Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The filters above are automatically registered.
 
 
 ---

@@ -41,11 +41,11 @@ class AzureRemoteService {
     );
 
     // Add Standard Filters
-    addFeatureFilter(FeatureFilter.percentage());
-    addFeatureFilter(FeatureFilter.timeWindow());
+    registerFeatureFilter(FeatureFilter.percentage());
+    registerFeatureFilter(FeatureFilter.timeWindow());
   }
 
-  void addFeatureFilter(FeatureFilter filter) {
+  void registerFeatureFilter(FeatureFilter filter) {
     _featureFilters.add(filter);
   }
 
@@ -137,7 +137,7 @@ class AzureRemoteService {
     return KeyValue.fromJson(data);
   }
 
-  /// Get a specific key-value
+  /// Retrieve a list of keys.
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {
