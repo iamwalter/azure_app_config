@@ -93,6 +93,7 @@ class AzureRemoteService {
   /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final featureFlags = <FeatureFlag>[];
+
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
@@ -112,11 +113,15 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    return _get(path, params).then(
-      (data) => data["items"].map(
-        (json) => KeyValue.fromJson(json),
-      ),
-    );
+    final data = await _get(path, params);
+
+    final items = <KeyValue>[];
+
+    for (final json in data["items"]) {
+      items.add(KeyValue.fromJson(json));
+    }
+
+    return items;
   }
 
   /// Get a specific key-value
@@ -127,9 +132,9 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    return _get(path, params).then(
-      (json) => KeyValue.fromJson(json),
-    );
+    final data = await _get(path, params);
+
+    return KeyValue.fromJson(data);
   }
 
   /// Get a specific key-value
@@ -139,10 +144,15 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    return _get(path, params).then(
-      (data) => data["items"].map(
-        (json) => AzureKey.fromJson(json),
-      ),
-    );
+    final data = await _get(path, params);
+
+    final List<AzureKey> items = [];
+
+    for (final json in data["items"]) {
+      final item = AzureKey.fromJson(json);
+      items.add(item);
+    }
+
+    return items;
   }
 }
