@@ -7,12 +7,13 @@ import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:azure_app_config/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
+import 'dart:developer' as developer;
 
 class AzureRemoteService {
   final String apiVersion = "1.0";
   final Dio dio = Dio();
 
-  late String endpoint;
+  late final String endpoint;
 
   List<FeatureFilter> _featureFilters = [];
 
@@ -81,7 +82,7 @@ class AzureRemoteService {
       for (final filter in _featureFilters) {
         if (filter.name == name) {
           enabled = filter.evaluate(params);
-          print("AZURE FILTER [$key] => $name");
+          developer.log("AZURE FILTER [$key] => $name");
         }
       }
     }
@@ -111,15 +112,11 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    final data = await _get(path, params);
-
-    final items = <KeyValue>[];
-
-    for (final json in data["items"]) {
-      items.add(KeyValue.fromJson(json));
-    }
-
-    return items;
+    return _get(path, params).then(
+      (data) => data["items"].map(
+        (json) => KeyValue.fromJson(json),
+      ),
+    );
   }
 
   /// Get a specific key-value
@@ -130,9 +127,9 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    final data = await _get(path, params);
-
-    return KeyValue.fromJson(data);
+    return _get(path, params).then(
+      (json) => KeyValue.fromJson(json),
+    );
   }
 
   /// Get a specific key-value
@@ -142,15 +139,10 @@ class AzureRemoteService {
       "api_version": apiVersion,
     };
 
-    final data = await _get(path, params);
-
-    final List<AzureKey> items = [];
-
-    for (final json in data["items"]) {
-      final item = AzureKey.fromJson(json);
-      items.add(item);
-    }
-
-    return items;
+    return _get(path, params).then(
+      (data) => data["items"].map(
+        (json) => AzureKey.fromJson(json),
+      ),
+    );
   }
 }
