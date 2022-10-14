@@ -39,8 +39,8 @@ void main() {
     dioAdapter.onGet("$endpoint/keys", (server) {
       return server.reply(200, {
         "items": [
-          {"name": "testkey"},
-          {"name": "testkey2"},
+          key1.toMap(),
+          key2.toMap(),
         ]
       });
     }, queryParameters: {"api_version": "1.0"});
