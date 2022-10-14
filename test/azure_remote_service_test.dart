@@ -32,6 +32,14 @@ void main() {
     dioAdapter = DioAdapter(dio: dio);
   });
 
+  test('when the connection string does not contain all required values.', () {
+    expect(
+      () => AzureRemoteService(
+          connectionString: 'server=test;hello=bye;up=down;'),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
+
   test('getKeys should return keys', () async {
     final key1 = AzureKey("testkey");
     final key2 = AzureKey("testkey2");

@@ -26,7 +26,8 @@ class AzureRemoteService {
     if (azureValues['Id'] == null ||
         azureValues['Secret'] == null ||
         azureValues['Endpoint'] == null) {
-      throw Exception("Invalid connection string");
+      throw ArgumentError(
+          'The connection string does not contain all required values.');
     }
 
     String credential = azureValues['Id']!;
