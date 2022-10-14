@@ -28,9 +28,9 @@ class KeyValue {
     required this.last_modified,
   });
 
-  /// Returns the KeyValue as a FeatureFlag.
+  /// Returns the [KeyValue] as a [FeatureFlag].
   ///
-  /// Returns null if the KeyValue is unable to be parsed as a FeatureFlag.
+  /// Returns null if the [KeyValue] is unable to be parsed as a [FeatureFlag].
   FeatureFlag? asFeatureFlag() {
     if (value == null) return null;
 
