@@ -4,6 +4,12 @@ import 'dart:convert';
 
 import 'package:azure_app_config/models/feature_flag.dart';
 
+/// This class represents a Azure App Configuration Key-value resource.
+///
+/// A Key-value is a resource identified by unique combination of key + label.
+/// A Key-value can have any type of value, usually this type is represented in [content_type].
+///
+/// To create a parsable FeatureFlag, use [asFeatureFlag].
 class KeyValue {
   final String etag;
   final String key;

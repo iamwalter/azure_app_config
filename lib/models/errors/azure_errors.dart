@@ -1,0 +1,1 @@
+class AzureKeyValueNotParsableAsFeatureFlag implements Exception {}
