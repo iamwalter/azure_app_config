@@ -1,4 +1,5 @@
 import 'package:azure_app_config/azure_remote_service.dart';
+import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +10,7 @@ final testKeyValue = KeyValue(
   etag: "etag",
   key: "testKey",
   label: "testKey",
-  value: "value",
+  value: "testvalue",
   tags: {},
   locked: false,
   last_modified: "last_modified",
@@ -24,7 +25,8 @@ void main() {
 
   setUp(() {
     service = AzureRemoteService(
-        connectionString: "Endpoint=$endpoint;Secret=tttestSecret;Id=testId");
+      connectionString: "Endpoint=$endpoint;Secret=tttestSecret;Id=testId",
+    );
 
     dio = service.dio;
     dioAdapter = DioAdapter(dio: dio);
@@ -83,8 +85,25 @@ void main() {
     expect(actual, expected);
   });
 
-  test('getFeatureFlags', () {
-    // todo
+  test('getFeatureFlags should only retrieve feature flags', () async {
+    final testFeatureFlag = FeatureFlag(
+        id: "id", description: "description", enabled: false, conditions: {});
+    final keyValueWithFeatureFlag =
+        testKeyValue.copyWith(value: testFeatureFlag.toJson());
+
+    dioAdapter.onGet("$endpoint/kv", (server) {
+      return server.reply(200, {
+        "items": [
+          keyValueWithFeatureFlag.toMap(),
+          testKeyValue.toMap(),
+        ],
+      });
+    }, queryParameters: {"label": "*", "api_version": "1.0"});
+
+    final expected = [testFeatureFlag];
+    final actual = await service.getFeatureFlags();
+
+    expect(actual, expected);
   });
 
   test('getFeatureEnabled', () {
