@@ -2,6 +2,7 @@ library azure_app_config;
 
 import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:azure_app_config/feature_filter.dart';
+import 'package:azure_app_config/models/errors/azure_errors.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
@@ -60,13 +61,16 @@ class AzureRemoteService {
   }
 
   /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
+  ///
+  /// Throws a [AzureKeyNotParsableAsFeatureFlag] if the key-value does not correspond to a
+  /// featurefilter.
   Future<bool> getFeatureEnabled(String key, String label) async {
     final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
     final FeatureFlag? feature = keyValue.asFeatureFlag();
 
     if (feature == null) {
-      return Future.error("KeyValue is not parsable as feature flag");
+      throw AzureKeyValueNotParsableAsFeatureFlag();
     }
 
     final clientFilters = feature.conditions['client_filters'];
