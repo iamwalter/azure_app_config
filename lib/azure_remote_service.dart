@@ -60,9 +60,9 @@ class AzureRemoteService {
     return networkResponse.data;
   }
 
-  /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
+  /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the key-value is not parsable to a
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not parsable to a
   /// [FeatureFlag].
   Future<bool> getFeatureEnabled(String key, String label) async {
     final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
