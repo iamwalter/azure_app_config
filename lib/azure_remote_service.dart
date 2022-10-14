@@ -2,17 +2,19 @@ library azure_app_config;
 
 import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:azure_app_config/feature_filter.dart';
+import 'package:azure_app_config/models/errors/azure_errors.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:azure_app_config/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
+import 'dart:developer' as developer;
 
 class AzureRemoteService {
   final String apiVersion = "1.0";
   final Dio dio;
 
-  late String endpoint;
+  late final String endpoint;
 
   List<FeatureFilter> _featureFilters = [];
 
@@ -39,11 +41,12 @@ class AzureRemoteService {
       ),
     );
 
-    addFeatureFilter(FeatureFilter.percentage());
-    addFeatureFilter(FeatureFilter.timeWindow());
+    // Add Standard Filters
+    registerFeatureFilter(FeatureFilter.percentage());
+    registerFeatureFilter(FeatureFilter.timeWindow());
   }
 
-  void addFeatureFilter(FeatureFilter filter) {
+  void registerFeatureFilter(FeatureFilter filter) {
     _featureFilters.add(filter);
   }
 
@@ -57,13 +60,18 @@ class AzureRemoteService {
     return networkResponse.data;
   }
 
-  /// Retrieve whether a feature is enabled. This method also validates the featurefilters.
+  /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s.
+  ///
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not parsable to a
+  /// [FeatureFlag].
   Future<bool> getFeatureEnabled(String key, String label) async {
     final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
     final FeatureFlag? feature = keyValue.asFeatureFlag();
 
-    if (feature == null) return Future.error("Could not find KeyValue");
+    if (feature == null) {
+      throw AzureKeyValueNotParsableAsFeatureFlag();
+    }
 
     final clientFilters = feature.conditions['client_filters'];
 
@@ -78,7 +86,7 @@ class AzureRemoteService {
       for (final filter in _featureFilters) {
         if (filter.name == name) {
           enabled = filter.evaluate(params);
-          print("AZURE FILTER [$key] => $name");
+          developer.log("AZURE FILTER [$key] => $name");
         }
       }
     }
@@ -89,9 +97,10 @@ class AzureRemoteService {
   /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final featureFlags = <FeatureFlag>[];
-    final features = await getKeyValues();
 
-    for (final kv in features) {
+    final keyValues = await getKeyValues();
+
+    for (final kv in keyValues) {
       final FeatureFlag? featureFlag = kv.asFeatureFlag();
 
       if (featureFlag != null) featureFlags.add(featureFlag);
@@ -132,7 +141,7 @@ class AzureRemoteService {
     return KeyValue.fromMap(data);
   }
 
-  /// Get a specific key-value
+  /// Retrieve a list of keys.
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
     final params = {

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 
+import 'dart:developer' as developer;
+
 class AzureRemoteInterceptor extends Interceptor {
   final String _credential; // access key id
   final String _secret; // access key value (base64 encoded)
@@ -55,7 +57,7 @@ class AzureRemoteInterceptor extends Interceptor {
         "&Signature=" +
         signature;
 
-    print(
+    developer.log(
         'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}');
 
     handler.next(options);
