@@ -95,7 +95,11 @@ void main() {
 
   test('getFeatureFlags should only retrieve feature flags', () async {
     final testFeatureFlag = FeatureFlag(
-        id: "id", description: "description", enabled: false, conditions: {});
+      id: "id",
+      description: "description",
+      enabled: false,
+      conditions: {},
+    );
     final keyValueWithFeatureFlag =
         testKeyValue.copyWith(value: testFeatureFlag.toJson());
 
