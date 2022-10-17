@@ -1,70 +1,67 @@
 library azure_app_config;
 
-import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:azure_app_config/feature_filter.dart';
 import 'package:azure_app_config/models/errors/azure_errors.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
-import 'package:azure_app_config/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
+import 'package:meta/meta.dart';
+
 import 'dart:developer' as developer;
 
-class AzureRemoteService {
-  final String apiVersion = "1.0";
-  final Dio dio;
+import 'core/client.dart';
 
-  late final String endpoint;
+abstract class AzureRemoteService {
+  factory AzureRemoteService({required String connectionString}) =>
+      _AzureRemoteService(connectionString: connectionString);
 
-  List<FeatureFilter> _featureFilters = [];
+  /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s. See [registerFeatureFilter].
+  ///
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not parsable to a
+  /// [FeatureFlag].
+  Future<bool> getFeatureEnabled(String key, String label);
 
-  AzureRemoteService({
+  /// Retrieve a list of [FeatureFlag].
+  Future<List<FeatureFlag>> getFeatureFlags();
+
+  /// Retrieve a list of [KeyValue].
+  Future<List<KeyValue>> getKeyValues();
+
+  /// Get a specific [KeyValue]'s.
+  Future<KeyValue> getKeyValue(String key, String label);
+
+  /// Retrieve a list of [AzureKey].
+  Future<List<AzureKey>> getKeys();
+
+  /// This method registers a [FeatureFilter]. The evaluation will happen when using the method
+  /// [getFeatureEnabled].
+  void registerFeatureFilter(FeatureFilter filter);
+
+  /// Make Dio available for tests.
+  @protected
+  Dio get dio;
+}
+
+class _AzureRemoteService implements AzureRemoteService {
+  List<FeatureFilter> featureFilters = [];
+
+  Dio get dio => client.dio;
+
+  final Client client;
+
+  _AzureRemoteService({
     required String connectionString,
-  }) : dio = Dio() {
-    Map<String, String> azureValues = parseConnectionString(connectionString);
-
-    if (azureValues['Id'] == null ||
-        azureValues['Secret'] == null ||
-        azureValues['Endpoint'] == null) {
-      throw ArgumentError(
-          'The connection string does not contain all required values.');
-    }
-
-    String credential = azureValues['Id']!;
-    String secret = azureValues['Secret']!;
-
-    endpoint = azureValues['Endpoint']!;
-
-    dio.interceptors.add(
-      AzureRemoteInterceptor(
-        credential: credential,
-        secret: secret,
-      ),
-    );
-
+  }) : client = Client(connectionString: connectionString) {
     // Add Standard Filters
     registerFeatureFilter(FeatureFilter.percentage());
     registerFeatureFilter(FeatureFilter.timeWindow());
   }
 
   void registerFeatureFilter(FeatureFilter filter) {
-    _featureFilters.add(filter);
+    featureFilters.add(filter);
   }
 
-  Future<Map<String, dynamic>> _get(
-      String path, Map<String, String> queryParams) async {
-    final networkResponse = await dio.get(
-      "$endpoint$path",
-      queryParameters: queryParams,
-    );
-
-    return networkResponse.data;
-  }
-
-  /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s.
-  ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not parsable to a
-  /// [FeatureFlag].
   Future<bool> getFeatureEnabled(String key, String label) async {
     final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
@@ -84,7 +81,7 @@ class AzureRemoteService {
       final String name = filter['name'];
       final Map<String, dynamic> params = filter['parameters'];
 
-      for (final filter in _featureFilters) {
+      for (final filter in featureFilters) {
         if (filter.name == name) {
           enabled = filter.evaluate(params);
           developer.log("AZURE FILTER [$key] => $name");
@@ -95,7 +92,6 @@ class AzureRemoteService {
     return enabled;
   }
 
-  /// Retrieve a list of all feature flags.
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final featureFlags = <FeatureFlag>[];
 
@@ -110,15 +106,14 @@ class AzureRemoteService {
     return featureFlags;
   }
 
-  /// Retrieve a list of key-values.
   Future<List<KeyValue>> getKeyValues() async {
     final path = "/kv";
     final params = {
       "label": "*",
-      "api_version": apiVersion,
     };
 
-    final data = await _get(path, params);
+    final response = await client.get(path, params);
+    final data = response.data;
 
     final items = <KeyValue>[];
 
@@ -129,27 +124,23 @@ class AzureRemoteService {
     return items;
   }
 
-  /// Get a specific key-value
   Future<KeyValue> getKeyValue(String key, String label) async {
     final path = "/kv/$key";
     final params = {
       "label": label,
-      "api_version": apiVersion,
     };
-
-    final data = await _get(path, params);
+    final response = await client.get(path, params);
+    final data = response.data;
 
     return KeyValue.fromMap(data);
   }
 
-  /// Retrieve a list of keys.
   Future<List<AzureKey>> getKeys() async {
     final path = "/keys";
-    final params = {
-      "api_version": apiVersion,
-    };
+    final params = <String, String>{};
 
-    final data = await _get(path, params);
+    final response = await client.get(path, params);
+    final data = response.data;
 
     final List<AzureKey> items = [];
 
