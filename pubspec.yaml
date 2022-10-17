@@ -9,4 +9,5 @@ dependencies:
   
 dev_dependencies:
   test: ^1.21.6
+  http_mock_adapter: ^0.3.3
 

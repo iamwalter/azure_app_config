@@ -12,7 +12,7 @@ import 'dart:developer' as developer;
 
 class AzureRemoteService {
   final String apiVersion = "1.0";
-  final Dio dio = Dio();
+  final Dio dio;
 
   late final String endpoint;
 
@@ -20,13 +20,14 @@ class AzureRemoteService {
 
   AzureRemoteService({
     required String connectionString,
-  }) {
+  }) : dio = Dio() {
     Map<String, String> azureValues = parseConnectionString(connectionString);
 
     if (azureValues['Id'] == null ||
         azureValues['Secret'] == null ||
         azureValues['Endpoint'] == null) {
-      throw Exception("Invalid connection string");
+      throw ArgumentError(
+          'The connection string does not contain all required values.');
     }
 
     String credential = azureValues['Id']!;
@@ -111,7 +112,7 @@ class AzureRemoteService {
 
   /// Retrieve a list of key-values.
   Future<List<KeyValue>> getKeyValues() async {
-    final path = "/kv/";
+    final path = "/kv";
     final params = {
       "label": "*",
       "api_version": apiVersion,
@@ -122,7 +123,7 @@ class AzureRemoteService {
     final items = <KeyValue>[];
 
     for (final json in data["items"]) {
-      items.add(KeyValue.fromJson(json));
+      items.add(KeyValue.fromMap(json));
     }
 
     return items;
@@ -138,7 +139,7 @@ class AzureRemoteService {
 
     final data = await _get(path, params);
 
-    return KeyValue.fromJson(data);
+    return KeyValue.fromMap(data);
   }
 
   /// Retrieve a list of keys.
@@ -153,7 +154,7 @@ class AzureRemoteService {
     final List<AzureKey> items = [];
 
     for (final json in data["items"]) {
-      final item = AzureKey.fromJson(json);
+      final item = AzureKey.fromMap(json);
       items.add(item);
     }
 
