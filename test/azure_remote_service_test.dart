@@ -1,10 +1,18 @@
+import 'dart:convert';
+
 import 'package:azure_app_config/azure_remote_service.dart';
+import 'package:azure_app_config/core/client.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:dio/dio.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
 import "package:test/test.dart";
 import 'package:http_mock_adapter/http_mock_adapter.dart';
+
+import 'azure_remote_service_test.mocks.dart';
 
 final testKeyValue = KeyValue(
   etag: "etag",
@@ -16,6 +24,7 @@ final testKeyValue = KeyValue(
   last_modified: "last_modified",
 );
 
+@GenerateNiceMocks([MockSpec<Client>()])
 void main() {
   late Dio dio;
   late DioAdapter dioAdapter;
@@ -30,6 +39,45 @@ void main() {
 
     dio = service.dio;
     dioAdapter = DioAdapter(dio: dio);
+  });
+
+  test(
+    'setKeyValue should call client put with correct arguments',
+    () async {
+      final key = "testKey";
+      final label = "testLabel";
+
+      final client = MockClient();
+
+      service = AzureRemoteService.mock(client);
+
+      await service.setKeyValue(
+        key: key,
+        label: label,
+        value: "testValue",
+        contentType: "testContentType",
+        tags: {'testkey': 'testValue'},
+      );
+
+      verify(
+        client.put(
+          path: "/kv/$key",
+          params: {"label": label},
+          data: {
+            "value": "testValue",
+            "content_type": "testContentType",
+            "tags": {'testkey': 'testValue'},
+          },
+          headers: {
+            "Content-Type": "application/vnd.microsoft.appconfig.kv+json",
+          },
+        ),
+      ).called(1);
+    },
+  );
+
+  test('getFeatureEnabled', () {
+    //todo
   });
 
   test('when the connection string does not contain all required values.', () {
@@ -112,9 +160,5 @@ void main() {
     final actual = await service.getFeatureFlags();
 
     expect(actual, expected);
-  });
-
-  test('getFeatureEnabled', () {
-    // todo
   });
 }

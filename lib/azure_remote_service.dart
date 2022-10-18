@@ -13,8 +13,14 @@ import 'dart:developer' as developer;
 import 'core/client.dart';
 
 abstract class AzureRemoteService {
+  @visibleForTesting
+  factory AzureRemoteService.mock(Client client) =>
+      _AzureRemoteServiceImpl(client: client);
+
   factory AzureRemoteService({required String connectionString}) {
-    return _AzureRemoteService(connectionString: connectionString);
+    final client = Client(connectionString: connectionString);
+
+    return _AzureRemoteServiceImpl(client: client);
   }
 
   /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s. See [registerFeatureFilter].
@@ -52,10 +58,10 @@ abstract class AzureRemoteService {
   Dio get dio;
 }
 
-class _AzureRemoteService implements AzureRemoteService {
-  _AzureRemoteService({
-    required String connectionString,
-  }) : client = Client(connectionString: connectionString) {
+class _AzureRemoteServiceImpl implements AzureRemoteService {
+  _AzureRemoteServiceImpl({
+    required this.client,
+  }) {
     // Add Standard Filters
     registerFeatureFilter(FeatureFilter.percentage());
     registerFeatureFilter(FeatureFilter.timeWindow());
