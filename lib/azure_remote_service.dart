@@ -45,6 +45,7 @@ abstract class AzureRemoteService {
   /// [getFeatureEnabled].
   void registerFeatureFilter(FeatureFilter filter);
 
+  /// Adds or modifies a [KeyValue] in the repository.
   Future<Response> setKeyValue({
     required String key,
     required String label,
