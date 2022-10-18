@@ -10,11 +10,27 @@ class AzureRemoteInterceptor extends Interceptor {
   final String _credential; // access key id
   final String _secret; // access key value (base64 encoded)
 
+  late DateTime Function() getTime;
+
   AzureRemoteInterceptor({
     required String credential,
     required String secret,
+    DateTime Function()? getTime,
   })  : _credential = credential,
-        _secret = secret;
+        _secret = secret {
+    if (getTime == null) {
+      this.getTime = () => DateTime.now();
+    } else {
+      this.getTime = getTime;
+    }
+  }
+
+  String hashBody(String body) =>
+      base64.encode(sha256.convert(utf8.encode(body)).bytes);
+
+  String utcString() {
+    return HttpDate.format(getTime.call());
+  }
 
   @override
   void onRequest(
@@ -26,11 +42,11 @@ class AzureRemoteInterceptor extends Interceptor {
     final pathAndParams = "$path?$params";
 
     final method = options.method.toUpperCase();
-    final utcString = HttpDate.format(DateTime.now());
+    final _utcString = utcString();
 
     final body = "";
 
-    final contentHash = base64.encode(sha256.convert(utf8.encode(body)).bytes);
+    final _contentHash = hashBody(body);
 
     final host = options.uri.host;
 
@@ -38,24 +54,24 @@ class AzureRemoteInterceptor extends Interceptor {
         '\n' + // VERB
         pathAndParams +
         '\n' + // path_and_query
-        utcString +
+        _utcString +
         ';' +
         host +
         ';' +
-        contentHash;
+        _contentHash;
 
-    final signature = _signature(message);
+    final _signature = signature(message);
 
     final signedHeaders = "x-ms-date;host;x-ms-content-sha256";
 
-    options.headers["x-ms-date"] = utcString;
-    options.headers["x-ms-content-sha256"] = contentHash;
+    options.headers["x-ms-date"] = _utcString;
+    options.headers["x-ms-content-sha256"] = _contentHash;
     options.headers["Authorization"] = "HMAC-SHA256 Credential=" +
         _credential +
         "&SignedHeaders=" +
         signedHeaders +
         "&Signature=" +
-        signature;
+        _signature;
 
     developer.log(
         'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}');
@@ -63,7 +79,7 @@ class AzureRemoteInterceptor extends Interceptor {
     handler.next(options);
   }
 
-  String _signature(String msg) {
+  String signature(String msg) {
     final hmac = Hmac(sha256, base64.decode(_secret));
     final digest = hmac.convert(utf8.encode(msg));
 
