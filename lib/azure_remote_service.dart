@@ -13,8 +13,9 @@ import 'dart:developer' as developer;
 import 'core/client.dart';
 
 abstract class AzureRemoteService {
-  factory AzureRemoteService({required String connectionString}) =>
-      _AzureRemoteService(connectionString: connectionString);
+  factory AzureRemoteService({required String connectionString}) {
+    return _AzureRemoteService(connectionString: connectionString);
+  }
 
   /// Retrieves whether a [FeatureFlag] is enabled, using registered [FeatureFilter]'s. See [registerFeatureFilter].
   ///
@@ -38,18 +39,20 @@ abstract class AzureRemoteService {
   /// [getFeatureEnabled].
   void registerFeatureFilter(FeatureFilter filter);
 
+  Future<Response> setKeyValue({
+    required String key,
+    required String label,
+    String? value,
+    String? contentType,
+    Map<String, String>? tags,
+  });
+
   /// Make Dio available for tests.
-  @protected
+  @visibleForTesting
   Dio get dio;
 }
 
 class _AzureRemoteService implements AzureRemoteService {
-  List<FeatureFilter> featureFilters = [];
-
-  Dio get dio => client.dio;
-
-  final Client client;
-
   _AzureRemoteService({
     required String connectionString,
   }) : client = Client(connectionString: connectionString) {
@@ -57,6 +60,12 @@ class _AzureRemoteService implements AzureRemoteService {
     registerFeatureFilter(FeatureFilter.percentage());
     registerFeatureFilter(FeatureFilter.timeWindow());
   }
+
+  final Client client;
+
+  List<FeatureFilter> featureFilters = [];
+
+  Dio get dio => client.dio;
 
   void registerFeatureFilter(FeatureFilter filter) {
     featureFilters.add(filter);
@@ -112,7 +121,10 @@ class _AzureRemoteService implements AzureRemoteService {
       "label": "*",
     };
 
-    final response = await client.get(path, params);
+    final response = await client.get(
+      path: path,
+      params: params,
+    );
     final data = response.data;
 
     final items = <KeyValue>[];
@@ -129,7 +141,10 @@ class _AzureRemoteService implements AzureRemoteService {
     final params = {
       "label": label,
     };
-    final response = await client.get(path, params);
+    final response = await client.get(
+      path: path,
+      params: params,
+    );
     final data = response.data;
 
     return KeyValue.fromMap(data);
@@ -139,7 +154,10 @@ class _AzureRemoteService implements AzureRemoteService {
     final path = "/keys";
     final params = <String, String>{};
 
-    final response = await client.get(path, params);
+    final response = await client.get(
+      path: path,
+      params: params,
+    );
     final data = response.data;
 
     final List<AzureKey> items = [];
@@ -150,5 +168,33 @@ class _AzureRemoteService implements AzureRemoteService {
     }
 
     return items;
+  }
+
+  Future<Response> setKeyValue({
+    required String key,
+    required String label,
+    String? value,
+    String? contentType,
+    Map<String, String>? tags,
+  }) async {
+    final path = '/kv/$key';
+    final params = {
+      "label": label,
+    };
+
+    final data = <String, dynamic>{};
+
+    if (value != null) data['value'] = value;
+    if (contentType != null) data['content_type'] = contentType;
+    if (tags != null) data['tags'] = tags;
+
+    return client.put(
+      path: path,
+      params: params,
+      data: data,
+      headers: {
+        "Content-Type": "application/vnd.microsoft.appconfig.kv+json",
+      },
+    );
   }
 }

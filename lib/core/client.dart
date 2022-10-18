@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:azure_app_config/azure_remote_interceptor.dart';
 import 'package:dio/dio.dart';
 
@@ -34,7 +36,10 @@ class Client {
     );
   }
 
-  Future<Response> get(String path, Map<String, String> params) async {
+  Future<Response> get({
+    required String path,
+    required Map<String, String> params,
+  }) async {
     params["api_version"] = "1.0";
 
     final response = await dio.get("$endpoint$path", queryParameters: params);
@@ -42,9 +47,19 @@ class Client {
     return response;
   }
 
-  Future<Response> put(String path, Map<String, String> params, dynamic data) {
+  Future<Response> put({
+    required String path,
+    required Map<String, String> params,
+    required Map<String, dynamic> data,
+    Map<String, String>? headers,
+  }) {
     params["api_version"] = "1.0";
 
-    return dio.put("$endpoint$path", queryParameters: params, data: data);
+    return dio.put(
+      "$endpoint$path",
+      queryParameters: params,
+      data: jsonEncode(data),
+      options: Options(headers: headers),
+    );
   }
 }
