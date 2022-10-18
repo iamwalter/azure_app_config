@@ -13,10 +13,6 @@ import 'dart:developer' as developer;
 import 'core/client.dart';
 
 abstract class AzureRemoteService {
-  @visibleForTesting
-  factory AzureRemoteService.mock(Client client) =>
-      _AzureRemoteServiceImpl(client: client);
-
   factory AzureRemoteService({required String connectionString}) {
     final client = Client(connectionString: connectionString);
 
@@ -53,6 +49,11 @@ abstract class AzureRemoteService {
     String? contentType,
     Map<String, String>? tags,
   });
+
+  /// An way to provide dependencies to the implementation.
+  @visibleForTesting
+  factory AzureRemoteService.mock(Client client) =>
+      _AzureRemoteServiceImpl(client: client);
 
   /// Make Dio available for tests.
   @visibleForTesting
