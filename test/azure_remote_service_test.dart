@@ -41,40 +41,60 @@ void main() {
     dioAdapter = DioAdapter(dio: dio);
   });
 
-  test(
-    'setKeyValue should call client put with correct arguments',
-    () async {
-      final key = "testKey";
-      final label = "testLabel";
+  group('setKeyValue', () {
+    final key = "testKey";
+    final label = "testLabel";
 
+    test(
+      'setKeyValue should call client with empty arguments',
+      () async {
+        final client = MockClient();
+        service = AzureRemoteService.mock(client);
+        await service.setKeyValue(
+          key: key,
+          label: label,
+          value: "testValue",
+          contentType: "testContentType",
+          tags: {'testkey': 'testValue'},
+        );
+
+        verify(
+          client.put(
+            path: "/kv/$key",
+            params: {"label": label},
+            data: {
+              "value": "testValue",
+              "content_type": "testContentType",
+              "tags": {'testkey': 'testValue'},
+            },
+            headers: {
+              "Content-Type": "application/vnd.microsoft.appconfig.kv+json",
+            },
+          ),
+        ).called(1);
+      },
+    );
+
+    test('setKeyValue should call client with empty body', () async {
       final client = MockClient();
-
       service = AzureRemoteService.mock(client);
-
       await service.setKeyValue(
         key: key,
         label: label,
-        value: "testValue",
-        contentType: "testContentType",
-        tags: {'testkey': 'testValue'},
       );
 
       verify(
         client.put(
           path: "/kv/$key",
           params: {"label": label},
-          data: {
-            "value": "testValue",
-            "content_type": "testContentType",
-            "tags": {'testkey': 'testValue'},
-          },
+          data: {},
           headers: {
             "Content-Type": "application/vnd.microsoft.appconfig.kv+json",
           },
         ),
       ).called(1);
-    },
-  );
+    });
+  });
 
   test('getFeatureEnabled', () {
     //todo
