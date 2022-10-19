@@ -36,6 +36,9 @@ class Client {
     );
   }
 
+  /// Returns the [Response] of a GET request.
+  ///
+  /// Returns the response from 'http://[endpoint]/[path]?[params]'.
   Future<Response> get({
     required String path,
     required Map<String, String> params,
@@ -47,11 +50,16 @@ class Client {
     return response;
   }
 
+  /// Returns the [Response] of a PUT request.
+  ///
+  /// A request is made to 'http://[endpoint]/[path]?[params]'.
+  /// where [data] is the request body, which expects an object which is
+  /// parsable to a JSON String. [headers] usually indicates which type of data the server can expect.
   Future<Response> put({
     required String path,
     required Map<String, String> params,
     required Map<String, dynamic> data,
-    Map<String, String>? headers,
+    required Map<String, String> headers,
   }) {
     params["api_version"] = "1.0";
 
