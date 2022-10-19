@@ -7,48 +7,45 @@ import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
 
 class AzureRemoteInterceptor extends Interceptor {
-  final String _credential; // access key id
-  final String _secret; // access key value (base64 encoded)
+  /// Access key credential
+  final String _credential;
 
-  late DateTime Function() getTime;
+  /// Access key secret
+  final String _secret;
+
+  /// Optional time for the interceptor to use. Used for testing.
+  DateTime? clock;
 
   AzureRemoteInterceptor({
     required String credential,
     required String secret,
-    DateTime Function()? getTime,
+    this.clock,
   })  : _credential = credential,
-        _secret = secret {
-    if (getTime == null) {
-      this.getTime = () => DateTime.now();
-    } else {
-      this.getTime = getTime;
-    }
-  }
+        _secret = secret;
 
   String hashBody(String body) =>
       base64.encode(sha256.convert(utf8.encode(body)).bytes);
 
-  String utcString() {
-    return HttpDate.format(getTime.call());
-  }
+  String utcString() =>
+      clock == null ? HttpDate.format(DateTime.now()) : HttpDate.format(clock!);
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    final params = options.uri.query;
+    final host = options.uri.host;
     final path = options.uri.path;
-    final pathAndParams = "$path?$params";
 
     final method = options.method.toUpperCase();
+    final params = options.uri.query;
+    String body = options.data ?? "";
+
+    final pathAndParams = "$path?$params";
+
     final _utcString = utcString();
 
-    final body = "";
-
     final _contentHash = hashBody(body);
-
-    final host = options.uri.host;
 
     var message = method +
         '\n' + // VERB
