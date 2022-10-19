@@ -28,7 +28,7 @@ class AzureRemoteInterceptor extends Interceptor {
     final method = options.method.toUpperCase();
     final utcString = HttpDate.format(DateTime.now());
 
-    final body = "";
+    String body = options.data ?? "";
 
     final contentHash = base64.encode(sha256.convert(utf8.encode(body)).bytes);
 
