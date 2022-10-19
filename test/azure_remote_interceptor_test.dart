@@ -63,99 +63,39 @@ void main() {
     });
   });
 
-  group('onRequest()', () {
-    test("should contain correct 'x-ms-date' header", () {
-      final options = MockRequestOptions();
+  test(
+      'onRequest() should end with a call to handler.next(options) with correct headers',
+      () {
+    // Resolves to a specific time that the interceptor uses
+    // so the calculations will resolve to the expected outputs
+    final DateTime timeUsedForTesting =
+        DateTime.fromMicrosecondsSinceEpoch(1666132930809223);
 
-      stubRequest(options);
-
-      final constTime = DateTime.fromMicrosecondsSinceEpoch(1666132930809223);
-      final interceptor = AzureRemoteInterceptor(
-        credential: "",
-        secret: "",
-        clock: constTime,
-      );
-
-      interceptor.onRequest(
-        options,
-        MockRequestInterceptorHandler(),
-      );
-
-      final actual = options.headers["x-ms-date"];
-      final expected = HttpDate.format(constTime);
-
-      expect(actual, expected);
-    });
-
-    test("should contain correct 'x-ms-content-sha256' header", () {
-      final options = MockRequestOptions();
-      stubRequest(options);
-
-      final interceptor = AzureRemoteInterceptor(
-        credential: "",
-        secret: "",
-        clock: DateTime.fromMicrosecondsSinceEpoch(1666132930809223),
-      );
-
-      interceptor.onRequest(
-        options,
-        MockRequestInterceptorHandler(),
-      );
-
-      final actual = options.headers["x-ms-content-sha256"];
-      final expected = "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=";
-
-      expect(actual, expected);
-    });
-
-    test("should contain correct 'Authorization' header", () async {
-      final options = MockRequestOptions();
-      stubRequest(options);
-
-      final interceptor = AzureRemoteInterceptor(
-        credential: "7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN",
-        secret: "7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=",
-        clock: DateTime.fromMicrosecondsSinceEpoch(1666132930809223),
-      );
-
-      interceptor.onRequest(
-        options,
-        MockRequestInterceptorHandler(),
-      );
-
-      final actual = options.headers["Authorization"];
-
-      final expected = """
-HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=""";
-
-      expect(actual, expected);
-    });
-    test(
-      'should end with a call to handler.next(options) with correct options',
-      () async {
-        final constTime = DateTime.fromMicrosecondsSinceEpoch(1666132930809223);
-        final interceptor = AzureRemoteInterceptor(
-          credential: "7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN",
-          secret: "7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=",
-          clock: constTime,
-        );
-
-        final options = MockRequestOptions();
-        final handler = MockRequestInterceptorHandler();
-
-        stubRequest(options);
-
-        interceptor.onRequest(options, handler);
-
-        expect(options.headers["Authorization"], """
-HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=""");
-        expect(options.headers["x-ms-content-sha256"],
-            "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
-        expect(options.headers["x-ms-date"], HttpDate.format(constTime));
-        verify(handler.next(options)).called(1);
-
-        verifyNoMoreInteractions(handler);
-      },
+    final interceptor = AzureRemoteInterceptor(
+      credential: "7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN",
+      secret: "7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=",
+      clock: timeUsedForTesting,
     );
+
+    final options = MockRequestOptions();
+    final handler = MockRequestInterceptorHandler();
+
+    stubRequest(options);
+
+    interceptor.onRequest(options, handler);
+
+    final expectedAuthorizationHeader = """
+HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=""";
+    final expectedContentSha256Header =
+        "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=";
+    final expectedDateHeader = HttpDate.format(timeUsedForTesting);
+
+    expect(options.headers["Authorization"], expectedAuthorizationHeader);
+    expect(options.headers["x-ms-content-sha256"], expectedContentSha256Header);
+    expect(options.headers["x-ms-date"], expectedDateHeader);
+
+    verify(handler.next(options)).called(1);
+
+    verifyNoMoreInteractions(handler);
   });
 }
