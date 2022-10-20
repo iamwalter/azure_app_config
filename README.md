@@ -67,5 +67,8 @@ This package enables you to create custom FeatureFilters by extending the Featur
 
 Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The build-in filters are automatically registered.
 
----
+## More Information
+For more information about Azure App Configuration, take a look at the following resources.
 
+ - [Azure App Configuration Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)
+ - [Feature Management Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management)

@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:azure_app_config/azure_remote_service.dart';
 import 'package:azure_app_config/core/client.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key.dart';
 import 'package:azure_app_config/models/key_value.dart';
-import 'package:dio/dio.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
