@@ -2,7 +2,7 @@
 This package makes it easier to communicate with Microsoft Azure App Configuration KeyValue and FeatureFlag resources.
 
 ## Installation
-To use this plugin, add `azure_app_config` to your `pubspec.yaml` file
+To use this plugin, add `azure_app_config` to your `pubspec.yaml` file.
 
 ## Example
 Creating an instance of AzureRemoteService:
@@ -42,11 +42,8 @@ To get if a feature is enabled, use the `getFeatureEnabled` method.
 ### FeatureFilters
 This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
-#### Microsoft.Targeting
-Enable a flag based on a percentage.
-
-#### Microsoft.TimeWindow
-Enable a feature flag during a specified window of time.
+**Microsoft.Targeting** -> Enable a flag based on a percentage.
+**Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
 ### Implement your own FeatureFilter
 

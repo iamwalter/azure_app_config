@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 
 import 'package:azure_app_config/models/feature_flag.dart';
 
-/// This class represents a Azure App Configuration Key-value resource.
+/// This class represents an Azure App Configuration [Key-value](https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value) resource.
 ///
 /// A Key-value is a resource identified by unique combination of key + label.
 /// A Key-value can have any type of value, usually this type is represented in [content_type].
