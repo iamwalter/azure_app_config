@@ -1,8 +1,7 @@
+# Azure App Configuration  
+This package makes it easier to communicate with Microsoft Azure App Configuration KeyValue and FeatureFlag resources.
 
-# azure_app_config  
-This package makes it easier to communicate with Microsoft Azure App Configuration resources.
-
-## Usage
+## Installation
 To use this plugin, add `azure_app_config` to your `pubspec.yaml` file
 
 ## Example
@@ -12,12 +11,21 @@ Creating an instance of AzureRemoteService:
         connectionString: "<CONNECTION_STRING>",
       ); 
 
+## Authentication
 
-**To get all KeyValues**:
+A connection string is required to use App Configuration.
+The connection string can be obtained from the App Configuration Dashboard under 'Access keys'.
+
+Please note that when a connection string is invalid or not specified,
+an ArgumentError will occur.
+
+## Example Usages
+
+To get all KeyValues:
 
     final keyValue = await service.getKeyValues()
 
-**... or a specific keyValue:**
+... or a specific keyValue:
 
     final keyValue = await service.getKeyValue("key", "label")
 
@@ -32,26 +40,15 @@ To get if a feature is enabled, use the `getFeatureEnabled` method.
 ---
 
 ### FeatureFilters
+This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
-This package currently has the current built-in FeatureFilters:
-
-#### Percentage
-This will enable the flag to `Value` percentage of users.
-
-    "parameters": {
-    	"Value": 50
-    }
-
+#### Microsoft.Targeting
+Enable a flag based on a percentage.
 
 #### Microsoft.TimeWindow
-If current time is inbetween start and end time, return true. 
+Enable a feature flag during a specified window of time.
 
-    "parameters": {
-       	"Start": "Wed, 21 Sep 2022 00:25:00 GMT",
-       	"End": "Wed, 21 Sep 2022 01:15:00 GMT"
-       }
-
-### Custom FeatureFilter
+### Implement your own FeatureFilter
 
 This package enables you to create custom FeatureFilters by extending the FeatureFilter class. For example, this is how the Percentage filter is implemented:
 
@@ -68,8 +65,7 @@ This package enables you to create custom FeatureFilters by extending the Featur
     
 
 
-Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The filters above are automatically registered.
-
+Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The build-in filters are automatically registered.
 
 ---
 
