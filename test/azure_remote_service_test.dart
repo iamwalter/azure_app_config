@@ -26,30 +26,36 @@ final testKeyValue = KeyValue(
 
 @GenerateNiceMocks([MockSpec<Client>()])
 void main() {
-  late Dio dio;
+  test('when the connection string does not contain all required values.', () {
+    expect(
+      () => AzureRemoteService(
+          connectionString: 'server=test;hello=bye;up=down;'),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
+
   late DioAdapter dioAdapter;
   late AzureRemoteService service;
-
-  final endpoint = "https://test.website.com";
+  const endpoint = "https://test.website.com";
 
   setUp(() {
     service = AzureRemoteService(
       connectionString: "Endpoint=$endpoint;Secret=tttestSecret;Id=testId",
     );
 
-    dio = service.dio;
-    dioAdapter = DioAdapter(dio: dio);
+    dioAdapter = DioAdapter(dio: service.dio);
   });
 
-  group('setKeyValue', () {
+  group('setKeyValue()', () {
     final key = "testKey";
     final label = "testLabel";
 
     test(
-      'setKeyValue should call client with empty arguments',
+      'should call client with correct arguments and headers when full',
       () async {
         final client = MockClient();
-        service = AzureRemoteService.mock(client);
+        final service = AzureRemoteService.mock(client);
+
         await service.setKeyValue(
           key: key,
           label: label,
@@ -75,9 +81,11 @@ void main() {
       },
     );
 
-    test('setKeyValue should call client with empty body', () async {
+    test('should call client with correct arguments and headers when empty',
+        () async {
       final client = MockClient();
-      service = AzureRemoteService.mock(client);
+      final service = AzureRemoteService.mock(client);
+
       await service.setKeyValue(
         key: key,
         label: label,
@@ -100,14 +108,6 @@ void main() {
     //todo
   });
 
-  test('when the connection string does not contain all required values.', () {
-    expect(
-      () => AzureRemoteService(
-          connectionString: 'server=test;hello=bye;up=down;'),
-      throwsA(isA<ArgumentError>()),
-    );
-  });
-
   test('getKeys should return keys', () async {
     final key1 = AzureKey("testkey");
     final key2 = AzureKey("testkey2");
@@ -127,7 +127,7 @@ void main() {
     expect(actual, expected);
   });
 
-  test('getKeyValue', () async {
+  test('getKeyValue should return a KeyValue', () async {
     final key = testKeyValue.key;
     final label = testKeyValue.label;
 
@@ -146,7 +146,7 @@ void main() {
     expect(actual, testKeyValue);
   });
 
-  test('getKeyValues', () async {
+  test('getKeyValues should return keyValues', () async {
     final expected = <KeyValue>[testKeyValue, testKeyValue];
 
     dioAdapter.onGet("$endpoint/kv", (server) {
@@ -161,7 +161,7 @@ void main() {
     expect(actual, expected);
   });
 
-  test('getFeatureFlags should only retrieve feature flags', () async {
+  test('getFeatureFlags should retrieve feature flags', () async {
     final testFeatureFlag = FeatureFlag(
       id: "id",
       description: "description",

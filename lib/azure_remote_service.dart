@@ -12,8 +12,20 @@ import 'dart:developer' as developer;
 
 import 'core/client.dart';
 
+/// This class represents the Microsoft Azure App Configuration.
+///
+/// # Authentication
+///
+/// A connection string is required to use App Configuration.
+/// The connection string can be obtained from the App Configuration Dashboard
+/// under 'Access keys'.
+///
+/// Please note that when a connection string is invalid or not specified,
+/// an [ArgumentError] will occur when creating an instance of [AzureRemoteService].
 abstract class AzureRemoteService {
-  factory AzureRemoteService({required String connectionString}) {
+  factory AzureRemoteService({
+    required String connectionString,
+  }) {
     final client = Client(connectionString: connectionString);
 
     return _AzureRemoteServiceImpl(client: client);
@@ -31,10 +43,10 @@ abstract class AzureRemoteService {
   /// Retrieve a list of [KeyValue].
   Future<List<KeyValue>> getKeyValues();
 
-  /// Get a specific [KeyValue]'s.
+  /// Get a specific [KeyValue].
   Future<KeyValue> getKeyValue(String key, String label);
 
-  /// Retrieve a list of [AzureKey].
+  /// Retrieve a list of [AzureKey]'s.
   Future<List<AzureKey>> getKeys();
 
   /// This method registers a [FeatureFilter]. The evaluation will happen when using the method
@@ -50,7 +62,7 @@ abstract class AzureRemoteService {
     Map<String, String>? tags,
   });
 
-  /// An way to provide dependencies to the implementation.
+  /// A way to provide dependencies to the implementation.
   @visibleForTesting
   factory AzureRemoteService.mock(Client client) =>
       _AzureRemoteServiceImpl(client: client);

@@ -8,9 +8,11 @@ void main() {
   final current = DateTime.utc(2022, 09, 21, 14, 22, 50);
   final after = DateTime.utc(2022, 10, 21, 14, 22, 50);
 
-  var percentageFilter = TimeWindow(() => current);
+  var percentageFilter = TimeWindow(clock: current);
 
-  test('Time Filter should return correct boolean', () {
+  test(
+      'Time Filter should return correct boolean based on current time and input',
+      () {
     // START ONLY
     var params = <String, dynamic>{
       "Start": HttpDate.format(before),
@@ -32,7 +34,7 @@ void main() {
     expect(actual, expected);
 
     // START AND END
-    percentageFilter = TimeWindow(() => before);
+    percentageFilter = TimeWindow(clock: before);
     params = {
       "Start": HttpDate.format(current),
       "End": HttpDate.format(after),
@@ -42,7 +44,7 @@ void main() {
     expected = false;
     expect(actual, expected);
 
-    percentageFilter = TimeWindow(() => after);
+    percentageFilter = TimeWindow(clock: after);
     params = {
       "Start": HttpDate.format(before),
       "End": HttpDate.format(current),
