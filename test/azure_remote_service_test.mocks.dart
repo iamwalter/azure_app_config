@@ -114,7 +114,7 @@ class MockClient extends _i1.Mock implements _i3.Client {
     required String? path,
     required Map<String, String>? params,
     required Map<String, dynamic>? data,
-    Map<String, String>? headers,
+    required Map<String, String>? headers,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

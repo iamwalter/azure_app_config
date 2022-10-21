@@ -1,7 +1,4 @@
-import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:azure_app_config/models/feature_flag.dart';
-import 'package:azure_app_config/models/key_value.dart';
-
+import 'package:azure_app_config/azure_app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
