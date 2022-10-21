@@ -36,7 +36,7 @@ class GetKeys extends StatelessWidget {
         for (final key in keys) {
           listTiles.add(
             ListTile(
-              title: Text("${key.toString()}"),
+              title: Text(key.toString()),
             ),
           );
         }

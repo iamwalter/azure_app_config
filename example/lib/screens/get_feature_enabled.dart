@@ -8,8 +8,8 @@ class GetFeatureEnabled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final key = "chat_feature";
-    final label = "JUST";
+    const key = "chat_feature";
+    const label = "JUST";
     return FutureBuilder(
       future: service.getFeatureEnabled(key, label),
       builder: (context, data) {

@@ -1,7 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key_value.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
 class SetKeyValue extends StatelessWidget {
   final AzureRemoteService service;
@@ -62,8 +64,10 @@ class SetKeyValue extends StatelessWidget {
           contentType: keyValue.content_type,
           tags: keyValue.tags,
         )
-        .then((value) => print("Success!"))
-        .onError(
-            (error, stackTrace) => print("An error occurred while saving"));
+        .then((value) => developer.log("Success!"))
+        .onError((error, stackTrace) {
+      developer.log("An error occurred while saving");
+      developer.log(error.toString());
+    });
   }
 }

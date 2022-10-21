@@ -51,31 +51,65 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Widget page = const Text("Please select a screen");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          // child: GetKeys(widget.service),
-          // child: GetFeatureFlags(widget.service),
-          // child: GetKeyValues(widget.service),
-          // child: GetFeatureEnabled(widget.service),
-          child: SetKeyValue(widget.service),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const DrawerHeader(child: Text("Example app")),
+            ListTile(
+              title: const Text("getKeys"),
+              onTap: () {
+                setState(() {
+                  page = GetKeys(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getFeatureFlags"),
+              onTap: () {
+                setState(() {
+                  page = GetFeatureFlags(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getKeyValues"),
+              onTap: () {
+                setState(() {
+                  page = GetKeyValues(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getFeatureEnabled"),
+              onTap: () {
+                setState(() {
+                  page = GetFeatureEnabled(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("setKeyValue"),
+              onTap: () {
+                setState(() {
+                  page = SetKeyValue(widget.service);
+                });
+              },
+            ),
+          ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              setState(() {});
-            },
-            child: const Icon(Icons.refresh),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: page,
+        ),
       ),
     );
   }
