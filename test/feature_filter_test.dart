@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:azure_app_config/feature_filter.dart';
+import 'package:azure_app_config/src/feature_filter.dart';
 import 'package:test/test.dart';
 
 void main() {

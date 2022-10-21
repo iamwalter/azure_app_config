@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:azure_app_config/azure_remote_interceptor.dart';
+import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 
 import 'package:dio/dio.dart';
 import 'package:mockito/annotations.dart';

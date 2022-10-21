@@ -1,8 +1,10 @@
-import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:azure_app_config/core/client.dart';
-import 'package:azure_app_config/models/feature_flag.dart';
-import 'package:azure_app_config/models/key.dart';
-import 'package:azure_app_config/models/key_value.dart';
+import 'package:azure_app_config/azure_app_config.dart';
+import 'package:azure_app_config/src/azure_remote_service_impl.dart';
+import 'package:azure_app_config/src/core/client.dart';
+import 'package:azure_app_config/src/models/feature_flag.dart';
+import 'package:azure_app_config/src/models/key.dart';
+import 'package:azure_app_config/src/models/key_value.dart';
+
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -51,7 +53,7 @@ void main() {
       'should call client with correct arguments and headers when full',
       () async {
         final client = MockClient();
-        final service = AzureRemoteService.mock(client);
+        final service = AzureRemoteServiceImpl(client: client);
 
         await service.setKeyValue(
           key: key,
@@ -81,7 +83,7 @@ void main() {
     test('should call client with correct arguments and headers when empty',
         () async {
       final client = MockClient();
-      final service = AzureRemoteService.mock(client);
+      final service = AzureRemoteServiceImpl(client: client);
 
       await service.setKeyValue(
         key: key,
