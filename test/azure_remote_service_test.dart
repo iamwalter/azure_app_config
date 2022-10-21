@@ -1,9 +1,6 @@
 import 'package:azure_app_config/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
-import 'package:azure_app_config/src/models/feature_flag.dart';
-import 'package:azure_app_config/src/models/key.dart';
-import 'package:azure_app_config/src/models/key_value.dart';
 
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

@@ -9,8 +9,6 @@ import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
-import 'dart:developer' as developer;
-
 /// This class represents the Microsoft Azure App Configuration.
 ///
 /// # Authentication
