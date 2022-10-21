@@ -47,7 +47,7 @@ abstract class AzureRemoteService {
     required String label,
     String? value,
     String? contentType,
-    Map<String, String>? tags,
+    Map<String, dynamic>? tags,
   });
 
   /// An way to provide dependencies to the implementation.
@@ -183,7 +183,7 @@ class _AzureRemoteServiceImpl implements AzureRemoteService {
     required String label,
     String? value,
     String? contentType,
-    Map<String, String>? tags,
+    Map<String, dynamic>? tags,
   }) async {
     final path = '/kv/$key';
     final params = {

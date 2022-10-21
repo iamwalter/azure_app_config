@@ -1,6 +1,13 @@
+// ignore_for_file: unused_import
+
 import 'package:azure_app_config/azure_remote_service.dart';
 import 'package:azure_app_config/models/feature_flag.dart';
 import 'package:azure_app_config/models/key_value.dart';
+import 'package:example/screens/get_feature_enabled.dart';
+import 'package:example/screens/get_key_values.dart';
+import 'package:example/screens/get_keys.dart';
+import 'package:example/screens/get_feature_flags.dart';
+import 'package:example/screens/set_key_value.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -52,59 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            children: [
-              FutureBuilder(
-                future: widget.service.getKeyValues(),
-                builder: (context, data) {
-                  final listTiles = <Widget>[];
-
-                  if (data.hasError) {
-                    return Text("${data.error}");
-                  }
-
-                  if (data.hasData == false) {
-                    return const Text("No Data!");
-                  }
-
-                  final List<KeyValue> keyValues = data.data!;
-
-                  final String title = "Total tiles: ${keyValues.length}";
-
-                  listTiles.add(
-                    ListTile(
-                      title: Text(title),
-                    ),
-                  );
-
-                  for (final kv in keyValues) {
-                    FeatureFlag? ff = kv.asFeatureFlag();
-
-                    listTiles.add(
-                      ListTile(
-                        title: Text(kv.key),
-                        subtitle: Text(kv.value ?? "No label"),
-                        leading: Text(kv.last_modified),
-                        trailing: Text(kv.tags.toString()),
-                      ),
-                    );
-
-                    if (ff != null) {
-                      listTiles.add(ListTile(
-                        title: Text("${ff.id} => ${ff.description}"),
-                        subtitle: Text(ff.conditions.toString()),
-                        leading: Text(kv.key),
-                        trailing:
-                            Switch(value: ff.enabled, onChanged: (val) {}),
-                      ));
-                    }
-                  }
-
-                  return Column(children: listTiles);
-                },
-              ),
-            ],
-          ),
+          // child: GetKeys(widget.service),
+          // child: GetFeatureFlags(widget.service),
+          // child: GetKeyValues(widget.service),
+          // child: GetFeatureEnabled(widget.service),
+          child: SetKeyValue(widget.service),
         ),
       ),
       floatingActionButton: Row(
