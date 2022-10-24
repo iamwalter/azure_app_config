@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:azure_app_config/azure_remote_interceptor.dart';
+import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 import 'package:dio/dio.dart';
 
 import '../util/connection_string_parser.dart';

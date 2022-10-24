@@ -1,16 +1,12 @@
-// ignore_for_file: unused_import
-
-import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:azure_app_config/models/feature_flag.dart';
-import 'package:azure_app_config/models/key_value.dart';
-import 'package:example/screens/get_feature_enabled.dart';
-import 'package:example/screens/get_key_values.dart';
-import 'package:example/screens/get_keys.dart';
-import 'package:example/screens/get_feature_flags.dart';
-import 'package:example/screens/set_key_value.dart';
-
+import 'package:azure_app_config/azure_app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'screens/get_feature_enabled.dart';
+import 'screens/get_feature_flags.dart';
+import 'screens/get_key_values.dart';
+import 'screens/get_keys.dart';
+import 'screens/set_key_value.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");

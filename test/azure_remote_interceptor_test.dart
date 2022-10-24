@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:azure_app_config/azure_remote_interceptor.dart';
+import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 
 import 'package:dio/dio.dart';
 import 'package:mockito/annotations.dart';
@@ -31,8 +31,8 @@ void main() {
     when(options.headers).thenReturn({});
   }
 
-  group('crypto utilities', () {
-    test('utcString() should return correct string when clock is passed', () {
+  group('utility functions', () {
+    test('utcString() should return correct string based on clock', () {
       final moonLanding = DateTime.utc(1969, 7, 20, 20, 18, 04);
 
       final interceptor = AzureRemoteInterceptor(
@@ -54,7 +54,7 @@ void main() {
       expect(actual, expected);
     });
 
-    test("signature ('') should return correct string", () async {
+    test("signature('') should return correct string", () async {
       final i = AzureRemoteInterceptor(credential: '', secret: '');
       final expected = "thNnmggU2ex3L5XXeMNfxf8Wl8STcVZTxscSFEKSxa0=";
       final actual = i.signature('');

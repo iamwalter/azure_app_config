@@ -1,7 +1,4 @@
-// ignore_for_file: must_be_immutable
-
-import 'package:azure_app_config/azure_remote_service.dart';
-import 'package:azure_app_config/models/key_value.dart';
+import 'package:azure_app_config/azure_app_config.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 

@@ -1,4 +1,5 @@
-import 'package:azure_app_config/azure_remote_service.dart';
+import 'package:azure_app_config/azure_app_config.dart';
+
 import 'package:flutter/material.dart';
 
 class GetFeatureEnabled extends StatelessWidget {

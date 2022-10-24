@@ -100,7 +100,7 @@ packages:
     source: hosted
     version: "2.0.1"
   clock:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: clock
       url: "https://pub.dartlang.org"

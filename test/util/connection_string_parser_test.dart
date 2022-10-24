@@ -1,4 +1,4 @@
-import 'package:azure_app_config/util/connection_string_parser.dart';
+import 'package:azure_app_config/src/util/connection_string_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
