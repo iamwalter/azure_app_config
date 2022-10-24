@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:azure_app_config/core/client.dart' as _i3;
+import 'package:azure_app_config/src/core/client.dart' as _i3;
 import 'package:dio/dio.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -114,7 +114,7 @@ class MockClient extends _i1.Mock implements _i3.Client {
     required String? path,
     required Map<String, String>? params,
     required Map<String, dynamic>? data,
-    Map<String, String>? headers,
+    required Map<String, String>? headers,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
