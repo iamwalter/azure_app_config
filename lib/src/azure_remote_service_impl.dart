@@ -132,7 +132,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     required String label,
     String? value,
     String? contentType,
-    Map<String, String>? tags,
+    Map<String, dynamic>? tags,
   }) async {
     final path = '/kv/$key';
     final params = {

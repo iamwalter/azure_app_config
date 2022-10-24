@@ -56,7 +56,7 @@ abstract class AzureRemoteService {
     required String label,
     String? value,
     String? contentType,
-    Map<String, String>? tags,
+    Map<String, dynamic>? tags,
   });
 
   /// Make Dio available for tests.

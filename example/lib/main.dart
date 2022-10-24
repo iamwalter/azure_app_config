@@ -2,6 +2,12 @@ import 'package:azure_app_config/azure_app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'screens/get_feature_enabled.dart';
+import 'screens/get_feature_flags.dart';
+import 'screens/get_key_values.dart';
+import 'screens/get_keys.dart';
+import 'screens/set_key_value.dart';
+
 void main() async {
   await dotenv.load(fileName: ".env");
 
@@ -41,79 +47,65 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Widget page = const Text("Please select a screen");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              FutureBuilder(
-                future: widget.service.getKeyValues(),
-                builder: (context, data) {
-                  final listTiles = <Widget>[];
-
-                  if (data.hasError) {
-                    return Text("${data.error}");
-                  }
-
-                  if (data.hasData == false) {
-                    return const Text("No Data!");
-                  }
-
-                  final List<KeyValue> keyValues = data.data!;
-
-                  final String title = "Total tiles: ${keyValues.length}";
-
-                  listTiles.add(
-                    ListTile(
-                      title: Text(title),
-                    ),
-                  );
-
-                  for (final kv in keyValues) {
-                    FeatureFlag? ff = kv.asFeatureFlag();
-
-                    listTiles.add(
-                      ListTile(
-                        title: Text(kv.key),
-                        subtitle: Text(kv.value ?? "No label"),
-                        leading: Text(kv.last_modified),
-                        trailing: Text(kv.tags.toString()),
-                      ),
-                    );
-
-                    if (ff != null) {
-                      listTiles.add(ListTile(
-                        title: Text("${ff.id} => ${ff.description}"),
-                        subtitle: Text(ff.conditions.toString()),
-                        leading: Text(kv.key),
-                        trailing:
-                            Switch(value: ff.enabled, onChanged: (val) {}),
-                      ));
-                    }
-                  }
-
-                  return Column(children: listTiles);
-                },
-              ),
-            ],
-          ),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const DrawerHeader(child: Text("Example app")),
+            ListTile(
+              title: const Text("getKeys"),
+              onTap: () {
+                setState(() {
+                  page = GetKeys(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getFeatureFlags"),
+              onTap: () {
+                setState(() {
+                  page = GetFeatureFlags(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getKeyValues"),
+              onTap: () {
+                setState(() {
+                  page = GetKeyValues(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("getFeatureEnabled"),
+              onTap: () {
+                setState(() {
+                  page = GetFeatureEnabled(widget.service);
+                });
+              },
+            ),
+            ListTile(
+              title: const Text("setKeyValue"),
+              onTap: () {
+                setState(() {
+                  page = SetKeyValue(widget.service);
+                });
+              },
+            ),
+          ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              setState(() {});
-            },
-            child: const Icon(Icons.refresh),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: page,
+        ),
       ),
     );
   }
