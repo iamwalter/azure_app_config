@@ -87,7 +87,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final items = <KeyValue>[];
 
     for (final json in data["items"]) {
-      items.add(KeyValue.fromMap(json));
+      items.add(KeyValue.fromJson(json));
     }
 
     return items;
@@ -104,7 +104,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     );
     final data = response.data;
 
-    return KeyValue.fromMap(data);
+    return KeyValue.fromJson(data);
   }
 
   Future<List<AzureKey>> getKeys() async {
@@ -120,7 +120,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final List<AzureKey> items = [];
 
     for (final json in data["items"]) {
-      final item = AzureKey.fromMap(json);
+      final item = AzureKey.fromJson(json);
       items.add(item);
     }
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:test/test.dart';
@@ -13,7 +15,7 @@ void main() {
   final validKv = KeyValue(
     etag: "etag",
     key: "key",
-    value: testFeatureFlag.toJson(),
+    value: json.encode(testFeatureFlag.toJson()),
     tags: {},
     locked: false,
     last_modified: "last_modified",
