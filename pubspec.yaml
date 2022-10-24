@@ -4,7 +4,6 @@ environment:
 dependencies:
   crypto: ^3.0.2
   dio: ^4.0.6
-  intl: ^0.17.0
   freezed: ^2.2.0
   json_annotation: ^4.7.0
   
