@@ -40,20 +40,19 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       throw AzureKeyValueNotParsableAsFeatureFlag();
     }
 
-    final clientFilters = feature.conditions['client_filters'] as List<dynamic>;
-
     var enabled = feature.enabled;
 
-    if (enabled == false) return false;
+    final clientFilters = feature.getClientFilters();
 
-    for (final Map<String, dynamic> filter in clientFilters) {
-      final name = filter['name'] as String;
-      final params = filter['parameters'] as Map<String, dynamic>;
+    for (final clientFilter in clientFilters) {
+      final name = clientFilter.name;
+      final params = clientFilter.parameters;
 
-      for (final filter in featureFilters) {
-        if (filter.name == name) {
-          enabled = filter.evaluate(params);
-          developer.log('AZURE FILTER [$key] => $name');
+      for (final featureFilter in featureFilters) {
+        if (featureFilter.name == name) {
+          enabled = featureFilter.evaluate(params);
+
+          developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
         }
       }
     }

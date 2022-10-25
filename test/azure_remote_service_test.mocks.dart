@@ -63,14 +63,6 @@ class MockClient extends _i1.Mock implements _i3.Client {
         ),
       ) as _i2.Dio);
   @override
-  set _endpoint(dynamic _endpoint) => super.noSuchMethod(
-        Invocation.setter(
-          #endpoint,
-          _endpoint,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i4.Future<_i2.Response<dynamic>> get({
     required String? path,
     required Map<String, String>? params,
