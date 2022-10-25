@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
@@ -108,14 +110,14 @@ void main() {
   });
 
   test('getKeys should return keys', () async {
-    final key1 = AzureKey("testkey");
-    final key2 = AzureKey("testkey2");
+    final key1 = AzureKey(name: "testkey");
+    final key2 = AzureKey(name: "testkey2");
 
     dioAdapter.onGet("$endpoint/keys", (server) {
       return server.reply(200, {
         "items": [
-          key1.toMap(),
-          key2.toMap(),
+          key1.toJson(),
+          key2.toJson(),
         ]
       });
     }, queryParameters: {"api_version": "1.0"});
@@ -133,7 +135,7 @@ void main() {
     dioAdapter.onGet("$endpoint/kv/$key", (server) {
       return server.reply(
         200,
-        testKeyValue.toMap(),
+        testKeyValue.toJson(),
       );
     }, queryParameters: {
       "label": label,
@@ -151,8 +153,8 @@ void main() {
     dioAdapter.onGet("$endpoint/kv", (server) {
       return server.reply(200, {
         "items": [
-          testKeyValue.toMap(),
-          testKeyValue.toMap(),
+          testKeyValue.toJson(),
+          testKeyValue.toJson(),
         ]
       });
     }, queryParameters: {"api_version": "1.0"});
@@ -168,13 +170,13 @@ void main() {
       conditions: {},
     );
     final keyValueWithFeatureFlag =
-        testKeyValue.copyWith(value: testFeatureFlag.toJson());
+        testKeyValue.copyWith(value: json.encode(testFeatureFlag.toJson()));
 
     dioAdapter.onGet("$endpoint/kv", (server) {
       return server.reply(200, {
         "items": [
-          keyValueWithFeatureFlag.toMap(),
-          testKeyValue.toMap(),
+          keyValueWithFeatureFlag.toJson(),
+          testKeyValue.toJson(),
         ],
       });
     }, queryParameters: {"label": "*", "api_version": "1.0"});
