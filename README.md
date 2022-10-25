@@ -1,3 +1,5 @@
+[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
+
 # Azure App Configuration  
 This package makes it easier to communicate with Microsoft Azure App Configuration KeyValue and FeatureFlag resources.
 
