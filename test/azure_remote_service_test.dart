@@ -20,7 +20,7 @@ const testKeyValue = KeyValue(
   value: 'testvalue',
   tags: {},
   locked: false,
-  last_modified: 'last_modified',
+  lastModified: 'last_modified',
 );
 
 @GenerateNiceMocks([MockSpec<Client>()])

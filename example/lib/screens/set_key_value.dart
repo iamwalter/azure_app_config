@@ -59,7 +59,7 @@ class SetKeyValue extends StatelessWidget {
           key: keyValue.key,
           label: keyValue.label ?? "",
           value: controller.text,
-          contentType: keyValue.content_type,
+          contentType: keyValue.contentType,
           tags: keyValue.tags,
         )
         .then((value) => developer.log("Success!"))

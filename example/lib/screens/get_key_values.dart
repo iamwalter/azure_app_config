@@ -38,7 +38,7 @@ class GetKeyValues extends StatelessWidget {
             ListTile(
               title: Text(kv.key),
               subtitle: Text(kv.value ?? "No label"),
-              leading: Text(kv.last_modified),
+              leading: Text(kv.lastModified),
               trailing: Text(kv.tags.toString()),
             ),
           );

@@ -18,7 +18,7 @@ void main() {
     value: json.encode(testFeatureFlag.toJson()),
     tags: {},
     locked: false,
-    last_modified: 'last_modified',
+    lastModified: 'last_modified',
   );
 
   final invalidKv = validKv.copyWith(value: '');
