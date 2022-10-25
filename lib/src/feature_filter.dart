@@ -4,27 +4,28 @@ import 'dart:math';
 /// A filter that can be used to determine whether some criteria is
 /// met to enable a feature flag.
 abstract class FeatureFilter {
-  /// Represents the FeatureFilter name. Make sure this name is the same as the
-  /// [FeatureFilter] name in Azure App Configuration.
-  final String name;
-
   FeatureFilter({required this.name});
+
+  /// Microsoft's default 'TimeWindow' filter.
+  factory FeatureFilter.timeWindow() => TimeWindow();
 
   /// Microsoft's default 'Percentage' Filter.
   factory FeatureFilter.percentage() => Percentage();
 
-  /// Microsoft's default 'TimeWindow' filter.
-  factory FeatureFilter.timeWindow() => TimeWindow();
+  /// Represents the FeatureFilter name. Make sure this name is the same as the
+  /// [FeatureFilter] name in Azure App Configuration.
+  final String name;
 
   /// The callback that is executed while evaluating the [FeatureFilter].
   bool evaluate(Map<String, dynamic> parameters);
 }
 
 class Percentage extends FeatureFilter {
-  Percentage() : super(name: "Microsoft.Targeting");
+  Percentage() : super(name: 'Microsoft.Targeting');
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
+    // ignore: avoid_dynamic_calls
     final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
     final random = Random().nextInt(100);
 
@@ -33,18 +34,18 @@ class Percentage extends FeatureFilter {
 }
 
 class TimeWindow extends FeatureFilter {
+  TimeWindow({this.clock}) : super(name: 'Microsoft.TimeWindow');
+
   /// Optional time for the timewindow to use. Used for testing.
   final DateTime? clock;
-
-  TimeWindow({this.clock}) : super(name: "Microsoft.TimeWindow");
 
   @override
   bool evaluate(Map<String, dynamic> parameters) {
     try {
       final now = clock ?? DateTime.now();
 
-      final String? startTime = parameters['Start'];
-      final String? endTime = parameters['End'];
+      final startTime = parameters['Start'] as String?;
+      final endTime = parameters['End'] as String?;
 
       DateTime? start;
       DateTime? end;

@@ -5,28 +5,28 @@ import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final testFeatureFlag = FeatureFlag(
-    id: "testid",
+  const testFeatureFlag = FeatureFlag(
+    id: 'testid',
     enabled: false,
-    description: "description",
+    description: 'description',
     conditions: {},
   );
 
   final validKv = KeyValue(
-    etag: "etag",
-    key: "key",
+    etag: 'etag',
+    key: 'key',
     value: json.encode(testFeatureFlag.toJson()),
     tags: {},
     locked: false,
-    last_modified: "last_modified",
+    last_modified: 'last_modified',
   );
 
-  final invalidKv = validKv.copyWith(value: "");
+  final invalidKv = validKv.copyWith(value: '');
 
   test('asFeatureFlag should convert to a featureFlag if value is valid',
       () async {
     final actual = validKv.asFeatureFlag();
-    final expected = testFeatureFlag;
+    const expected = testFeatureFlag;
 
     expect(actual, expected);
   });

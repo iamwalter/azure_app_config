@@ -9,7 +9,8 @@ part 'key_value.g.dart';
 /// This class represents an Azure App Configuration [Key-value](https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value) resource.
 ///
 /// A Key-value is a resource identified by unique combination of key + label.
-/// A Key-value can have any type of value, usually this type is represented in [content_type].
+/// A Key-value can have any type of value, usually this type
+/// is represented in [content_type].
 ///
 /// To create a parsable FeatureFlag, use [asFeatureFlag].
 @freezed
@@ -37,7 +38,7 @@ class KeyValue with _$KeyValue {
     if (value == null) return null;
 
     try {
-      return FeatureFlag.fromJson(jsonDecode(value!));
+      return FeatureFlag.fromJson(jsonDecode(value!) as Map<String, Object?>);
     } catch (e) {
       return null;
     }

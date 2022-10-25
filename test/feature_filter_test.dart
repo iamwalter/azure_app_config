@@ -10,12 +10,11 @@ void main() {
 
   var percentageFilter = TimeWindow(clock: current);
 
-  test(
-      'Time Filter should return correct boolean based on current time and input',
+  test('Time Filter should return good result based on current time and input',
       () {
     // START ONLY
     var params = <String, dynamic>{
-      "Start": HttpDate.format(before),
+      'Start': HttpDate.format(before),
     };
 
     var actual = percentageFilter.evaluate(params);
@@ -25,7 +24,7 @@ void main() {
 
     // END ONLY
     params = <String, dynamic>{
-      "End": HttpDate.format(after),
+      'End': HttpDate.format(after),
     };
 
     actual = percentageFilter.evaluate(params);
@@ -36,8 +35,8 @@ void main() {
     // START AND END
     percentageFilter = TimeWindow(clock: before);
     params = {
-      "Start": HttpDate.format(current),
-      "End": HttpDate.format(after),
+      'Start': HttpDate.format(current),
+      'End': HttpDate.format(after),
     };
 
     actual = percentageFilter.evaluate(params);
@@ -46,8 +45,8 @@ void main() {
 
     percentageFilter = TimeWindow(clock: after);
     params = {
-      "Start": HttpDate.format(before),
-      "End": HttpDate.format(current),
+      'Start': HttpDate.format(before),
+      'End': HttpDate.format(current),
     };
 
     actual = percentageFilter.evaluate(params);
@@ -61,7 +60,7 @@ void main() {
 
     expect(actual, expected);
 
-    params = <String, dynamic>{"Start": 23};
+    params = <String, dynamic>{'Start': 23};
 
     actual = percentageFilter.evaluate(params);
     expected = true;

@@ -1,12 +1,20 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 
-import 'dart:developer' as developer;
-
 class AzureRemoteInterceptor extends Interceptor {
+  AzureRemoteInterceptor({
+    required String credential,
+    required String secret,
+    this.clock,
+  })  : _credential = credential,
+        _secret = secret;
+
   /// Access key credential
   final String _credential;
 
@@ -15,13 +23,6 @@ class AzureRemoteInterceptor extends Interceptor {
 
   /// Optional time for the interceptor to use. Used for testing.
   DateTime? clock;
-
-  AzureRemoteInterceptor({
-    required String credential,
-    required String secret,
-    this.clock,
-  })  : _credential = credential,
-        _secret = secret;
 
   String hashBody(String body) =>
       base64.encode(sha256.convert(utf8.encode(body)).bytes);
@@ -39,39 +40,28 @@ class AzureRemoteInterceptor extends Interceptor {
 
     final method = options.method.toUpperCase();
     final params = options.uri.query;
-    String body = options.data ?? "";
+    final body = options.data as String? ?? '';
 
-    final pathAndParams = "$path?$params";
+    final pathAndParams = '$path?$params';
 
-    final _utcString = utcString();
+    final utc = utcString();
 
-    final _contentHash = hashBody(body);
+    final contentHash = hashBody(body);
 
-    var message = method +
-        '\n' + // VERB
-        pathAndParams +
-        '\n' + // path_and_query
-        _utcString +
-        ';' +
-        host +
-        ';' +
-        _contentHash;
+    final message = '$method\n$pathAndParams\n$utc;$host;$contentHash';
 
-    final _signature = signature(message);
+    final signedMessage = signature(message);
 
-    final signedHeaders = "x-ms-date;host;x-ms-content-sha256";
+    const signedHeaders = 'x-ms-date;host;x-ms-content-sha256';
 
-    options.headers["x-ms-date"] = _utcString;
-    options.headers["x-ms-content-sha256"] = _contentHash;
-    options.headers["Authorization"] = "HMAC-SHA256 Credential=" +
-        _credential +
-        "&SignedHeaders=" +
-        signedHeaders +
-        "&Signature=" +
-        _signature;
+    options.headers['x-ms-date'] = utc;
+    options.headers['x-ms-content-sha256'] = contentHash;
+    options.headers['Authorization'] =
+        'HMAC-SHA256 Credential=$_credential&SignedHeaders=$signedHeaders&Signature=$signedMessage';
 
     developer.log(
-        'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}');
+      'AZURE REQUEST[${options.method}] => ${options.path}?${options.uri.query}',
+    );
 
     handler.next(options);
   }

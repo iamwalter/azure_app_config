@@ -63,7 +63,7 @@ class MockClient extends _i1.Mock implements _i3.Client {
         ),
       ) as _i2.Dio);
   @override
-  set endpoint(dynamic _endpoint) => super.noSuchMethod(
+  set _endpoint(dynamic _endpoint) => super.noSuchMethod(
         Invocation.setter(
           #endpoint,
           _endpoint,

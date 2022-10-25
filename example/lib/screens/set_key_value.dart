@@ -5,9 +5,11 @@ import 'dart:developer' as developer;
 class SetKeyValue extends StatelessWidget {
   final AzureRemoteService service;
 
-  SetKeyValue(this.service, {super.key});
+  SetKeyValue(this.service, {super.key}) {
+    controller = TextEditingController();
+  }
 
-  late TextEditingController controller;
+  late final TextEditingController controller;
 
   final String _key = "reactiontime";
   final String _label = "CZ";
@@ -26,8 +28,7 @@ class SetKeyValue extends StatelessWidget {
 
         final KeyValue keyValue = data.data!;
 
-        controller = TextEditingController.fromValue(
-            TextEditingValue(text: keyValue.value ?? ""));
+        controller.text = keyValue.value ?? "";
 
         return Column(
           children: [
