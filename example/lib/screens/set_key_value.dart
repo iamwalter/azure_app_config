@@ -5,11 +5,9 @@ import 'dart:developer' as developer;
 class SetKeyValue extends StatelessWidget {
   final AzureRemoteService service;
 
-  SetKeyValue(this.service, {super.key}) {
-    controller = TextEditingController();
-  }
+  SetKeyValue(this.service, {super.key});
 
-  late final TextEditingController controller;
+  final TextEditingController controller = TextEditingController();
 
   final String _key = "reactiontime";
   final String _label = "CZ";
