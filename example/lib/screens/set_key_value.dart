@@ -7,7 +7,7 @@ class SetKeyValue extends StatelessWidget {
 
   SetKeyValue(this.service, {super.key});
 
-  late TextEditingController controller;
+  final TextEditingController controller = TextEditingController();
 
   final String _key = "reactiontime";
   final String _label = "CZ";
@@ -26,8 +26,7 @@ class SetKeyValue extends StatelessWidget {
 
         final KeyValue keyValue = data.data!;
 
-        controller = TextEditingController.fromValue(
-            TextEditingValue(text: keyValue.value ?? ""));
+        controller.text = keyValue.value ?? "";
 
         return Column(
           children: [
@@ -58,7 +57,7 @@ class SetKeyValue extends StatelessWidget {
           key: keyValue.key,
           label: keyValue.label ?? "",
           value: controller.text,
-          contentType: keyValue.content_type,
+          contentType: keyValue.contentType,
           tags: keyValue.tags,
         )
         .then((value) => developer.log("Success!"))

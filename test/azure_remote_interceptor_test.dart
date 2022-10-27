@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:io';
 
 import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
@@ -22,11 +24,11 @@ void main() {
 
     when(options.uri).thenReturn(uri);
 
-    when(uri.query).thenReturn("label=%2A&api_version=1.0");
-    when(uri.path).thenReturn("/kv");
-    when(uri.host).thenReturn("ac-cz-test.eigenrisico.azconfig.io");
+    when(uri.query).thenReturn('label=%2A&api_version=1.0');
+    when(uri.path).thenReturn('/kv');
+    when(uri.host).thenReturn('ac-cz-test.eigenrisico.azconfig.io');
 
-    when(options.method).thenReturn("get");
+    when(options.method).thenReturn('get');
     when(options.data).thenReturn(null);
     when(options.headers).thenReturn({});
   }
@@ -41,7 +43,7 @@ void main() {
         clock: moonLanding,
       );
       final actual = interceptor.utcString();
-      final expected = 'Sun, 20 Jul 1969 20:18:04 GMT';
+      const expected = 'Sun, 20 Jul 1969 20:18:04 GMT';
 
       expect(actual, expected);
     });
@@ -49,14 +51,14 @@ void main() {
     test("hashBody('') should return correct string", () {
       final i = AzureRemoteInterceptor(credential: '', secret: '');
 
-      final expected = "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=";
+      const expected = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
       final actual = i.hashBody('');
       expect(actual, expected);
     });
 
     test("signature('') should return correct string", () async {
       final i = AzureRemoteInterceptor(credential: '', secret: '');
-      final expected = "thNnmggU2ex3L5XXeMNfxf8Wl8STcVZTxscSFEKSxa0=";
+      const expected = 'thNnmggU2ex3L5XXeMNfxf8Wl8STcVZTxscSFEKSxa0=';
       final actual = i.signature('');
 
       expect(actual, expected);
@@ -68,12 +70,12 @@ void main() {
       () {
     // Resolves to a specific time that the interceptor uses
     // so the calculations will resolve to the expected outputs
-    final DateTime timeUsedForTesting =
+    final timeUsedForTesting =
         DateTime.fromMicrosecondsSinceEpoch(1666132930809223);
 
     final interceptor = AzureRemoteInterceptor(
-      credential: "7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN",
-      secret: "7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=",
+      credential: '7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN',
+      secret: '7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=',
       clock: timeUsedForTesting,
     );
 
@@ -84,15 +86,15 @@ void main() {
 
     interceptor.onRequest(options, handler);
 
-    final expectedAuthorizationHeader = """
-HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=""";
-    final expectedContentSha256Header =
-        "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=";
+    const expectedAuthorizationHeader = '''
+HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=''';
+    const expectedContentSha256Header =
+        '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
     final expectedDateHeader = HttpDate.format(timeUsedForTesting);
 
-    expect(options.headers["Authorization"], expectedAuthorizationHeader);
-    expect(options.headers["x-ms-content-sha256"], expectedContentSha256Header);
-    expect(options.headers["x-ms-date"], expectedDateHeader);
+    expect(options.headers['Authorization'], expectedAuthorizationHeader);
+    expect(options.headers['x-ms-content-sha256'], expectedContentSha256Header);
+    expect(options.headers['x-ms-date'], expectedDateHeader);
 
     verify(handler.next(options)).called(1);
 

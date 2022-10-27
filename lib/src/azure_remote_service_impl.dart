@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -6,8 +8,6 @@ import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
-
-import 'dart:developer' as developer;
 
 class AzureRemoteServiceImpl implements AzureRemoteService {
   AzureRemoteServiceImpl({
@@ -22,35 +22,37 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   List<FeatureFilter> featureFilters = [];
 
+  @override
   Dio get dio => client.dio;
 
+  @override
   void registerFeatureFilter(FeatureFilter filter) {
     featureFilters.add(filter);
   }
 
+  @override
   Future<bool> getFeatureEnabled(String key, String label) async {
     final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
 
-    final FeatureFlag? feature = keyValue.asFeatureFlag();
+    final feature = keyValue.asFeatureFlag();
 
     if (feature == null) {
       throw AzureKeyValueNotParsableAsFeatureFlag();
     }
 
-    final clientFilters = feature.conditions['client_filters'];
+    var enabled = feature.enabled;
 
-    bool enabled = feature.enabled;
+    final clientFilters = feature.getClientFilters();
 
-    if (enabled == false) return false;
+    for (final clientFilter in clientFilters) {
+      final name = clientFilter.name;
+      final params = clientFilter.parameters;
 
-    for (final filter in clientFilters) {
-      final String name = filter['name'];
-      final Map<String, dynamic> params = filter['parameters'];
+      for (final featureFilter in featureFilters) {
+        if (featureFilter.name == name) {
+          enabled = featureFilter.evaluate(params);
 
-      for (final filter in featureFilters) {
-        if (filter.name == name) {
-          enabled = filter.evaluate(params);
-          developer.log("AZURE FILTER [$key] => $name");
+          developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
         }
       }
     }
@@ -58,13 +60,14 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     return enabled;
   }
 
+  @override
   Future<List<FeatureFlag>> getFeatureFlags() async {
     final featureFlags = <FeatureFlag>[];
 
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
-      final FeatureFlag? featureFlag = kv.asFeatureFlag();
+      final featureFlag = kv.asFeatureFlag();
 
       if (featureFlag != null) featureFlags.add(featureFlag);
     }
@@ -72,10 +75,11 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     return featureFlags;
   }
 
+  @override
   Future<List<KeyValue>> getKeyValues() async {
-    final path = "/kv";
+    const path = '/kv';
     final params = {
-      "label": "*",
+      'label': '*',
     };
 
     final response = await client.get(
@@ -85,18 +89,18 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final data = response.data;
 
     final items = <KeyValue>[];
-
-    for (final json in data["items"]) {
-      items.add(KeyValue.fromJson(json));
+    for (final json in data['items'] as List<dynamic>) {
+      items.add(KeyValue.fromJson(json as Map<String, Object?>));
     }
 
     return items;
   }
 
+  @override
   Future<KeyValue> getKeyValue(String key, String label) async {
-    final path = "/kv/$key";
+    final path = '/kv/$key';
     final params = {
-      "label": label,
+      'label': label,
     };
     final response = await client.get(
       path: path,
@@ -104,11 +108,12 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     );
     final data = response.data;
 
-    return KeyValue.fromJson(data);
+    return KeyValue.fromJson(data as Map<String, Object?>);
   }
 
+  @override
   Future<List<AzureKey>> getKeys() async {
-    final path = "/keys";
+    const path = '/keys';
     final params = <String, String>{};
 
     final response = await client.get(
@@ -117,17 +122,18 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     );
     final data = response.data;
 
-    final List<AzureKey> items = [];
+    final items = <AzureKey>[];
 
-    for (final json in data["items"]) {
-      final item = AzureKey.fromJson(json);
+    for (final json in data['items'] as List<dynamic>) {
+      final item = AzureKey.fromJson(json as Map<String, Object?>);
       items.add(item);
     }
 
     return items;
   }
 
-  Future<Response> setKeyValue({
+  @override
+  Future<Response<dynamic>> setKeyValue({
     required String key,
     required String label,
     String? value,
@@ -136,7 +142,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }) async {
     final path = '/kv/$key';
     final params = {
-      "label": label,
+      'label': label,
     };
 
     final data = <String, dynamic>{};
@@ -150,7 +156,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       params: params,
       data: data,
       headers: {
-        "Content-Type": "application/vnd.microsoft.appconfig.kv+json",
+        'Content-Type': 'application/vnd.microsoft.appconfig.kv+json',
       },
     );
   }

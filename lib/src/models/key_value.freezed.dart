@@ -23,11 +23,13 @@ mixin _$KeyValue {
   String get etag => throw _privateConstructorUsedError;
   String get key => throw _privateConstructorUsedError;
   String? get label => throw _privateConstructorUsedError;
-  String? get content_type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'content_type')
+  String? get contentType => throw _privateConstructorUsedError;
   String? get value => throw _privateConstructorUsedError;
   Map<String, dynamic> get tags => throw _privateConstructorUsedError;
   bool get locked => throw _privateConstructorUsedError;
-  String get last_modified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_modified')
+  String get lastModified => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,11 +46,11 @@ abstract class $KeyValueCopyWith<$Res> {
       {String etag,
       String key,
       String? label,
-      String? content_type,
+      @JsonKey(name: 'content_type') String? contentType,
       String? value,
       Map<String, dynamic> tags,
       bool locked,
-      String last_modified});
+      @JsonKey(name: 'last_modified') String lastModified});
 }
 
 /// @nodoc
@@ -67,11 +69,11 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
     Object? etag = null,
     Object? key = null,
     Object? label = freezed,
-    Object? content_type = freezed,
+    Object? contentType = freezed,
     Object? value = freezed,
     Object? tags = null,
     Object? locked = null,
-    Object? last_modified = null,
+    Object? lastModified = null,
   }) {
     return _then(_value.copyWith(
       etag: null == etag
@@ -86,9 +88,9 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
               as String?,
-      content_type: freezed == content_type
-          ? _value.content_type
-          : content_type // ignore: cast_nullable_to_non_nullable
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
               as String?,
       value: freezed == value
           ? _value.value
@@ -102,9 +104,9 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
           ? _value.locked
           : locked // ignore: cast_nullable_to_non_nullable
               as bool,
-      last_modified: null == last_modified
-          ? _value.last_modified
-          : last_modified // ignore: cast_nullable_to_non_nullable
+      lastModified: null == lastModified
+          ? _value.lastModified
+          : lastModified // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -121,11 +123,11 @@ abstract class _$$_KeyValueCopyWith<$Res> implements $KeyValueCopyWith<$Res> {
       {String etag,
       String key,
       String? label,
-      String? content_type,
+      @JsonKey(name: 'content_type') String? contentType,
       String? value,
       Map<String, dynamic> tags,
       bool locked,
-      String last_modified});
+      @JsonKey(name: 'last_modified') String lastModified});
 }
 
 /// @nodoc
@@ -142,11 +144,11 @@ class __$$_KeyValueCopyWithImpl<$Res>
     Object? etag = null,
     Object? key = null,
     Object? label = freezed,
-    Object? content_type = freezed,
+    Object? contentType = freezed,
     Object? value = freezed,
     Object? tags = null,
     Object? locked = null,
-    Object? last_modified = null,
+    Object? lastModified = null,
   }) {
     return _then(_$_KeyValue(
       etag: null == etag
@@ -161,9 +163,9 @@ class __$$_KeyValueCopyWithImpl<$Res>
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
               as String?,
-      content_type: freezed == content_type
-          ? _value.content_type
-          : content_type // ignore: cast_nullable_to_non_nullable
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
               as String?,
       value: freezed == value
           ? _value.value
@@ -177,9 +179,9 @@ class __$$_KeyValueCopyWithImpl<$Res>
           ? _value.locked
           : locked // ignore: cast_nullable_to_non_nullable
               as bool,
-      last_modified: null == last_modified
-          ? _value.last_modified
-          : last_modified // ignore: cast_nullable_to_non_nullable
+      lastModified: null == lastModified
+          ? _value.lastModified
+          : lastModified // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -192,11 +194,11 @@ class _$_KeyValue extends _KeyValue {
       {required this.etag,
       required this.key,
       this.label,
-      this.content_type,
+      @JsonKey(name: 'content_type') this.contentType,
       this.value,
       required final Map<String, dynamic> tags,
       required this.locked,
-      required this.last_modified})
+      @JsonKey(name: 'last_modified') required this.lastModified})
       : _tags = tags,
         super._();
 
@@ -210,7 +212,8 @@ class _$_KeyValue extends _KeyValue {
   @override
   final String? label;
   @override
-  final String? content_type;
+  @JsonKey(name: 'content_type')
+  final String? contentType;
   @override
   final String? value;
   final Map<String, dynamic> _tags;
@@ -223,11 +226,12 @@ class _$_KeyValue extends _KeyValue {
   @override
   final bool locked;
   @override
-  final String last_modified;
+  @JsonKey(name: 'last_modified')
+  final String lastModified;
 
   @override
   String toString() {
-    return 'KeyValue(etag: $etag, key: $key, label: $label, content_type: $content_type, value: $value, tags: $tags, locked: $locked, last_modified: $last_modified)';
+    return 'KeyValue(etag: $etag, key: $key, label: $label, contentType: $contentType, value: $value, tags: $tags, locked: $locked, lastModified: $lastModified)';
   }
 
   @override
@@ -238,19 +242,19 @@ class _$_KeyValue extends _KeyValue {
             (identical(other.etag, etag) || other.etag == etag) &&
             (identical(other.key, key) || other.key == key) &&
             (identical(other.label, label) || other.label == label) &&
-            (identical(other.content_type, content_type) ||
-                other.content_type == content_type) &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
             (identical(other.value, value) || other.value == value) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.locked, locked) || other.locked == locked) &&
-            (identical(other.last_modified, last_modified) ||
-                other.last_modified == last_modified));
+            (identical(other.lastModified, lastModified) ||
+                other.lastModified == lastModified));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, etag, key, label, content_type,
-      value, const DeepCollectionEquality().hash(_tags), locked, last_modified);
+  int get hashCode => Object.hash(runtimeType, etag, key, label, contentType,
+      value, const DeepCollectionEquality().hash(_tags), locked, lastModified);
 
   @JsonKey(ignore: true)
   @override
@@ -268,14 +272,15 @@ class _$_KeyValue extends _KeyValue {
 
 abstract class _KeyValue extends KeyValue {
   const factory _KeyValue(
-      {required final String etag,
-      required final String key,
-      final String? label,
-      final String? content_type,
-      final String? value,
-      required final Map<String, dynamic> tags,
-      required final bool locked,
-      required final String last_modified}) = _$_KeyValue;
+          {required final String etag,
+          required final String key,
+          final String? label,
+          @JsonKey(name: 'content_type') final String? contentType,
+          final String? value,
+          required final Map<String, dynamic> tags,
+          required final bool locked,
+          @JsonKey(name: 'last_modified') required final String lastModified}) =
+      _$_KeyValue;
   const _KeyValue._() : super._();
 
   factory _KeyValue.fromJson(Map<String, dynamic> json) = _$_KeyValue.fromJson;
@@ -287,7 +292,8 @@ abstract class _KeyValue extends KeyValue {
   @override
   String? get label;
   @override
-  String? get content_type;
+  @JsonKey(name: 'content_type')
+  String? get contentType;
   @override
   String? get value;
   @override
@@ -295,7 +301,8 @@ abstract class _KeyValue extends KeyValue {
   @override
   bool get locked;
   @override
-  String get last_modified;
+  @JsonKey(name: 'last_modified')
+  String get lastModified;
   @override
   @JsonKey(ignore: true)
   _$$_KeyValueCopyWith<_$_KeyValue> get copyWith =>

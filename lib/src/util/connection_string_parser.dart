@@ -7,16 +7,16 @@
 /// print(map); // { "id": "14", "pass": "secret", "server": "production"}
 /// ```
 Map<String, String> parseConnectionString(String connectionString) {
-  final pieces = connectionString._controlledSplit(";")
+  final pieces = connectionString._controlledSplit(';')
     ..removeWhere((element) => element == '');
 
   final map = <String, String>{};
 
   for (final piece in pieces) {
-    final nameAndValue = piece._controlledSplit("=", max: 1);
+    final nameAndValue = piece._controlledSplit('=', max: 1);
 
     if (nameAndValue.length != 2) {
-      throw FormatException("Malformed connection string");
+      throw const FormatException('Malformed connection string');
     }
 
     final name = nameAndValue[0];
@@ -30,7 +30,7 @@ Map<String, String> parseConnectionString(String connectionString) {
 
 extension on String {
   List<String> _controlledSplit(String separator, {int max = 0}) {
-    var result = <String>[];
+    final result = <String>[];
     var string = this;
 
     if (separator.isEmpty) {
@@ -39,7 +39,7 @@ extension on String {
     }
 
     while (true) {
-      var index = string.indexOf(separator, 0);
+      final index = string.indexOf(separator);
       if (index == -1 || (max > 0 && result.length >= max)) {
         result.add(string);
         break;

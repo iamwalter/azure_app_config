@@ -137,13 +137,14 @@ class __$$_FeatureFlagCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_FeatureFlag implements _FeatureFlag {
+class _$_FeatureFlag extends _FeatureFlag {
   const _$_FeatureFlag(
       {required this.id,
       required this.description,
       required this.enabled,
       required final Map<String, dynamic> conditions})
-      : _conditions = conditions;
+      : _conditions = conditions,
+        super._();
 
   factory _$_FeatureFlag.fromJson(Map<String, dynamic> json) =>
       _$$_FeatureFlagFromJson(json);
@@ -198,12 +199,13 @@ class _$_FeatureFlag implements _FeatureFlag {
   }
 }
 
-abstract class _FeatureFlag implements FeatureFlag {
+abstract class _FeatureFlag extends FeatureFlag {
   const factory _FeatureFlag(
       {required final String id,
       required final String description,
       required final bool enabled,
       required final Map<String, dynamic> conditions}) = _$_FeatureFlag;
+  const _FeatureFlag._() : super._();
 
   factory _FeatureFlag.fromJson(Map<String, dynamic> json) =
       _$_FeatureFlag.fromJson;
