@@ -1,0 +1,2 @@
+*.freezed.dart -diff
+*.g.dart -diff
