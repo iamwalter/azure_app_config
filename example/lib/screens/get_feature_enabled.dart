@@ -12,7 +12,7 @@ class GetFeatureEnabled extends StatelessWidget {
     const key = "chat_feature";
     const label = "JUST";
     return FutureBuilder(
-      future: service.getFeatureEnabled(key, label),
+      future: service.getFeatureEnabled(key: key, label: label),
       builder: (context, data) {
         if (data.hasError) {
           return Text("${data.error}");

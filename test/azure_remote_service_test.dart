@@ -149,7 +149,7 @@ void main() {
       },
     );
 
-    final actual = await service.getKeyValue(key, label ?? '');
+    final actual = await service.getKeyValue(key: key, label: label ?? '');
 
     expect(actual, testKeyValue);
   });

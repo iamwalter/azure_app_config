@@ -32,8 +32,11 @@ abstract class AzureRemoteService {
   /// [FeatureFilter]'s. See [registerFeatureFilter].
   ///
   /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not
-  ///  parsable to [FeatureFlag].
-  Future<bool> getFeatureEnabled(String key, String label);
+  /// parsable to [FeatureFlag].
+  Future<bool> getFeatureEnabled({
+    required String key,
+    required String label,
+  });
 
   /// Retrieve a list of [FeatureFlag].
   Future<List<FeatureFlag>> getFeatureFlags();
@@ -42,7 +45,10 @@ abstract class AzureRemoteService {
   Future<List<KeyValue>> getKeyValues();
 
   /// Get a specific [KeyValue].
-  Future<KeyValue> getKeyValue(String key, String label);
+  Future<KeyValue> getKeyValue({
+    required String key,
+    required String label,
+  });
 
   /// Retrieve a list of [AzureKey]'s.
   Future<List<AzureKey>> getKeys();

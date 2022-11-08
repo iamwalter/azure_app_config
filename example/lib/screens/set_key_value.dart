@@ -15,7 +15,7 @@ class SetKeyValue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: service.getKeyValue(_key, _label),
+      future: service.getKeyValue(key: _key, label: _label),
       builder: (context, data) {
         if (data.hasError) {
           return Text("${data.error}");
