@@ -20,6 +20,7 @@ import 'package:meta/meta.dart';
 /// an [ArgumentError] will occur when creating an
 /// instance of [AzureRemoteService].
 abstract class AzureRemoteService {
+  /// Instanciate an instance of [AzureRemoteService] using a [connectionString]
   factory AzureRemoteService({
     required String connectionString,
   }) {

@@ -10,6 +10,7 @@ import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteServiceImpl implements AzureRemoteService {
+  /// Constructs an instance and registers default [FeatureFilter]s.
   AzureRemoteServiceImpl({
     required this.client,
   }) {
