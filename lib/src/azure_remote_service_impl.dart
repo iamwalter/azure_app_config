@@ -10,6 +10,7 @@ import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 
 class AzureRemoteServiceImpl implements AzureRemoteService {
+  /// Constructs an instance and registers default [FeatureFilter]s.
   AzureRemoteServiceImpl({
     required this.client,
   }) {
@@ -31,8 +32,12 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }
 
   @override
-  Future<bool> getFeatureEnabled(String key, String label) async {
-    final keyValue = await getKeyValue('.appconfig.featureflag/$key', label);
+  Future<bool> getFeatureEnabled({
+    required String key,
+    required String label,
+  }) async {
+    final keyValue =
+        await getKeyValue(key: '.appconfig.featureflag/$key', label: label);
 
     final feature = keyValue.asFeatureFlag();
 
@@ -97,7 +102,10 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }
 
   @override
-  Future<KeyValue> getKeyValue(String key, String label) async {
+  Future<KeyValue> getKeyValue({
+    required String key,
+    required String label,
+  }) async {
     final path = '/kv/$key';
     final params = {
       'label': label,

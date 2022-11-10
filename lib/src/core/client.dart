@@ -4,6 +4,8 @@ import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 import 'package:azure_app_config/src/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 
+/// Handles communication with the API. Deals with Authentication & Generic API
+/// Parameters.
 class Client {
   Client({required String connectionString})
       : apiVersion = '1.0',
