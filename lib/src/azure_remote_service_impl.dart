@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:azure_app_config/src/azure_remote_service.dart';
@@ -165,6 +166,38 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       data: data,
       headers: {
         'Content-Type': 'application/vnd.microsoft.appconfig.kv+json',
+      },
+    );
+  }
+
+  @override
+  Future<Response<dynamic>> setFeature({
+    required KeyValue keyValue,
+    required bool isEnabled,
+  }) async {
+    final key = keyValue.key;
+    final label = keyValue.label ?? '';
+
+    final FeatureFlag? ff;
+
+    ff = keyValue.asFeatureFlag();
+
+    if (ff == null) {
+      throw AzureKeyValueNotParsableAsFeatureFlag();
+    }
+
+    final modifiedFeatureFlag = ff.copyWith(enabled: isEnabled);
+
+    final data =
+        keyValue.copyWith(value: json.encode(modifiedFeatureFlag.toJson()));
+
+    return client.put(
+      path: '/kv/$key',
+      params: {'label': label},
+      data: data.toJson(),
+      headers: {
+        'Content-Type':
+            'application/vnd.microsoft.appconfig.kv+json; charset=utf-8',
       },
     );
   }
