@@ -120,7 +120,7 @@ void main() {
       );
 
       expect(
-        service.setFeature(keyValue: kv, isEnabled: false),
+        service.disableFeature(keyValue: kv),
         throwsA(isA<AzureKeyValueNotParsableAsFeatureFlag>()),
       );
     });
@@ -145,7 +145,7 @@ void main() {
       final key = kv.key;
       final label = kv.label ?? '';
 
-      await service.setFeature(keyValue: kv, isEnabled: false);
+      await service.disableFeature(keyValue: kv);
 
       verify(
         client.put(

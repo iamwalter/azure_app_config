@@ -171,29 +171,37 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }
 
   @override
-  Future<Response<dynamic>> setFeature({
+  Future<Response<dynamic>> disableFeature({
+    required KeyValue keyValue,
+  }) =>
+      _setFeatureEnabled(keyValue: keyValue, isEnabled: false);
+
+  @override
+  Future<Response<dynamic>> enableFeature({
+    required KeyValue keyValue,
+  }) =>
+      _setFeatureEnabled(keyValue: keyValue, isEnabled: false);
+
+  Future<Response<dynamic>> _setFeatureEnabled({
     required KeyValue keyValue,
     required bool isEnabled,
   }) async {
-    final key = keyValue.key;
-    final label = keyValue.label ?? '';
+    final FeatureFlag? featureFlag;
 
-    final FeatureFlag? ff;
+    featureFlag = keyValue.asFeatureFlag();
 
-    ff = keyValue.asFeatureFlag();
-
-    if (ff == null) {
+    if (featureFlag == null) {
       throw AzureKeyValueNotParsableAsFeatureFlag();
     }
 
-    final modifiedFeatureFlag = ff.copyWith(enabled: isEnabled);
+    final modifiedFeatureFlag = featureFlag.copyWith(enabled: isEnabled);
 
     final data =
         keyValue.copyWith(value: json.encode(modifiedFeatureFlag.toJson()));
 
     return client.put(
-      path: '/kv/$key',
-      params: {'label': label},
+      path: '/kv/${keyValue.key}',
+      params: {'label': keyValue.label ?? ''},
       data: data.toJson(),
       headers: {
         'Content-Type':
