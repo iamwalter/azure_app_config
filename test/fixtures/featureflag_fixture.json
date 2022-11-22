@@ -1,0 +1,25 @@
+{
+    "id": "tId",
+    "description": "tDescription",
+    "enabled": true,
+    "conditions": {
+        "client_filters": [
+            {
+                "name": "tName",
+                "parameters": {
+                    "tParam": {
+                        "tKey": "tValue"
+                    }
+                }
+            },
+            {
+                "name": "tName2",
+                "parameters": {
+                    "tParam": {
+                        "tKey": "tValue"
+                    }
+                }
+            }
+        ]
+    }
+}
