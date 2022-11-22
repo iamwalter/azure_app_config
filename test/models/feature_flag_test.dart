@@ -1,21 +1,26 @@
+import 'dart:convert';
+
 import 'package:azure_app_config/src/models/client_filter.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:test/test.dart';
 
+import '../fixtures/fixture_reader.dart';
+
 void main() {
   const filter1 = ClientFilter(
-    name: 'filter1',
+    name: 'tName',
     parameters: {
-      'key1': 'value1',
-      'key2': 'value2',
+      'tParam': {
+        'tKey': 'tValue',
+      }
     },
   );
 
-  final filter2 = filter1.copyWith(name: 'filter2');
+  final filter2 = filter1.copyWith(name: 'tName2');
 
-  final featureFlag = FeatureFlag(
-    id: 'id',
-    description: 'description',
+  final tFeatureFlag = FeatureFlag(
+    id: 'tId',
+    description: 'tDescription',
     enabled: true,
     conditions: {
       'client_filters': [
@@ -25,12 +30,21 @@ void main() {
     },
   );
 
+  test('should be parsable from JSON', () async {
+    final jsonMap = json.decode(fixture('featureflag_fixture.json'))
+        as Map<String, dynamic>;
+
+    final actual = FeatureFlag.fromJson(jsonMap);
+
+    expect(actual, tFeatureFlag);
+  });
+
   test(
     'getClientFilters() should get client filters',
     () async {
       final expected = [filter1, filter2];
 
-      final actual = featureFlag.getClientFilters();
+      final actual = tFeatureFlag.getClientFilters();
 
       expect(actual, expected);
     },
