@@ -105,7 +105,63 @@ void main() {
     //todo
   });
 
-  group('setFeature', () {
+  group('enableFeature', () {
+    final client = MockClient();
+    final service = AzureRemoteServiceImpl(client: client);
+
+    test('with invalid featureflag', () async {
+      const kv = KeyValue(
+        etag: 'etag',
+        key: 'key',
+        tags: {},
+        value: 'dad',
+        locked: false,
+        lastModified: '',
+      );
+
+      expect(
+        service.enableFeature(keyValue: kv),
+        throwsA(isA<AzureKeyValueNotParsableAsFeatureFlag>()),
+      );
+    });
+
+    test('with valid featureflag', () async {
+      const featureFlag = FeatureFlag(
+        id: 'id',
+        description: 'description',
+        enabled: true,
+        conditions: {},
+      );
+
+      final kv = KeyValue(
+        etag: 'etag',
+        key: 'key',
+        tags: {},
+        value: json.encode(featureFlag),
+        locked: false,
+        lastModified: '',
+      );
+
+      final key = kv.key;
+      final label = kv.label ?? '';
+
+      await service.enableFeature(keyValue: kv);
+
+      verify(
+        client.put(
+          path: '/kv/$key',
+          params: {'label': label},
+          data: kv.toJson(),
+          headers: {
+            'Content-Type':
+                'application/vnd.microsoft.appconfig.kv+json; charset=utf-8'
+          },
+        ),
+      ).called(1);
+    });
+  });
+
+  group('disableFeature', () {
     final client = MockClient();
     final service = AzureRemoteServiceImpl(client: client);
 
