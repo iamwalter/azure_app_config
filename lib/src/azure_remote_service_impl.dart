@@ -180,7 +180,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   Future<Response<dynamic>> enableFeature({
     required KeyValue keyValue,
   }) =>
-      _setFeatureEnabled(keyValue: keyValue, isEnabled: false);
+      _setFeatureEnabled(keyValue: keyValue, isEnabled: true);
 
   Future<Response<dynamic>> _setFeatureEnabled({
     required KeyValue keyValue,
