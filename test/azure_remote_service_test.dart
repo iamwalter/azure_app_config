@@ -1,11 +1,8 @@
 import 'dart:convert';
 
-import 'package:azure_app_config/src/azure_remote_service.dart';
+import 'package:azure_app_config/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
-import 'package:azure_app_config/src/models/feature_flag.dart';
-import 'package:azure_app_config/src/models/key.dart';
-import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -106,6 +103,62 @@ void main() {
 
   test('getFeatureEnabled', () {
     //todo
+  });
+
+  group('setFeature', () {
+    final client = MockClient();
+    final service = AzureRemoteServiceImpl(client: client);
+
+    test('with invalid featureflag', () async {
+      const kv = KeyValue(
+        etag: 'etag',
+        key: 'key',
+        tags: {},
+        value: 'dad',
+        locked: false,
+        lastModified: '',
+      );
+
+      expect(
+        service.disableFeature(keyValue: kv),
+        throwsA(isA<AzureKeyValueNotParsableAsFeatureFlag>()),
+      );
+    });
+
+    test('with valid featureflag', () async {
+      const featureFlag = FeatureFlag(
+        id: 'id',
+        description: 'description',
+        enabled: false,
+        conditions: {},
+      );
+
+      final kv = KeyValue(
+        etag: 'etag',
+        key: 'key',
+        tags: {},
+        value: json.encode(featureFlag),
+        locked: false,
+        lastModified: '',
+      );
+
+      final key = kv.key;
+      final label = kv.label ?? '';
+
+      await service.disableFeature(keyValue: kv);
+
+      verify(
+        client.put(
+          path: '/kv/$key',
+          params: {'label': label},
+          data: kv.toJson(),
+          headers: {
+            'Content-Type':
+                'application/vnd.microsoft.appconfig.kv+json; charset=utf-8'
+          },
+        ),
+      ).called(1);
+    });
   });
 
   test('getKeys should return keys', () async {
