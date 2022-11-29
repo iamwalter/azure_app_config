@@ -172,20 +172,25 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   @override
   Future<Response<dynamic>> disableFeature({
-    required KeyValue keyValue,
+    required String key,
+    required String label,
   }) =>
-      _setFeatureEnabled(keyValue: keyValue, isEnabled: false);
+      setFeatureEnabled(key: key, label: label, isEnabled: false);
 
   @override
   Future<Response<dynamic>> enableFeature({
-    required KeyValue keyValue,
+    required String key,
+    required String label,
   }) =>
-      _setFeatureEnabled(keyValue: keyValue, isEnabled: true);
+      setFeatureEnabled(key: key, label: label, isEnabled: true);
 
-  Future<Response<dynamic>> _setFeatureEnabled({
-    required KeyValue keyValue,
+  Future<Response<dynamic>> setFeatureEnabled({
+    required String key,
+    required String label,
     required bool isEnabled,
   }) async {
+    final keyValue = await getKeyValue(key: key, label: label);
+
     final FeatureFlag? featureFlag;
 
     featureFlag = keyValue.asFeatureFlag();
