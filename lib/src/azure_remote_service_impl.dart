@@ -184,6 +184,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }) =>
       setFeatureEnabled(key: key, label: label, isEnabled: true);
 
+  @override
   Future<Response<dynamic>> setFeatureEnabled({
     required String key,
     required String label,
