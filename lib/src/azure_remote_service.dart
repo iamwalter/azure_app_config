@@ -39,17 +39,33 @@ abstract class AzureRemoteService {
     required String label,
   });
 
-  /// Disables a given feature to be enabled.
+  /// Sets a given Feature to be enabled or disabled based on [isEnabled].
   ///
   /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] does
   /// not parse to a [FeatureFlag].
-  Future<Response<dynamic>> enableFeature({required KeyValue keyValue});
+  Future<Response<dynamic>> setFeatureEnabled({
+    required String key,
+    required String label,
+    required bool isEnabled,
+  });
 
-  /// Disables a given feature to be disabled.
+  /// Sets a given feature to be enabled.
   ///
   /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] does
   /// not parse to a [FeatureFlag].
-  Future<Response<dynamic>> disableFeature({required KeyValue keyValue});
+  Future<Response<dynamic>> enableFeature({
+    required String key,
+    required String label,
+  });
+
+  /// Sets a given feature to be disabled.
+  ///
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] does
+  /// not parse to a [FeatureFlag].
+  Future<Response<dynamic>> disableFeature({
+    required String key,
+    required String label,
+  });
 
   /// Retrieve a list of [FeatureFlag].
   Future<List<FeatureFlag>> getFeatureFlags();
