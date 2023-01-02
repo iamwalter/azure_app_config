@@ -18,8 +18,7 @@ Creating an instance of AzureRemoteService:
 A connection string is required to use App Configuration.
 The connection string can be obtained from the App Configuration Dashboard under 'Access keys'.
 
-Please note that when a connection string is invalid or not specified,
-an ArgumentError will occur.
+When the connection string is invalid or not specified, an ArgumentError will occur.
 
 ## Example Usages
 
@@ -29,22 +28,28 @@ To get all KeyValues:
 
 ... or a specific keyValue:
 
-    final keyValue = await service.getKeyValue("key", "label")
+    final keyValue = await service.getKeyValue(key: "example_key", label: "example_label")
 
-To convert a KeyValue to a feature flag entity use the method 
+To convert a KeyValue to a feature flag entity use the method. This method is only valid if the 
+KeyValue is of type FeatureFlag. Otherwise, it returns null.
 
-    keyValue.asFeatureFlag()
+    final featureFlag = keyValue.asFeatureFlag()
 
-To get if a feature is enabled, use the `getFeatureEnabled` method.
+To retrieve wheter the FeatureFlag is enabled in the database, use:
 
-    final enabled = await getFeatureEnabled("example_key", "example_tag");
+    final isEnabledInDatabase = featureFlag.enabled;
+
+
+To get if a feature is enabled while running it through the FeatureFilters, use the `getFeatureEnabled` method.
+
+    final enabled = await getFeatureEnabled(key: "example_key", label: "example_label");
 
 ---
 
 ### FeatureFilters
 This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
-**Microsoft.Targeting** -> Enable a flag based on a percentage.
+**Microsoft.Targeting** -> Enable a flag based on a percentage. Use 'Default Percentage' for this. The Groups section is still a work in progress, and is not included in this library. 
 **Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
 ### Implement your own FeatureFilter
@@ -71,3 +76,11 @@ For more information about Azure App Configuration, take a look at the following
 
  - [Azure App Configuration Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)
  - [Feature Management Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management)
+
+
+Feel free to submit any pull requests!
+
+
+
+
+Package created by Walter Tesevic commissioned by Ordina
