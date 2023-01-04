@@ -71,7 +71,7 @@ void main() {
   });
 
   test(
-      'asFeatureFlag throw AzureKeyValueNotParsableAsFeatureFlagException when value',
+      'asFeatureFlag throws AzureKeyValueNotParsableAsFeatureFlagException when value is unparsable',
       () async {
     expect(
       invalidKv.asFeatureFlag,
