@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:azure_app_config/azure_app_config.dart';
+import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:test/test.dart';
@@ -70,9 +70,9 @@ void main() {
     expect(actual, expected);
   });
 
-  test(
-      'asFeatureFlag throws AzureKeyValueNotParsableAsFeatureFlagException when value is unparsable',
-      () async {
+  test('''
+asFeatureFlag throws AzureKeyValueNotParsableAsFeatureFlagException
+       when value is unparsable''', () async {
     expect(
       invalidKv.asFeatureFlag,
       throwsA(
