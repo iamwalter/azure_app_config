@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_local_variable
+// ignore_for_file: avoid_print, unused_local_variable, lines_longer_than_80_chars
 
 import 'package:azure_app_config/azure_app_config.dart';
 
@@ -25,12 +25,16 @@ void main() async {
 
   // .. if the keyValue is a FeatureFlag, you can use .asFeatureFlag()
   // to get the properties of the FeatureFlag
-  final featureFlag = keyValue.asFeatureFlag();
+  try {
+    final featureFlag = keyValue.asFeatureFlag();
 
-  if (featureFlag == null) return;
+    // to check if the featureflag is enabled, use
+    final isFeatureFlagEnabled = featureFlag.enabled;
 
-  // to check if the featureflag is enabled, use
-  final isFeatureFlagEnabled = featureFlag.enabled;
+    // Handle error if the KeyValue is not a FeatureFlag.
+  } on AzureKeyValueNotParsableAsFeatureFlagException {
+    rethrow;
+  }
 
   // to check if a featureflag is enabled while parsing the featurefilters, use
   bool isFeatureEnabled;

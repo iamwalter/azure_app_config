@@ -11,7 +11,7 @@ _$_KeyValue _$$_KeyValueFromJson(Map<String, dynamic> json) => _$_KeyValue(
       key: json['key'] as String,
       label: json['label'] as String?,
       contentType: json['content_type'] as String?,
-      value: json['value'] as String?,
+      value: json['value'] as String? ?? '',
       tags: json['tags'] as Map<String, dynamic>,
       locked: json['locked'] as bool,
       lastModified: json['last_modified'] as String,

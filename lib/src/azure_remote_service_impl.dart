@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:azure_app_config/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
-import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
@@ -42,10 +42,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     final feature = keyValue.asFeatureFlag();
 
-    if (feature == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
-
     var enabled = feature.enabled;
 
     final clientFilters = feature.getClientFilters();
@@ -73,9 +69,13 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
-      final featureFlag = kv.asFeatureFlag();
+      try {
+        final featureFlag = kv.asFeatureFlag();
 
-      if (featureFlag != null) featureFlags.add(featureFlag);
+        featureFlags.add(featureFlag);
+      } on AzureKeyValueNotParsableAsFeatureFlagException {
+        continue;
+      }
     }
 
     return featureFlags;
@@ -195,10 +195,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final FeatureFlag? featureFlag;
 
     featureFlag = keyValue.asFeatureFlag();
-
-    if (featureFlag == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
 
     final modifiedFeatureFlag = featureFlag.copyWith(enabled: isEnabled);
 
