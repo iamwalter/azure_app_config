@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_local_variable
+import 'dart:developer' as developer;
 
 import 'package:azure_app_config/azure_app_config.dart';
 
@@ -6,8 +6,8 @@ void main() async {
   const exampleKey = 'example_key';
   const exampleLabel = 'example_label';
 
-  // Creating an instance needs a connection String. This can be obtained through
-  // the Azure Portal, under "Access Keys".
+  // Creating an instance needs a connection String. This can be
+  // obtained through the Azure Portal, under "Access Keys".
   final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
   // Getting a keyvalue
@@ -15,31 +15,38 @@ void main() async {
 
   try {
     keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
-  } catch (error) {
-    // Handle any exceptions that might occur when interacting with the Azure service
-    print('Error occurred while getting key value: $error');
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service
+    developer.log('Error occurred while getting key value: $err');
   }
 
   // Now you can retrieve any property of the keyValue, for instance
-  final value = keyValue.value;
+  developer.log(keyValue.value);
 
-  // .. if the keyValue is a FeatureFlag, you can use .asFeatureFlag()
+  // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
   // to get the properties of the FeatureFlag
-  final featureFlag = keyValue.asFeatureFlag();
+  try {
+    final featureFlag = keyValue.asFeatureFlag();
 
-  if (featureFlag == null) return;
+    // To check if the featureflag is enabled, use
+    developer.log('${featureFlag.enabled}');
 
-  // to check if the featureflag is enabled, use
-  final isFeatureFlagEnabled = featureFlag.enabled;
+    // .asFeatureFlag()will throw this exception if it's unable to parse.
+  } on AzureKeyValueNotParsableAsFeatureFlagException {
+    rethrow;
+  }
 
-  // to check if a featureflag is enabled while parsing the featurefilters, use
-  bool isFeatureEnabled;
+  // To check if a featureflag is enabled while parsing the featurefilters, use
 
   try {
-    isFeatureEnabled =
+    final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
-  } catch (error) {
-    // Handle any exceptions that might occur when interacting with the Azure service
-    print('Error occurred while checking if feature is enabled: $error');
+
+    developer.log('$isFeatureEnabled');
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service
+    developer.log('Error occurred while checking if feature is enabled: $err');
   }
 }

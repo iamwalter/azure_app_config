@@ -42,10 +42,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     final feature = keyValue.asFeatureFlag();
 
-    if (feature == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
-
     var enabled = feature.enabled;
 
     final clientFilters = feature.getClientFilters();
@@ -73,9 +69,13 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
-      final featureFlag = kv.asFeatureFlag();
+      try {
+        final featureFlag = kv.asFeatureFlag();
 
-      if (featureFlag != null) featureFlags.add(featureFlag);
+        featureFlags.add(featureFlag);
+      } on AzureKeyValueNotParsableAsFeatureFlagException {
+        continue;
+      }
     }
 
     return featureFlags;
@@ -195,10 +195,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final FeatureFlag? featureFlag;
 
     featureFlag = keyValue.asFeatureFlag();
-
-    if (featureFlag == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
 
     final modifiedFeatureFlag = featureFlag.copyWith(enabled: isEnabled);
 

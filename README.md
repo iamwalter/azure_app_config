@@ -30,8 +30,8 @@ To get all KeyValues:
 
     final keyValue = await service.getKeyValue(key: "example_key", label: "example_label")
 
-To convert a KeyValue to a feature flag entity use the method. This method is only valid if the 
-KeyValue is of type FeatureFlag. Otherwise, it returns null.
+To convert a `KeyValue` to a `FeatureFlag`  use the method. This method will throw an `AzureKeyValueNotParsableAsFeatureFlagException` if the 
+`KeyValue` cannot be parsed to `FeatureFlag`.
 
     final featureFlag = keyValue.asFeatureFlag()
 

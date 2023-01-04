@@ -25,7 +25,7 @@ mixin _$KeyValue {
   String? get label => throw _privateConstructorUsedError;
   @JsonKey(name: 'content_type')
   String? get contentType => throw _privateConstructorUsedError;
-  String? get value => throw _privateConstructorUsedError;
+  String get value => throw _privateConstructorUsedError;
   Map<String, dynamic> get tags => throw _privateConstructorUsedError;
   bool get locked => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_modified')
@@ -47,7 +47,7 @@ abstract class $KeyValueCopyWith<$Res> {
       String key,
       String? label,
       @JsonKey(name: 'content_type') String? contentType,
-      String? value,
+      String value,
       Map<String, dynamic> tags,
       bool locked,
       @JsonKey(name: 'last_modified') String lastModified});
@@ -70,7 +70,7 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
     Object? key = null,
     Object? label = freezed,
     Object? contentType = freezed,
-    Object? value = freezed,
+    Object? value = null,
     Object? tags = null,
     Object? locked = null,
     Object? lastModified = null,
@@ -92,10 +92,10 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
           ? _value.contentType
           : contentType // ignore: cast_nullable_to_non_nullable
               as String?,
-      value: freezed == value
+      value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       tags: null == tags
           ? _value.tags
           : tags // ignore: cast_nullable_to_non_nullable
@@ -124,7 +124,7 @@ abstract class _$$_KeyValueCopyWith<$Res> implements $KeyValueCopyWith<$Res> {
       String key,
       String? label,
       @JsonKey(name: 'content_type') String? contentType,
-      String? value,
+      String value,
       Map<String, dynamic> tags,
       bool locked,
       @JsonKey(name: 'last_modified') String lastModified});
@@ -145,7 +145,7 @@ class __$$_KeyValueCopyWithImpl<$Res>
     Object? key = null,
     Object? label = freezed,
     Object? contentType = freezed,
-    Object? value = freezed,
+    Object? value = null,
     Object? tags = null,
     Object? locked = null,
     Object? lastModified = null,
@@ -167,10 +167,10 @@ class __$$_KeyValueCopyWithImpl<$Res>
           ? _value.contentType
           : contentType // ignore: cast_nullable_to_non_nullable
               as String?,
-      value: freezed == value
+      value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
       tags: null == tags
           ? _value._tags
           : tags // ignore: cast_nullable_to_non_nullable
@@ -195,7 +195,7 @@ class _$_KeyValue extends _KeyValue {
       required this.key,
       this.label,
       @JsonKey(name: 'content_type') this.contentType,
-      this.value,
+      this.value = '',
       required final Map<String, dynamic> tags,
       required this.locked,
       @JsonKey(name: 'last_modified') required this.lastModified})
@@ -215,7 +215,8 @@ class _$_KeyValue extends _KeyValue {
   @JsonKey(name: 'content_type')
   final String? contentType;
   @override
-  final String? value;
+  @JsonKey()
+  final String value;
   final Map<String, dynamic> _tags;
   @override
   Map<String, dynamic> get tags {
@@ -276,7 +277,7 @@ abstract class _KeyValue extends KeyValue {
           required final String key,
           final String? label,
           @JsonKey(name: 'content_type') final String? contentType,
-          final String? value,
+          final String value,
           required final Map<String, dynamic> tags,
           required final bool locked,
           @JsonKey(name: 'last_modified') required final String lastModified}) =
@@ -295,7 +296,7 @@ abstract class _KeyValue extends KeyValue {
   @JsonKey(name: 'content_type')
   String? get contentType;
   @override
-  String? get value;
+  String get value;
   @override
   Map<String, dynamic> get tags;
   @override
