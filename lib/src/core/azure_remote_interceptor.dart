@@ -42,7 +42,9 @@ class AzureRemoteInterceptor extends Interceptor {
     final path = options.uri.path;
 
     final method = options.method.toUpperCase();
+
     final params = options.uri.query;
+
     final body = options.data as String? ?? '';
 
     final pathAndParams = '$path?$params';

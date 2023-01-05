@@ -56,7 +56,7 @@ void main() async {
   try {
     final keyValues = await service.findKeyValuesBy(
       keyFilter: '.appconfig.*',
-      labelFilter: '%00',
+      labelFilter: AzureFilters.noLabel,
     );
 
     // Loop through the values

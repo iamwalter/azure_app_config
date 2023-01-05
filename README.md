@@ -79,8 +79,8 @@ When the connection string is invalid or not specified, an ArgumentError will oc
         // and don't have a label:
         try {
             final keyValues = await service.findKeyValuesBy(
-            keyFilter: '.appconfig.*',
-            labelFilter: '%00',
+                keyFilter: '.appconfig.*',
+                labelFilter: AzureFilters.noLabel,
             );
 
             // Loop through the values

@@ -55,10 +55,14 @@ class Client {
       );
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
-        final errorModel =
-            ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
+        try {
+          final errorModel =
+              ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
 
-        throw AzureFilterValidationException(errorModel.detail);
+          throw AzureFilterValidationException(errorModel.detail);
+        } catch (e) {
+          rethrow;
+        }
       }
 
       rethrow;

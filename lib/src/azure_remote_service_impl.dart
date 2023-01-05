@@ -214,8 +214,8 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   @override
   Future<List<KeyValue>> findKeyValuesBy({
-    required String keyFilter,
-    required String labelFilter,
+    String keyFilter = '',
+    String labelFilter = '',
   }) async {
     const path = '/kv';
     final params = {
