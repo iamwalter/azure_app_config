@@ -20,29 +20,81 @@ The connection string can be obtained from the App Configuration Dashboard under
 
 When the connection string is invalid or not specified, an ArgumentError will occur.
 
-## Example Usages
+## Example 
 
-To get all KeyValues:
+    import 'dart:developer' as developer;
 
-    final keyValue = await service.getKeyValues()
+    import 'package:azure_app_config/azure_app_config.dart';
 
-... or a specific keyValue:
+    void main() async {
+        const exampleKey = 'example_key';
+        const exampleLabel = 'example_label';
 
-    final keyValue = await service.getKeyValue(key: "example_key", label: "example_label")
+        // Creating an instance needs a connection String. This can be
+        // obtained through the Azure Portal, under "Access Keys".
+        final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
-To convert a `KeyValue` to a `FeatureFlag`  use the method. This method will throw an `AzureKeyValueNotParsableAsFeatureFlagException` if the 
-`KeyValue` cannot be parsed to `FeatureFlag`.
+        // Getting a keyvalue
+        late KeyValue keyValue;
 
-    final featureFlag = keyValue.asFeatureFlag()
+        try {
+            keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
+        } catch (err) {
+            // Handle any exceptions that might occur when interacting with the Azure
+            // service
+            developer.log('Error occurred while getting key value: $err');
+        }
 
-To retrieve wheter the FeatureFlag is enabled in the database, use:
+        // Now you can retrieve any property of the keyValue, for instance
+        developer.log(keyValue.value);
 
-    final isEnabledInDatabase = featureFlag.enabled;
+        // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
+        // to get the properties of the FeatureFlag
+        try {
+            final featureFlag = keyValue.asFeatureFlag();
 
+            // To check if the featureflag is enabled, use
+            developer.log('${featureFlag.enabled}');
 
-To get if a feature is enabled while running it through the FeatureFilters, use the `getFeatureEnabled` method.
+            // .asFeatureFlag() will throw this exception if it's unable to parse.
+        } on AzureKeyValueNotParsableAsFeatureFlagException {
+            rethrow;
+        }
 
-    final enabled = await getFeatureEnabled(key: "example_key", label: "example_label");
+        // To check if a featureflag is enabled while parsing the featurefilters, use
+
+        try {
+            final isFeatureEnabled =
+                await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
+
+            developer.log('$isFeatureEnabled');
+        } catch (err) {
+            // Handle any exceptions that might occur when interacting with the Azure
+            // service
+            developer.log('Error occurred while checking if feature is enabled: $err');
+        }
+
+        // To find FeatureFlags based on a key and label filter use the following
+        // method. This example find all the keyValues that start with '.appconfig.*'
+        // and don't have a label:
+        try {
+            final keyValues = await service.findKeyValuesBy(
+            keyFilter: '.appconfig.*',
+            labelFilter: '%00',
+            );
+
+            // Loop through the values
+            for (final keyValue in keyValues) {
+            developer.log(keyValue.value);
+            }
+
+            // When an invalid filter has been provided, for example, '.appconfig.**',
+            // an [AzureFilterValidationException] is thrown.
+        } on AzureFilterValidationException catch (e) {
+            developer.log(e.message ?? '');
+        }
+    }
+
 
 ---
 
@@ -50,6 +102,7 @@ To get if a feature is enabled while running it through the FeatureFilters, use 
 This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
 **Microsoft.Targeting** -> Enable a flag based on a percentage. Use 'Default Percentage' for this. The Groups section is still a work in progress, and is not included in this library. 
+
 **Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
 ### Implement your own FeatureFilter

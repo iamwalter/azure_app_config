@@ -73,6 +73,36 @@ abstract class AzureRemoteService {
   /// Retrieve a list of [KeyValue].
   Future<List<KeyValue>> getKeyValues();
 
+  /// Retrieve key values based on filters.
+  ///
+  /// [keyFilter] can be used in the following ways:
+  /// - key=*           : Matches any key
+  /// - key=abc         : Matches a key named abc
+  /// - key=abc*        : Matches keys names that start with abc
+  /// - key=abc,xyz     : Matches keys names abc or xyz (limited to 5 CSV)
+  ///
+  /// [labelFilter] can be used in the following ways:
+  /// - label=*         : Matches any label
+  /// - label=%00       : Matches KV without label
+  /// - label=prod      : Matches the label prod
+  /// - label=prod*     : Matches labels that start with prod
+  /// - label=prod,test : Matches labels prod or test (limited to 5 CSV)
+  ///
+  /// Reserved characters: '*', '\\', ','.
+  ///
+  /// If a reserved character is part of the value, then it must be escaped by
+  ///  using \\{Reserved Character}. Non-reserved characters can also be escaped.
+  ///
+  /// In the case of a filter validation error, e.g. 'key=abc**', an
+  /// [AzureFilterValidationException] is thrown.
+  ///
+  /// Read more at the [API Reference]
+  /// (https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters)
+  Future<List<KeyValue>> findKeyValuesBy({
+    required String keyFilter,
+    required String labelFilter,
+  });
+
   /// Get a specific [KeyValue].
   Future<KeyValue> getKeyValue({
     required String key,

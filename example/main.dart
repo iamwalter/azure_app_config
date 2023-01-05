@@ -32,7 +32,7 @@ void main() async {
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
 
-    // .asFeatureFlag()will throw this exception if it's unable to parse.
+    // .asFeatureFlag() will throw this exception if it's unable to parse.
   } on AzureKeyValueNotParsableAsFeatureFlagException {
     rethrow;
   }
@@ -48,5 +48,25 @@ void main() async {
     // Handle any exceptions that might occur when interacting with the Azure
     // service
     developer.log('Error occurred while checking if feature is enabled: $err');
+  }
+
+  // To find FeatureFlags based on a key and label filter use the following
+  // method. This example find all the keyValues that start with '.appconfig.*'
+  // and don't have a label:
+  try {
+    final keyValues = await service.findKeyValuesBy(
+      keyFilter: '.appconfig.*',
+      labelFilter: '%00',
+    );
+
+    // Loop through the values
+    for (final keyValue in keyValues) {
+      developer.log(keyValue.value);
+    }
+
+    // When an invalid filter has been provided, for example, '.appconfig.**',
+    // an [AzureFilterValidationException] is thrown.
+  } on AzureFilterValidationException catch (e) {
+    developer.log(e.message ?? '');
   }
 }

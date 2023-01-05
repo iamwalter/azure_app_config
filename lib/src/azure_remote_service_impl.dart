@@ -211,4 +211,28 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       },
     );
   }
+
+  @override
+  Future<List<KeyValue>> findKeyValuesBy({
+    required String keyFilter,
+    required String labelFilter,
+  }) async {
+    const path = '/kv';
+    final params = {
+      'key': keyFilter,
+      'label': labelFilter,
+    };
+
+    final response = await client.get(path: path, params: params);
+
+    final data = response.data;
+    final items = <KeyValue>[];
+
+    for (final json in data['items'] as List<dynamic>) {
+      final item = KeyValue.fromJson(json as Map<String, dynamic>);
+      items.add(item);
+    }
+
+    return items;
+  }
 }
