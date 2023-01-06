@@ -203,7 +203,7 @@ void main() {
     final key2 = key1.copyWith(key: 'keyvalue2');
 
     dioAdapter.onGet(
-      '$endpoint/kv?label=%00',
+      '$endpoint/kv',
       (server) {
         return server.reply(200, {
           'items': [
@@ -212,7 +212,11 @@ void main() {
           ]
         });
       },
-      queryParameters: {'api_version': '1.0', 'key': 'key*'},
+      queryParameters: {
+        'api_version': '1.0',
+        'key': 'key*',
+        'label': AzureFilters.noLabel
+      },
     );
 
     final actual = await service.findKeyValuesBy(
