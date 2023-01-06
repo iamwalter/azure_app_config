@@ -50,20 +50,8 @@ class Client {
     params['api_version'] = '1.0';
 
     try {
-      var url = '$_endpoint$path';
-
-      // Handles an edgecase where dio.get(queryParameters) encodes the
-      // URL parameter for a null character differently than
-      // what the Azure API expects (Dio encodes %00 to %2500, API expects %00)
-      if (params['label'] == AzureFilters.noLabel) {
-        params.remove('label');
-
-        // so the solution is to hardcode the label parameter into the url
-        url = '$url?label=${AzureFilters.noLabel}';
-      }
-
       return await dio.get<dynamic>(
-        url,
+        '$_endpoint$path',
         queryParameters: params,
       );
     } on DioError catch (e) {

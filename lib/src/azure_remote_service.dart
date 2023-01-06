@@ -78,21 +78,22 @@ abstract class AzureRemoteService {
   ///
   ///  Filter the records by [key].
   ///
-  /// - key=[AzureFilters.any] (default) : Matches any key.
-  /// - key=abc                   : Matches a key named abc
-  /// - key=abc*                  : Matches keys names that start with abc
-  /// - key=abc,xyz               : Matches keys names abc or xyz
-  ///                               (limited to 5 CSV)
+  /// - key=[AzureFilters.any] (default)  : Matches any key.
+  /// - key=abc                           : Matches a key named abc
+  /// - key=abc*                          : Matches keys names that start with
+  ///                                       abc
+  /// - key=abc,xyz                       : Matches keys names abc or xyz
+  ///                               (limited to 5 values)
   ///
   ///  Filters the records by [label].
   ///
   /// - label=[AzureFilters.any] (default): Matches empty and non-empty labels
-  /// - label=%00                 : Only matches [KeyValue]s without a label,
-  ///                               same as [AzureFilters.noLabel].
-  /// - label=prod                : Matches the label prod
-  /// - label=prod*               : Matches labels that start with prod
-  /// - label=prod,test           : Matches labels prod or test
-  ///                               (limited to 5 CSV)
+  /// - label=[AzureFilters.noLabel]      : Only matches [KeyValue]s without a
+  ///                                       label.
+  /// - label=prod                        : Matches the label prod
+  /// - label=prod*                       : Matches labels that start with prod
+  /// - label=prod,test                   : Matches labels prod or test
+  ///                                       (limited to 5 values)
   ///
   /// Reserved characters: '*', '\\', ','.
   ///

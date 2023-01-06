@@ -7,5 +7,5 @@ class AzureFilters {
   static const String any = '*';
 
   /// Matches if a record's label is an empty value.
-  static const String noLabel = '%00';
+  static final String noLabel = String.fromCharCode(0);
 }
