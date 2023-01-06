@@ -50,9 +50,9 @@ void main() async {
     developer.log('Error occurred while checking if feature is enabled: $err');
   }
 
-  // To find FeatureFlags based on a key and label filter use the following
-  // method. This example find all the keyValues that start with '.appconfig.*'
-  // and don't have a label:
+  // To find FeatureFlags based on a key and label filter use findKeyValuesBy().
+  // This example searches for the keyValues that start with '.appconfig.'
+  // without a label:
   try {
     final keyValues = await service.findKeyValuesBy(
       key: '.appconfig.*',
