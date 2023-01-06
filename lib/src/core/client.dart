@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/errors/error_response.dart';
