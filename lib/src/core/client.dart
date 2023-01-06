@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
+import 'package:azure_app_config/src/models/errors/azure_errors.dart';
+import 'package:azure_app_config/src/models/errors/error_response.dart';
 import 'package:azure_app_config/src/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 
@@ -46,12 +48,23 @@ class Client {
   }) async {
     params['api_version'] = '1.0';
 
-    final response = await dio.get<dynamic>(
-      '$_endpoint$path',
-      queryParameters: params,
-    );
+    try {
+      return await dio.get<dynamic>(
+        '$_endpoint$path',
+        queryParameters: params,
+      );
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.response) {
+        final errorModel =
+            ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
 
-    return response;
+        throw AzureFilterValidationException(errorModel);
+      }
+
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Returns the [Response] of a PUT request.

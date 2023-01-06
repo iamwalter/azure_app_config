@@ -1,5 +1,6 @@
 library azure_app_config;
 
+export 'package:azure_app_config/src/azure_filters.dart';
 export 'package:azure_app_config/src/azure_remote_service.dart';
 export 'package:azure_app_config/src/feature_filter.dart';
 export 'package:azure_app_config/src/models/errors/azure_errors.dart';

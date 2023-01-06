@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -210,5 +211,29 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
             'application/vnd.microsoft.appconfig.kv+json; charset=utf-8',
       },
     );
+  }
+
+  @override
+  Future<List<KeyValue>> findKeyValuesBy({
+    String key = AzureFilters.any,
+    String label = AzureFilters.any,
+  }) async {
+    const path = '/kv';
+    final params = {
+      'key': key,
+      'label': label,
+    };
+
+    final response = await client.get(path: path, params: params);
+
+    final data = response.data;
+    final items = <KeyValue>[];
+
+    for (final json in data['items'] as List<dynamic>) {
+      final item = KeyValue.fromJson(json as Map<String, dynamic>);
+      items.add(item);
+    }
+
+    return items;
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:azure_app_config/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
+
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -191,6 +192,66 @@ void main() {
 
     final expected = [testFeatureFlag];
     final actual = await service.getFeatureFlags();
+
+    expect(actual, expected);
+  });
+
+  test(
+      '''findKeyValuesBy get keyvalues with correct query params when using %00 as label''',
+      () async {
+    const key1 = testKeyValue;
+    final key2 = key1.copyWith(key: 'keyvalue2');
+
+    dioAdapter.onGet(
+      '$endpoint/kv',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            key1.toJson(),
+            key2.toJson(),
+          ]
+        });
+      },
+      queryParameters: {
+        'api_version': '1.0',
+        'key': 'key*',
+        'label': AzureFilters.noLabel
+      },
+    );
+
+    final actual = await service.findKeyValuesBy(
+      key: 'key*',
+      label: AzureFilters.noLabel,
+    );
+    final expected = [key1, key2];
+
+    expect(actual, expected);
+  });
+
+  test(
+      '''findKeyValuesBy get keyvalues with correct query params when not using %00 as label''',
+      () async {
+    const key1 = testKeyValue;
+    final key2 = key1.copyWith(key: 'keyvalue2');
+
+    dioAdapter.onGet(
+      '$endpoint/kv',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            key1.toJson(),
+            key2.toJson(),
+          ]
+        });
+      },
+      queryParameters: {'api_version': '1.0', 'key': 'key*', 'label': 'CZ'},
+    );
+
+    final actual = await service.findKeyValuesBy(
+      key: 'key*',
+      label: 'CZ',
+    );
+    final expected = [key1, key2];
 
     expect(actual, expected);
   });

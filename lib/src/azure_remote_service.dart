@@ -1,3 +1,4 @@
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -72,6 +73,41 @@ abstract class AzureRemoteService {
 
   /// Retrieve a list of [KeyValue].
   Future<List<KeyValue>> getKeyValues();
+
+  ///  Retrieve [KeyValue] records based on filters.
+  ///
+  ///  Filter the records by [key].
+  ///
+  /// - key=[AzureFilters.any] (default)  : Matches any key.
+  /// - key=abc                           : Matches a key named abc
+  /// - key=abc*                          : Matches keys names that start with
+  ///                                       abc
+  /// - key=abc,xyz                       : Matches keys names abc or xyz
+  ///                               (limited to 5 values)
+  ///
+  ///  Filters the records by [label].
+  ///
+  /// - label=[AzureFilters.any] (default): Matches empty and non-empty labels
+  /// - label=[AzureFilters.noLabel]      : Only matches [KeyValue]s without a
+  ///                                       label.
+  /// - label=prod                        : Matches the label prod
+  /// - label=prod*                       : Matches labels that start with prod
+  /// - label=prod,test                   : Matches labels prod or test
+  ///                                       (limited to 5 values)
+  ///
+  /// Reserved characters: '*', '\\', ','.
+  ///
+  /// If a reserved character is part of the value, it must be escaped by using
+  ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
+  ///
+  /// If a filter validation error occurs (e.g. 'key=abc**'),
+  /// an [AzureFilterValidationException] is thrown.
+  ///
+  /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
+  Future<List<KeyValue>> findKeyValuesBy({
+    String key,
+    String label,
+  });
 
   /// Get a specific [KeyValue].
   Future<KeyValue> getKeyValue({
