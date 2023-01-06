@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/core/azure_remote_interceptor.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/errors/error_response.dart';
@@ -49,20 +50,28 @@ class Client {
     params['api_version'] = '1.0';
 
     try {
+      var url = '$_endpoint$path';
+
+      // Handles an edgecase where dio.get(queryParameters) encodes the
+      // URL parameter for a null character differently than
+      // what the Azure API expects (Dio encodes %00 to %2500, API expects %00)
+      if (params['label'] == AzureFilters.noLabel) {
+        params.remove('label');
+
+        // so the solution is to hardcode the label parameter into the url
+        url = '$url?label=${AzureFilters.noLabel}';
+      }
+
       return await dio.get<dynamic>(
-        '$_endpoint$path',
+        url,
         queryParameters: params,
       );
     } on DioError catch (e) {
       if (e.type == DioErrorType.response) {
-        try {
-          final errorModel =
-              ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
+        final errorModel =
+            ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
 
-          throw AzureFilterValidationException(errorModel.detail);
-        } catch (e) {
-          rethrow;
-        }
+        throw AzureFilterValidationException(errorModel);
       }
 
       rethrow;

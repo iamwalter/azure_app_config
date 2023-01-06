@@ -55,8 +55,8 @@ void main() async {
   // and don't have a label:
   try {
     final keyValues = await service.findKeyValuesBy(
-      keyFilter: '.appconfig.*',
-      labelFilter: AzureFilters.noLabel,
+      key: '.appconfig.*',
+      label: AzureFilters.noLabel,
     );
 
     // Loop through the values
@@ -67,6 +67,6 @@ void main() async {
     // When an invalid filter has been provided, for example, '.appconfig.**',
     // an [AzureFilterValidationException] is thrown.
   } on AzureFilterValidationException catch (e) {
-    developer.log(e.message ?? '');
+    developer.log(e.errorResponse?.detail ?? 'Handle error');
   }
 }

@@ -1,3 +1,4 @@
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -5,7 +6,6 @@ import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
-import 'package:azure_app_config/src/filter_filters.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
@@ -74,34 +74,38 @@ abstract class AzureRemoteService {
   /// Retrieve a list of [KeyValue].
   Future<List<KeyValue>> getKeyValues();
 
-  /// Retrieve key values based on filters.
+  ///  Retrieve [KeyValue] records based on filters.
   ///
-  /// [keyFilter] can be used in the following ways:
-  /// - key=*           : Matches any key, same as [AzureFilters.any].
-  /// - key=abc         : Matches a key named abc
-  /// - key=abc*        : Matches keys names that start with abc
-  /// - key=abc,xyz     : Matches keys names abc or xyz (limited to 5 CSV)
+  ///  Filter the records by [key].
   ///
-  /// [labelFilter] can be used in the following ways:
-  /// - label=*         : Matches any label, same as [AzureFilters.any].
-  /// - label=%00       : Matches KV without label, same as
-  ///                     [AzureFilters.noLabel].
-  /// - label=prod      : Matches the label prod
-  /// - label=prod*     : Matches labels that start with prod
-  /// - label=prod,test : Matches labels prod or test (limited to 5 CSV)
+  /// - key=[AzureFilters.any] (default) : Matches any key.
+  /// - key=abc                   : Matches a key named abc
+  /// - key=abc*                  : Matches keys names that start with abc
+  /// - key=abc,xyz               : Matches keys names abc or xyz
+  ///                               (limited to 5 CSV)
+  ///
+  ///  Filters the records by [label].
+  ///
+  /// - label=[AzureFilters.any] (default): Matches empty and non-empty labels
+  /// - label=%00                 : Only matches [KeyValue]s without a label,
+  ///                               same as [AzureFilters.noLabel].
+  /// - label=prod                : Matches the label prod
+  /// - label=prod*               : Matches labels that start with prod
+  /// - label=prod,test           : Matches labels prod or test
+  ///                               (limited to 5 CSV)
   ///
   /// Reserved characters: '*', '\\', ','.
   ///
-  /// If a reserved character is part of the value, then it must be escaped by
-  /// using \\{Reserved Character}. Non-reserved characters can also be escaped.
+  /// If a reserved character is part of the value, it must be escaped by using
+  ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
   ///
-  /// In the case of a filter validation error, e.g. 'key=abc**', an
-  /// [AzureFilterValidationException] is thrown.
+  /// If a filter validation error occurs (e.g. 'key=abc**'),
+  /// an [AzureFilterValidationException] is thrown.
   ///
-  /// Read more at the [API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters)
+  /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
   Future<List<KeyValue>> findKeyValuesBy({
-    String keyFilter,
-    String labelFilter,
+    String key,
+    String label,
   });
 
   /// Get a specific [KeyValue].

@@ -1,11 +1,11 @@
-import 'package:azure_app_config/src/models/key_value.dart';
-
 /// Defines constants that are related to
 /// filtering operations that can be made.
 class AzureFilters {
-  /// Matches any of a type.
+  const AzureFilters._();
+
+  /// Matches any record.
   static const String any = '*';
 
-  /// Matches any [KeyValue]s without a label.
+  /// Matches if a record's label is an empty value.
   static const String noLabel = '%00';
 }
