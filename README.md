@@ -6,19 +6,14 @@ This package makes it easier to communicate with Microsoft Azure App Configurati
 ## Installation
 To use this plugin, add `azure_app_config` to your `pubspec.yaml` file.
 
-## Example
-Creating an instance of AzureRemoteService:
-
-      final service = AzureRemoteService(
-        connectionString: "<CONNECTION_STRING>",
-      ); 
 
 ## Authentication
 
-A connection string is required to use App Configuration.
-The connection string can be obtained from the App Configuration Dashboard under 'Access keys'.
+There are two methods of using Azure App Configuration:
 
-When the connection string is invalid or not specified, an ArgumentError will occur.
+1. (simple) Use the connection string which can be obtained from the App Configuration Dashboard under 'Access keys'. If the connection string is invalid or not specified, an ArgumentError will occur.
+
+2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to prove a custom way of signing requests.
 
 ## Example 
 
@@ -83,9 +78,8 @@ When the connection string is invalid or not specified, an ArgumentError will oc
                 labelFilter: AzureFilters.noLabel,
             );
 
-            // Loop through the values
             for (final keyValue in keyValues) {
-            developer.log(keyValue.value);
+                developer.log(keyValue.value);
             }
 
             // When an invalid filter has been provided, for example, '.appconfig.**',
