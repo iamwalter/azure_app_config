@@ -126,6 +126,28 @@ abstract class AzureRemoteService {
     String label,
   });
 
+  ///  Retrieve [AzureKey] records based on filters.
+  ///
+  ///  Filter the records by [name].
+  ///
+  /// - name=[AzureFilters.any] (default) : Matches any key.
+  /// - name=abc                           : Matches a key named abc
+  /// - name=abc*                          : Matches keys names that start with
+  ///                                       abc
+  /// - name=abc,xyz                       : Matches keys names abc or xyz
+  ///                                       (limited to 5 values)
+  ///
+  /// Reserved characters: '*', '\\', ','.
+  ///
+  /// If a reserved character is part of the value, it must be escaped by using
+  ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
+  ///
+  /// If a filter validation error occurs (e.g. 'key=abc**'),
+  /// an [AzureFilterValidationException] is thrown.
+  ///
+  /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-keys#filtering).
+  Future<List<AzureKey>> findKeyBy({String name});
+
   /// Get a specific [KeyValue].
   Future<KeyValue> getKeyValue({
     required String key,

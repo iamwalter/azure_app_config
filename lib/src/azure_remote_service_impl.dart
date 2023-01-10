@@ -15,15 +15,14 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   /// Constructs an instance and registers default [FeatureFilter]s.
   AzureRemoteServiceImpl({
     required this.client,
-  }) {
-    // Add Standard Filters
-    registerFeatureFilter(FeatureFilter.percentage());
-    registerFeatureFilter(FeatureFilter.timeWindow());
-  }
+  });
 
   final Client client;
 
-  List<FeatureFilter> featureFilters = [];
+  List<FeatureFilter> featureFilters = [
+    FeatureFilter.percentage(),
+    FeatureFilter.timeWindow(),
+  ];
 
   @override
   Dio get dio => client.dio;
@@ -231,6 +230,28 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     for (final json in data['items'] as List<dynamic>) {
       final item = KeyValue.fromJson(json as Map<String, dynamic>);
+      items.add(item);
+    }
+
+    return items;
+  }
+
+  @override
+  Future<List<AzureKey>> findKeyBy({
+    String name = AzureFilters.any,
+  }) async {
+    const path = '/keys';
+    final params = {
+      'name': name,
+    };
+
+    final response = await client.get(path: path, params: params);
+
+    final data = response.data;
+    final items = <AzureKey>[];
+
+    for (final json in data['items'] as List<dynamic>) {
+      final item = AzureKey.fromJson(json as Map<String, dynamic>);
       items.add(item);
     }
 

@@ -21,6 +21,8 @@ const testKeyValue = KeyValue(
   lastModified: 'last_modified',
 );
 
+const testKey = AzureKey(name: 'test');
+
 @GenerateNiceMocks([MockSpec<Client>()])
 void main() {
   test('when the connection string does not contain all required values.', () {
@@ -252,6 +254,28 @@ void main() {
       label: 'CZ',
     );
     final expected = [key1, key2];
+
+    expect(actual, expected);
+  });
+
+  test('''findKeyBy should call correct endpoint & return AzureKeys''',
+      () async {
+    dioAdapter.onGet(
+      '$endpoint/keys',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            testKey.toJson(),
+            testKey.toJson(),
+            testKey.toJson(),
+          ]
+        });
+      },
+      queryParameters: {'api_version': '1.0', 'name': 'testSearchQuery'},
+    );
+
+    final actual = await service.findKeyBy(name: 'testSearchQuery');
+    final expected = [testKey, testKey, testKey];
 
     expect(actual, expected);
   });
