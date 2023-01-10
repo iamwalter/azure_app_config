@@ -30,6 +30,23 @@ abstract class AzureRemoteService {
     return AzureRemoteServiceImpl(client: client);
   }
 
+  /// Instanciate an instance of [AzureRemoteService] using an endpoint and
+  /// providing a custom interceptor.
+  ///
+  /// Using this method you are able to intercept requests and provide a custom
+  /// method of signing API requests.
+  factory AzureRemoteService.customAuthentication({
+    required String endpoint,
+    required Interceptor interceptor,
+  }) {
+    final client = Client.customAuthentication(
+      endpoint: endpoint,
+      interceptor: interceptor,
+    );
+
+    return AzureRemoteServiceImpl(client: client);
+  }
+
   /// Retrieves whether a [FeatureFlag] is enabled, using registered
   /// [FeatureFilter]'s. See [registerFeatureFilter].
   ///
