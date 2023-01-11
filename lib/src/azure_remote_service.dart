@@ -118,7 +118,7 @@ abstract class AzureRemoteService {
   ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
   ///
   /// If a filter validation error occurs (e.g. 'key=abc**'),
-  /// an [AzureFilterValidationException] is thrown.
+  /// an [AzureException] is thrown.
   ///
   /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
   Future<List<KeyValue>> findKeyValuesBy({

@@ -31,10 +31,9 @@ void main() async {
 
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
-
-    // .asFeatureFlag() will throw this exception if it's unable to parse.
-  } on AzureKeyValueNotParsableAsFeatureFlagException {
-    rethrow;
+  } // .asFeatureFlag() will throw this exception if it's unable to parse.
+  on AzureKeyValueNotParsableAsFeatureFlagException {
+    developer.log('Oh no!');
   }
 
   // To check if a featureflag is enabled while parsing the featurefilters, use
@@ -66,7 +65,7 @@ void main() async {
 
     // When an invalid filter has been provided, for example, '.appconfig.**',
     // an [AzureFilterValidationException] is thrown.
-  } on AzureFilterValidationException catch (e) {
-    developer.log(e.errorResponse?.detail ?? 'Handle error');
+  } on AzureException catch (e) {
+    developer.log(e.errorResponse?.detail ?? 'Error occurred!');
   }
 }
