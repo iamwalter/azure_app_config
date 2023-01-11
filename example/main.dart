@@ -37,7 +37,6 @@ void main() async {
   }
 
   // To check if a featureflag is enabled while parsing the featurefilters, use
-
   try {
     final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
@@ -65,7 +64,7 @@ void main() async {
 
     // When an invalid filter has been provided, for example, '.appconfig.**',
     // an [AzureFilterValidationException] is thrown.
-  } on AzureException catch (e) {
-    developer.log(e.errorResponse?.detail ?? 'Error occurred!');
+  } on AzureFilterValidationException catch (e) {
+    developer.log(e.errorResponse.detail ?? 'Error occurred!');
   }
 }
