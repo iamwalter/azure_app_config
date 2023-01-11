@@ -12,6 +12,7 @@ class AzureRecordNotFoundException implements Exception {
   String toString() => 'AzureRecordNotFoundException: 404';
 }
 
+/// When a invalid filter query has been provided.
 class AzureFilterValidationException implements Exception {
   AzureFilterValidationException(this.errorResponse);
 
@@ -22,6 +23,7 @@ class AzureFilterValidationException implements Exception {
       'AzureFilterValidationException: ${errorResponse.title} - ${errorResponse.detail}';
 }
 
+/// When a locked record is changed.
 class AzureRecordLockedException implements Exception {
   AzureRecordLockedException(this.errorResponse);
 
