@@ -83,6 +83,49 @@ class ClientImpl implements Client {
 
   final String endpoint;
 
+  /// Handle any exceptions that may be thrown during the execution of
+  /// the passed-in [callBack].
+  Future<Response<dynamic>> _requestHelper(
+    Future<Response<dynamic>> Function() callBack,
+  ) async {
+    try {
+      return await callBack();
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.response) {
+        if (e.response?.statusCode == 400) {
+          // Expecting a response object from API
+          final errorResponse = ErrorResponse.fromJson(
+            e.response?.data as Map<String, dynamic>,
+          );
+
+          throw AzureFilterValidationException(errorResponse);
+        }
+
+        if (e.response?.statusCode == 401) {
+          throw AzureAuthenticationException();
+        }
+
+        if (e.response?.statusCode == 404) {
+          throw AzureRecordNotFoundException();
+        }
+        if (e.response?.statusCode == 409) {
+          // Expecting a response object from API
+          final errorResponse = ErrorResponse.fromJson(
+            e.response?.data as Map<String, dynamic>,
+          );
+
+          throw AzureRecordLockedException(errorResponse);
+        }
+      }
+
+      if (e.type == DioErrorType.other) {
+        throw e.error as Exception;
+      }
+
+      rethrow;
+    }
+  }
+
   /// Returns the [Response] of a GET request.
   ///
   /// Returns the response from 'http://[endpoint]/[path]?[params]'.
@@ -91,25 +134,14 @@ class ClientImpl implements Client {
     required String path,
     required Map<String, String> params,
   }) async {
-    params['api_version'] = '1.0';
+    return _requestHelper(() async {
+      params['api_version'] = '1.0';
 
-    try {
-      return await dio.get<dynamic>(
+      return dio.get<dynamic>(
         '$endpoint$path',
         queryParameters: params,
       );
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
-        final errorModel =
-            ErrorResponse.fromJson(e.response?.data as Map<String, dynamic>);
-
-        throw AzureFilterValidationException(errorModel);
-      }
-
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
+    });
   }
 
   /// Returns the [Response] of a PUT request.
@@ -125,13 +157,15 @@ class ClientImpl implements Client {
     required Map<String, dynamic> data,
     required Map<String, String> headers,
   }) {
-    params['api_version'] = '1.0';
+    return _requestHelper(() async {
+      params['api_version'] = '1.0';
 
-    return dio.put(
-      '$endpoint$path',
-      queryParameters: params,
-      data: jsonEncode(data),
-      options: Options(headers: headers),
-    );
+      return dio.put(
+        '$endpoint$path',
+        queryParameters: params,
+        data: jsonEncode(data),
+        options: Options(headers: headers),
+      );
+    });
   }
 }
