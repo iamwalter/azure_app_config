@@ -12,7 +12,7 @@ part 'feature_flag.g.dart';
 /// More about [FeatureFlag's](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management).
 @freezed
 class FeatureFlag with _$FeatureFlag {
-  /// Instanciate a [FeatureFlag]
+  /// Instantiate a [FeatureFlag]
   const factory FeatureFlag({
     required String id,
     required String description,

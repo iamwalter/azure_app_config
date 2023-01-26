@@ -1,4 +1,3 @@
-import 'package:azure_app_config/complex_type.dart';
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
@@ -22,7 +21,7 @@ import 'package:meta/meta.dart';
 /// an [ArgumentError] will occur when creating an
 /// instance of [AzureRemoteService].
 abstract class AzureRemoteService {
-  /// Instanciate an instance of [AzureRemoteService] using a [connectionString]
+  /// Instantiate an instance of [AzureRemoteService] using a [connectionString]
   factory AzureRemoteService({
     required String connectionString,
   }) {
@@ -31,14 +30,7 @@ abstract class AzureRemoteService {
     return AzureRemoteServiceImpl(client: client);
   }
 
-  Future<O> getComplexType<O extends ComplexType>({
-    required String key,
-    required String label,
-  });
-
-  void registerComplexType<O extends ComplexType>(O type);
-
-  /// Instanciate an instance of [AzureRemoteService] using an endpoint and
+  /// Instantiate an instance of [AzureRemoteService] using an endpoint and
   /// providing a custom interceptor.
   ///
   /// Using this method you are able to intercept requests and provide a custom
@@ -126,7 +118,7 @@ abstract class AzureRemoteService {
   ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
   ///
   /// If a filter validation error occurs (e.g. 'key=abc**'),
-  /// an [AzureException] is thrown.
+  /// an [AzureFilterValidationException] is thrown.
   ///
   /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
   Future<List<KeyValue>> findKeyValuesBy({
@@ -181,4 +173,44 @@ abstract class AzureRemoteService {
   /// Make Dio available for tests.
   @visibleForTesting
   Dio get dio;
+
+  /// Register a mapping for a Type.
+  ///
+  /// Enables you to register type and provide
+  /// encode/decode instructions for that type.
+  ///
+  /// After registering a type, you can use [getTyped] to retrieve the object
+  /// which will use the [decode] function, or [setTyped] to set a value in
+  /// which will use the [encode] function.
+  ///
+  /// Throws a [AzureComplexTypeException] if the Type is already registered.
+  void registerType<O>({
+    O Function(Map<String, dynamic> jsonData)? decode,
+    Map<String, dynamic> Function(O object)? encode,
+  });
+
+  /// Unregister a mapping for a Type.
+  void unregisterType<O>();
+
+  /// Retrieve a certain type and use the encode mapping provided
+  /// in [registerType].
+  ///
+  /// Throws a [AzureComplexTypeException] if the Type is not registered or does
+  /// not have a decode mapping.
+  Future<O> getTyped<O>({
+    required String key,
+    required String label,
+  });
+
+  /// Set a certain type and use the encode mapping provided
+  /// in [registerType].
+  ///
+  /// Throws a [AzureComplexTypeException] if the Type is not registered or does
+  /// not have a encode mapping.
+
+  Future<void> setTyped<O>(
+    O object, {
+    required String key,
+    required String label,
+  });
 }

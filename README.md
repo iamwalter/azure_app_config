@@ -13,7 +13,7 @@ There are two methods of using Azure App Configuration:
 
 1. (simple) Use the connection string which can be obtained from the App Configuration Dashboard under 'Access keys'. If the connection string is invalid or not specified, an ArgumentError will occur.
 
-2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to prove a custom way of signing requests.
+2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to provide a custom way of signing requests.
 
 ## Example 
 
@@ -89,6 +89,40 @@ There are two methods of using Azure App Configuration:
         }
     }
 
+
+## Complex Types
+
+You are able to register types with their associated 
+encode and decode functions. After registering the types, the library will automatically use those functions to retrieve/set values in the database.
+
+    class TimeRange {
+        String start;
+        String end;
+        TimeRange(this.start, this.end);
+        factory TimeRange.fromJson(Map<String, dynamic>)
+        Map<String, dynamic> toMap() => {'start': start, 'end': end}
+    }
+    
+    ...
+
+    // Register a type, so that the library knows how to encode and decode the model
+    service.registerType<TimeRange>(
+      decode: (jsonData) => TimeRange.fromJson(jsonData),
+      encode: (timeRange) => timeRange.toMap(),
+    );
+
+    // Uses the passed-in [encode] method to know the json structure to use.
+    await service.setTyped(
+        TimeRange('Monday', 'Friday'),
+        key: 'time_range',
+        label: 'some_label',
+    );
+    
+    // Uses the passed-in [decode] method to know how to serialize [TimeRange]
+    final timeRange = await service.getTyped<TimeRange>(
+        key: 'time_range',
+        label: 'some_label',
+    ); 
 
 ---
 

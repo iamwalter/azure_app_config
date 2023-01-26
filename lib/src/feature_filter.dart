@@ -22,7 +22,7 @@ abstract class FeatureFilter {
 
 /// Microsoft's default Percentage Filter.
 class Percentage extends FeatureFilter {
-  /// Instanciate the [Percentage] filter.
+  /// Instantiate the [Percentage] filter.
   Percentage() : super(name: 'Microsoft.Targeting');
 
   @override
@@ -37,7 +37,7 @@ class Percentage extends FeatureFilter {
 
 /// Microsoft's default TimeWindow Filter.
 class TimeWindow extends FeatureFilter {
-  /// Instanciate the [TimeWindow] filter.
+  /// Instantiate the [TimeWindow] filter.
   TimeWindow({this.clock}) : super(name: 'Microsoft.TimeWindow');
 
   /// Optional time for the timewindow to use. Used for testing.

@@ -10,7 +10,7 @@ import 'package:dio/dio.dart';
 /// Handles configuring the Content & Authorization correct
 /// headers for each API call that is made to Azure.
 class AzureRemoteInterceptor extends Interceptor {
-  /// Instanciates a [AzureRemoteInterceptor]
+  /// Instantiate a [AzureRemoteInterceptor]
   AzureRemoteInterceptor({
     required String credential,
     required String secret,
