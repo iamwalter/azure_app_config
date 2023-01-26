@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:azure_app_config/complex_type.dart';
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
@@ -256,5 +257,24 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     }
 
     return items;
+  }
+
+
+  List<ComplexType> complexTypes = [];
+
+  @override
+  ComplexType getComplexType<O extends ComplexType>({
+    required String key,
+    required String label,
+    required O type,
+  }) async {
+    final keyValue = await getKeyValue(key: key, label: label);
+
+    final type = type.
+  }
+
+
+  void registerComplexType(ComplexType type) {
+    complexTypes.add(type);
   }
 }

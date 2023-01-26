@@ -1,3 +1,4 @@
+import 'package:azure_app_config/complex_type.dart';
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
@@ -29,6 +30,13 @@ abstract class AzureRemoteService {
 
     return AzureRemoteServiceImpl(client: client);
   }
+
+  ComplexType getComplexType<O extends ComplexType>({
+    required String key,
+    required String label,
+  });
+
+  void registerComplexType(ComplexType type);
 
   /// Instanciate an instance of [AzureRemoteService] using an endpoint and
   /// providing a custom interceptor.
