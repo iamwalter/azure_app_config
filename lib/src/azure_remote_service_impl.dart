@@ -259,22 +259,35 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     return items;
   }
 
-
   List<ComplexType> complexTypes = [];
 
   @override
-  ComplexType getComplexType<O extends ComplexType>({
+  void registerComplexType<O extends ComplexType>(O type) {
+    if (complexTypes
+        .where((element) => element.runtimeType == type.runtimeType)
+        .isNotEmpty) {
+      throw Exception('ComplexType already exists!');
+    }
+
+    complexTypes.add(type);
+  }
+
+  @override
+  Future<O> getComplexType<O extends ComplexType>({
     required String key,
     required String label,
-    required O type,
   }) async {
     final keyValue = await getKeyValue(key: key, label: label);
 
-    final type = type.
-  }
+    for (final type in complexTypes) {
+      if (type is O) {
+        final complexType =
+            type.fromJson(json.decode(keyValue.value) as Map<String, dynamic>);
 
+        return complexType as O;
+      }
+    }
 
-  void registerComplexType(ComplexType type) {
-    complexTypes.add(type);
+    throw Error();
   }
 }

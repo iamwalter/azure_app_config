@@ -31,12 +31,12 @@ abstract class AzureRemoteService {
     return AzureRemoteServiceImpl(client: client);
   }
 
-  ComplexType getComplexType<O extends ComplexType>({
+  Future<O> getComplexType<O extends ComplexType>({
     required String key,
     required String label,
   });
 
-  void registerComplexType(ComplexType type);
+  void registerComplexType<O extends ComplexType>(O type);
 
   /// Instanciate an instance of [AzureRemoteService] using an endpoint and
   /// providing a custom interceptor.
