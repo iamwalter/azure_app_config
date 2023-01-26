@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -14,15 +15,14 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   /// Constructs an instance and registers default [FeatureFilter]s.
   AzureRemoteServiceImpl({
     required this.client,
-  }) {
-    // Add Standard Filters
-    registerFeatureFilter(FeatureFilter.percentage());
-    registerFeatureFilter(FeatureFilter.timeWindow());
-  }
+  });
 
   final Client client;
 
-  List<FeatureFilter> featureFilters = [];
+  List<FeatureFilter> featureFilters = [
+    FeatureFilter.percentage(),
+    FeatureFilter.timeWindow(),
+  ];
 
   @override
   Dio get dio => client.dio;
@@ -41,10 +41,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
         await getKeyValue(key: '.appconfig.featureflag/$key', label: label);
 
     final feature = keyValue.asFeatureFlag();
-
-    if (feature == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
 
     var enabled = feature.enabled;
 
@@ -73,9 +69,13 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
-      final featureFlag = kv.asFeatureFlag();
+      try {
+        final featureFlag = kv.asFeatureFlag();
 
-      if (featureFlag != null) featureFlags.add(featureFlag);
+        featureFlags.add(featureFlag);
+      } on AzureKeyValueNotParsableAsFeatureFlagException {
+        continue;
+      }
     }
 
     return featureFlags;
@@ -172,27 +172,29 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   @override
   Future<Response<dynamic>> disableFeature({
-    required KeyValue keyValue,
+    required String key,
+    required String label,
   }) =>
-      _setFeatureEnabled(keyValue: keyValue, isEnabled: false);
+      setFeatureEnabled(key: key, label: label, isEnabled: false);
 
   @override
   Future<Response<dynamic>> enableFeature({
-    required KeyValue keyValue,
+    required String key,
+    required String label,
   }) =>
-      _setFeatureEnabled(keyValue: keyValue, isEnabled: true);
+      setFeatureEnabled(key: key, label: label, isEnabled: true);
 
-  Future<Response<dynamic>> _setFeatureEnabled({
-    required KeyValue keyValue,
+  @override
+  Future<Response<dynamic>> setFeatureEnabled({
+    required String key,
+    required String label,
     required bool isEnabled,
   }) async {
+    final keyValue = await getKeyValue(key: key, label: label);
+
     final FeatureFlag? featureFlag;
 
     featureFlag = keyValue.asFeatureFlag();
-
-    if (featureFlag == null) {
-      throw AzureKeyValueNotParsableAsFeatureFlag();
-    }
 
     final modifiedFeatureFlag = featureFlag.copyWith(enabled: isEnabled);
 
@@ -208,5 +210,51 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
             'application/vnd.microsoft.appconfig.kv+json; charset=utf-8',
       },
     );
+  }
+
+  @override
+  Future<List<KeyValue>> findKeyValuesBy({
+    String key = AzureFilters.any,
+    String label = AzureFilters.any,
+  }) async {
+    const path = '/kv';
+    final params = {
+      'key': key,
+      'label': label,
+    };
+
+    final response = await client.get(path: path, params: params);
+
+    final data = response.data;
+    final items = <KeyValue>[];
+
+    for (final json in data['items'] as List<dynamic>) {
+      final item = KeyValue.fromJson(json as Map<String, dynamic>);
+      items.add(item);
+    }
+
+    return items;
+  }
+
+  @override
+  Future<List<AzureKey>> findKeyBy({
+    String name = AzureFilters.any,
+  }) async {
+    const path = '/keys';
+    final params = {
+      'name': name,
+    };
+
+    final response = await client.get(path: path, params: params);
+
+    final data = response.data;
+    final items = <AzureKey>[];
+
+    for (final json in data['items'] as List<dynamic>) {
+      final item = AzureKey.fromJson(json as Map<String, dynamic>);
+      items.add(item);
+    }
+
+    return items;
   }
 }

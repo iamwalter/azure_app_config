@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:azure_app_config/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
+
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -19,6 +20,8 @@ const testKeyValue = KeyValue(
   locked: false,
   lastModified: 'last_modified',
 );
+
+const testKey = AzureKey(name: 'test');
 
 @GenerateNiceMocks([MockSpec<Client>()])
 void main() {
@@ -95,122 +98,6 @@ void main() {
           data: {},
           headers: {
             'Content-Type': 'application/vnd.microsoft.appconfig.kv+json',
-          },
-        ),
-      ).called(1);
-    });
-  });
-
-  test('getFeatureEnabled', () {
-    //todo
-  });
-
-  group('enableFeature', () {
-    final client = MockClient();
-    final service = AzureRemoteServiceImpl(client: client);
-
-    test('with invalid featureflag', () async {
-      const kv = KeyValue(
-        etag: 'etag',
-        key: 'key',
-        tags: {},
-        value: 'dad',
-        locked: false,
-        lastModified: '',
-      );
-
-      expect(
-        service.enableFeature(keyValue: kv),
-        throwsA(isA<AzureKeyValueNotParsableAsFeatureFlag>()),
-      );
-    });
-
-    test('with valid featureflag', () async {
-      const featureFlag = FeatureFlag(
-        id: 'id',
-        description: 'description',
-        enabled: true,
-        conditions: {},
-      );
-
-      final kv = KeyValue(
-        etag: 'etag',
-        key: 'key',
-        tags: {},
-        value: json.encode(featureFlag),
-        locked: false,
-        lastModified: '',
-      );
-
-      final key = kv.key;
-      final label = kv.label ?? '';
-
-      await service.enableFeature(keyValue: kv);
-
-      verify(
-        client.put(
-          path: '/kv/$key',
-          params: {'label': label},
-          data: kv.toJson(),
-          headers: {
-            'Content-Type':
-                'application/vnd.microsoft.appconfig.kv+json; charset=utf-8'
-          },
-        ),
-      ).called(1);
-    });
-  });
-
-  group('disableFeature', () {
-    final client = MockClient();
-    final service = AzureRemoteServiceImpl(client: client);
-
-    test('with invalid featureflag', () async {
-      const kv = KeyValue(
-        etag: 'etag',
-        key: 'key',
-        tags: {},
-        value: 'dad',
-        locked: false,
-        lastModified: '',
-      );
-
-      expect(
-        service.disableFeature(keyValue: kv),
-        throwsA(isA<AzureKeyValueNotParsableAsFeatureFlag>()),
-      );
-    });
-
-    test('with valid featureflag', () async {
-      const featureFlag = FeatureFlag(
-        id: 'id',
-        description: 'description',
-        enabled: false,
-        conditions: {},
-      );
-
-      final kv = KeyValue(
-        etag: 'etag',
-        key: 'key',
-        tags: {},
-        value: json.encode(featureFlag),
-        locked: false,
-        lastModified: '',
-      );
-
-      final key = kv.key;
-      final label = kv.label ?? '';
-
-      await service.disableFeature(keyValue: kv);
-
-      verify(
-        client.put(
-          path: '/kv/$key',
-          params: {'label': label},
-          data: kv.toJson(),
-          headers: {
-            'Content-Type':
-                'application/vnd.microsoft.appconfig.kv+json; charset=utf-8'
           },
         ),
       ).called(1);
@@ -307,6 +194,88 @@ void main() {
 
     final expected = [testFeatureFlag];
     final actual = await service.getFeatureFlags();
+
+    expect(actual, expected);
+  });
+
+  test(
+      '''findKeyValuesBy get keyvalues with correct query params when using %00 as label''',
+      () async {
+    const key1 = testKeyValue;
+    final key2 = key1.copyWith(key: 'keyvalue2');
+
+    dioAdapter.onGet(
+      '$endpoint/kv',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            key1.toJson(),
+            key2.toJson(),
+          ]
+        });
+      },
+      queryParameters: {
+        'api_version': '1.0',
+        'key': 'key*',
+        'label': AzureFilters.noLabel
+      },
+    );
+
+    final actual = await service.findKeyValuesBy(
+      key: 'key*',
+      label: AzureFilters.noLabel,
+    );
+    final expected = [key1, key2];
+
+    expect(actual, expected);
+  });
+
+  test(
+      '''findKeyValuesBy get keyvalues with correct query params when not using %00 as label''',
+      () async {
+    const key1 = testKeyValue;
+    final key2 = key1.copyWith(key: 'keyvalue2');
+
+    dioAdapter.onGet(
+      '$endpoint/kv',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            key1.toJson(),
+            key2.toJson(),
+          ]
+        });
+      },
+      queryParameters: {'api_version': '1.0', 'key': 'key*', 'label': 'CZ'},
+    );
+
+    final actual = await service.findKeyValuesBy(
+      key: 'key*',
+      label: 'CZ',
+    );
+    final expected = [key1, key2];
+
+    expect(actual, expected);
+  });
+
+  test('''findKeyBy should call correct endpoint & return AzureKeys''',
+      () async {
+    dioAdapter.onGet(
+      '$endpoint/keys',
+      (server) {
+        return server.reply(200, {
+          'items': [
+            testKey.toJson(),
+            testKey.toJson(),
+            testKey.toJson(),
+          ]
+        });
+      },
+      queryParameters: {'api_version': '1.0', 'name': 'testSearchQuery'},
+    );
+
+    final actual = await service.findKeyBy(name: 'testSearchQuery');
+    final expected = [testKey, testKey, testKey];
 
     expect(actual, expected);
   });

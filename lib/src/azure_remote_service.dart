@@ -1,3 +1,4 @@
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
@@ -29,33 +30,123 @@ abstract class AzureRemoteService {
     return AzureRemoteServiceImpl(client: client);
   }
 
+  /// Instanciate an instance of [AzureRemoteService] using an endpoint and
+  /// providing a custom interceptor.
+  ///
+  /// Using this method you are able to intercept requests and provide a custom
+  /// method of signing API requests.
+  factory AzureRemoteService.customAuthentication({
+    required String endpoint,
+    required Interceptor interceptor,
+  }) {
+    final client = Client.customAuthentication(
+      endpoint: endpoint,
+      interceptor: interceptor,
+    );
+
+    return AzureRemoteServiceImpl(client: client);
+  }
+
   /// Retrieves whether a [FeatureFlag] is enabled, using registered
   /// [FeatureFilter]'s. See [registerFeatureFilter].
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] is not
-  /// parsable to [FeatureFlag].
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
+  /// [KeyValue] is not parsable to [FeatureFlag].
   Future<bool> getFeatureEnabled({
     required String key,
     required String label,
   });
 
-  /// Disables a given feature to be enabled.
+  /// Sets a given Feature to be enabled or disabled based on [isEnabled].
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] does
-  /// not parse to a [FeatureFlag].
-  Future<Response<dynamic>> enableFeature({required KeyValue keyValue});
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
+  /// [KeyValue] does not parse to a [FeatureFlag].
+  Future<Response<dynamic>> setFeatureEnabled({
+    required String key,
+    required String label,
+    required bool isEnabled,
+  });
 
-  /// Disables a given feature to be disabled.
+  /// Sets a given feature to be enabled.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlag] if the [KeyValue] does
-  /// not parse to a [FeatureFlag].
-  Future<Response<dynamic>> disableFeature({required KeyValue keyValue});
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
+  /// [KeyValue] does not parse to a [FeatureFlag].
+  Future<Response<dynamic>> enableFeature({
+    required String key,
+    required String label,
+  });
+
+  /// Sets a given feature to be disabled.
+  ///
+  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
+  /// [KeyValue] does not parse to a [FeatureFlag].
+  Future<Response<dynamic>> disableFeature({
+    required String key,
+    required String label,
+  });
 
   /// Retrieve a list of [FeatureFlag].
   Future<List<FeatureFlag>> getFeatureFlags();
 
   /// Retrieve a list of [KeyValue].
   Future<List<KeyValue>> getKeyValues();
+
+  ///  Retrieve [KeyValue] records based on filters.
+  ///
+  ///  Filter the records by [key].
+  ///
+  /// - key=[AzureFilters.any] (default)  : Matches any key.
+  /// - key=abc                           : Matches a key named abc
+  /// - key=abc*                          : Matches keys names that start with
+  ///                                       abc
+  /// - key=abc,xyz                       : Matches keys names abc or xyz
+  ///                               (limited to 5 values)
+  ///
+  ///  Filters the records by [label].
+  ///
+  /// - label=[AzureFilters.any] (default): Matches empty and non-empty labels
+  /// - label=[AzureFilters.noLabel]      : Only matches [KeyValue]s without a
+  ///                                       label.
+  /// - label=prod                        : Matches the label prod
+  /// - label=prod*                       : Matches labels that start with prod
+  /// - label=prod,test                   : Matches labels prod or test
+  ///                                       (limited to 5 values)
+  ///
+  /// Reserved characters: '*', '\\', ','.
+  ///
+  /// If a reserved character is part of the value, it must be escaped by using
+  ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
+  ///
+  /// If a filter validation error occurs (e.g. 'key=abc**'),
+  /// an [AzureException] is thrown.
+  ///
+  /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
+  Future<List<KeyValue>> findKeyValuesBy({
+    String key,
+    String label,
+  });
+
+  ///  Retrieve [AzureKey] records based on filters.
+  ///
+  ///  Filter the records by [name].
+  ///
+  /// - name=[AzureFilters.any] (default) : Matches any key.
+  /// - name=abc                           : Matches a key named abc
+  /// - name=abc*                          : Matches keys names that start with
+  ///                                       abc
+  /// - name=abc,xyz                       : Matches keys names abc or xyz
+  ///                                       (limited to 5 values)
+  ///
+  /// Reserved characters: '*', '\\', ','.
+  ///
+  /// If a reserved character is part of the value, it must be escaped by using
+  ///  \\{Reserved Character}. Non-reserved characters can also be escaped.
+  ///
+  /// If a filter validation error occurs (e.g. 'key=abc**'),
+  /// an [AzureFilterValidationException] is thrown.
+  ///
+  /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-keys#filtering).
+  Future<List<AzureKey>> findKeyBy({String name});
 
   /// Get a specific [KeyValue].
   Future<KeyValue> getKeyValue({

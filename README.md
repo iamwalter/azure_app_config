@@ -6,45 +6,97 @@ This package makes it easier to communicate with Microsoft Azure App Configurati
 ## Installation
 To use this plugin, add `azure_app_config` to your `pubspec.yaml` file.
 
-## Example
-Creating an instance of AzureRemoteService:
-
-      final service = AzureRemoteService(
-        connectionString: "<CONNECTION_STRING>",
-      ); 
 
 ## Authentication
 
-A connection string is required to use App Configuration.
-The connection string can be obtained from the App Configuration Dashboard under 'Access keys'.
+There are two methods of using Azure App Configuration:
 
-Please note that when a connection string is invalid or not specified,
-an ArgumentError will occur.
+1. (simple) Use the connection string which can be obtained from the App Configuration Dashboard under 'Access keys'. If the connection string is invalid or not specified, an ArgumentError will occur.
 
-## Example Usages
+2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to prove a custom way of signing requests.
 
-To get all KeyValues:
+## Example 
 
-    final keyValue = await service.getKeyValues()
+    import 'dart:developer' as developer;
 
-... or a specific keyValue:
+    import 'package:azure_app_config/azure_app_config.dart';
 
-    final keyValue = await service.getKeyValue("key", "label")
+    void main() async {
+        const exampleKey = 'example_key';
+        const exampleLabel = 'example_label';
 
-To convert a KeyValue to a feature flag entity use the method 
+        // Creating an instance needs a connection String. This can be
+        // obtained through the Azure Portal, under "Access Keys".
+        final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
-    keyValue.asFeatureFlag()
+        // Getting a keyvalue
+        late KeyValue keyValue;
 
-To get if a feature is enabled, use the `getFeatureEnabled` method.
+        try {
+            keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
+        } catch (err) {
+            // Handle any exceptions that might occur when interacting with the Azure
+            // service
+            developer.log('Error occurred while getting key value: $err');
+        }
 
-    final enabled = await getFeatureEnabled("example_key", "example_tag");
+        // Now you can retrieve any property of the keyValue, for instance
+        developer.log(keyValue.value);
+
+        // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
+        // to get the properties of the FeatureFlag
+        try {
+            final featureFlag = keyValue.asFeatureFlag();
+
+            // To check if the featureflag is enabled, use
+            developer.log('${featureFlag.enabled}');
+
+            // .asFeatureFlag() will throw this exception if it's unable to parse.
+        } on AzureKeyValueNotParsableAsFeatureFlagException {
+            rethrow;
+        }
+
+        // To check if a featureflag is enabled while parsing the featurefilters, use
+
+        try {
+            final isFeatureEnabled =
+                await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
+
+            developer.log('$isFeatureEnabled');
+        } catch (err) {
+            // Handle any exceptions that might occur when interacting with the Azure
+            // service
+            developer.log('Error occurred while checking if feature is enabled: $err');
+        }
+
+        // To find FeatureFlags based on a key and label filter use findKeyValuesBy().
+        // This example searches for the keyValues that start with '.appconfig.'
+        // without a label:
+        try {
+            final keyValues = await service.findKeyValuesBy(
+                keyFilter: '.appconfig.*',
+                labelFilter: AzureFilters.noLabel,
+            );
+
+            for (final keyValue in keyValues) {
+                developer.log(keyValue.value);
+            }
+
+            // When an invalid filter has been provided, for example, '.appconfig.**',
+            // an [AzureFilterValidationException] is thrown.
+        } on AzureFilterValidationException catch (e) {
+            developer.log(e.message ?? '');
+        }
+    }
+
 
 ---
 
 ### FeatureFilters
 This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
-**Microsoft.Targeting** -> Enable a flag based on a percentage.
+**Microsoft.Targeting** -> Enable a flag based on a percentage. Use 'Default Percentage' for this. The Groups section is still a work in progress, and is not included in this library. 
+
 **Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
 ### Implement your own FeatureFilter
@@ -71,3 +123,11 @@ For more information about Azure App Configuration, take a look at the following
 
  - [Azure App Configuration Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/overview)
  - [Feature Management Overview](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management)
+
+
+Feel free to submit any pull requests!
+
+
+
+
+Package created by Walter Tesevic commissioned by Ordina
