@@ -170,10 +170,6 @@ abstract class AzureRemoteService {
     Map<String, dynamic>? tags,
   });
 
-  /// Make Dio available for tests.
-  @visibleForTesting
-  Dio get dio;
-
   /// Register a mapping for a Type.
   ///
   /// Enables you to register type and provide
@@ -207,10 +203,13 @@ abstract class AzureRemoteService {
   ///
   /// Throws a [AzureComplexTypeException] if the Type is not registered or does
   /// not have a encode mapping.
-
   Future<void> setTyped<O>(
     O object, {
     required String key,
     required String label,
   });
+
+  /// Make Dio available for tests.
+  @visibleForTesting
+  Dio get dio;
 }

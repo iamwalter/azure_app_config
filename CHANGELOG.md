@@ -1,3 +1,6 @@
+## 0.12.0
+- Add registering of ComplexTypes for automatic (de)serialization of models.
+
 ## 0.11.0
 
 - Add factory constructor AzureRemoteService.customAuthentication() to provide custom way of signing requests.
