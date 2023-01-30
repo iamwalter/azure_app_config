@@ -8,7 +8,11 @@ void main() async {
 
   // Creating an instance needs a connection String. This can be
   // obtained through the Azure Portal, under "Access Keys".
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>')
+    ..registerFeatureFilter(FeatureFilter.percentage())
+    ..setFeatureFilterSettings(
+      user: 'test.user@company.com',
+    );
 
   // Getting a keyvalue
   late KeyValue keyValue;

@@ -10,6 +10,33 @@ void main() {
 
   var percentageFilter = TimeWindow(clock: current);
 
+  test('''
+Percentage filter should return the same value for the same user string''', () {
+    final params = <String, dynamic>{
+      'Audience': {
+        'DefaultRolloutPercentage': 25,
+      },
+    };
+
+    final filter = FeatureFilter.percentage();
+
+    var actual = filter.evaluate(
+      params,
+      const FeatureFilterSettings(user: 'test.user@company.com'),
+      'feature-a',
+    );
+
+    expect(actual, false);
+
+    actual = filter.evaluate(
+      params,
+      const FeatureFilterSettings(user: 'test.user8@company.com'),
+      'feature-b',
+    );
+
+    expect(actual, true);
+  });
+
   test('Time Filter should return good result based on current time and input',
       () {
     // START ONLY
@@ -17,7 +44,7 @@ void main() {
       'Start': HttpDate.format(before),
     };
 
-    var actual = percentageFilter.evaluate(params);
+    var actual = percentageFilter.evaluate(params, null, '');
     var expected = true;
 
     expect(actual, expected);
@@ -27,7 +54,7 @@ void main() {
       'End': HttpDate.format(after),
     };
 
-    actual = percentageFilter.evaluate(params);
+    actual = percentageFilter.evaluate(params, null, '');
     expected = true;
 
     expect(actual, expected);
@@ -39,7 +66,7 @@ void main() {
       'End': HttpDate.format(after),
     };
 
-    actual = percentageFilter.evaluate(params);
+    actual = percentageFilter.evaluate(params, null, '');
     expected = false;
     expect(actual, expected);
 
@@ -49,20 +76,20 @@ void main() {
       'End': HttpDate.format(current),
     };
 
-    actual = percentageFilter.evaluate(params);
+    actual = percentageFilter.evaluate(params, null, '');
     expected = false;
     expect(actual, expected);
 
     // Invalid Inputs should return true
     params = <String, dynamic>{};
-    actual = percentageFilter.evaluate(params);
+    actual = percentageFilter.evaluate(params, null, '');
     expected = true;
 
     expect(actual, expected);
 
     params = <String, dynamic>{'Start': 23};
 
-    actual = percentageFilter.evaluate(params);
+    actual = percentageFilter.evaluate(params, null, '');
     expected = true;
 
     expect(actual, expected);

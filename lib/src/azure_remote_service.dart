@@ -209,6 +209,8 @@ abstract class AzureRemoteService {
     required String label,
   });
 
+  void setFeatureFilterSettings({required String user});
+
   /// Make Dio available for tests.
   @visibleForTesting
   Dio get dio;

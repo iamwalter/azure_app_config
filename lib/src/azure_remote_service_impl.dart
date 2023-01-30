@@ -18,12 +18,14 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     required this.client,
   });
 
+  // HTTP client
   final Client client;
 
-  List<FeatureFilter> featureFilters = [
-    FeatureFilter.percentage(),
-    FeatureFilter.timeWindow(),
-  ];
+  //
+  List<FeatureFilter> featureFilters = [];
+
+  // Map that holds mapping data.
+  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
 
   @override
   Dio get dio => client.dio;
@@ -53,7 +55,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
       for (final featureFilter in featureFilters) {
         if (featureFilter.name == name) {
-          enabled = featureFilter.evaluate(params);
+          enabled = featureFilter.evaluate(params, settings, key);
 
           developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
         }
@@ -259,9 +261,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     return items;
   }
 
-  // Map that holds mapping data.
-  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
-
   @override
   void registerType<O>({
     O Function(Map<String, dynamic> jsonData)? decode,
@@ -334,5 +333,12 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       value: jsonEncode(json),
       contentType: 'application/json',
     );
+  }
+
+  FeatureFilterSettings? settings;
+
+  @override
+  void setFeatureFilterSettings({required String user}) {
+    settings = FeatureFilterSettings(user: user);
   }
 }

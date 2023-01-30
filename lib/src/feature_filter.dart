@@ -1,10 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
+import 'package:crypto/crypto.dart';
+
+/// Settings that all feature filters can use.
+class FeatureFilterSettings {
+  const FeatureFilterSettings({required this.user});
+
+  final String user;
+}
 
 /// A filter that can be used to determine whether some criteria is
 /// met to enable a feature flag.
 abstract class FeatureFilter {
-  FeatureFilter({required this.name});
+  const FeatureFilter({required this.name});
 
   /// Microsoft's default 'TimeWindow' filter.
   factory FeatureFilter.timeWindow() => TimeWindow();
@@ -17,7 +27,11 @@ abstract class FeatureFilter {
   final String name;
 
   /// The callback that is executed while evaluating the [FeatureFilter].
-  bool evaluate(Map<String, dynamic> parameters);
+  bool evaluate(
+    Map<String, dynamic> parameters,
+    FeatureFilterSettings? settings,
+    String featureKey,
+  );
 }
 
 /// Microsoft's default Percentage Filter.
@@ -25,11 +39,30 @@ class Percentage extends FeatureFilter {
   /// Instantiate the [Percentage] filter.
   Percentage() : super(name: 'Microsoft.Targeting');
 
+  int extractNumbersFromMD5(String md5Hash) {
+    final exp = RegExp(r'\d+');
+
+    return int.parse(
+      exp.allMatches(md5Hash).map((m) => m.group(0)).join().substring(0, 10),
+    );
+  }
+
   @override
-  bool evaluate(Map<String, dynamic> parameters) {
+  bool evaluate(
+    Map<String, dynamic> parameters,
+    FeatureFilterSettings? settings,
+    String featureKey,
+  ) {
+    int? seed;
+
+    if (settings?.user != null) {
+      final userHash = md5.convert(utf8.encode(settings!.user)).toString();
+      seed = extractNumbersFromMD5(userHash);
+    }
+
     // ignore: avoid_dynamic_calls
     final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
-    final random = Random().nextInt(100);
+    final random = Random(seed).nextInt(100);
 
     return random < value;
   }
@@ -44,7 +77,11 @@ class TimeWindow extends FeatureFilter {
   final DateTime? clock;
 
   @override
-  bool evaluate(Map<String, dynamic> parameters) {
+  bool evaluate(
+    Map<String, dynamic> parameters,
+    FeatureFilterSettings? settings,
+    String featureKey,
+  ) {
     try {
       final now = clock ?? DateTime.now();
 
