@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
+import 'package:azure_app_config/src/core/registered_type.dart';
 import 'package:azure_app_config/src/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
@@ -256,5 +257,82 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     }
 
     return items;
+  }
+
+  // Map that holds mapping data.
+  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
+
+  @override
+  void registerType<O>({
+    O Function(Map<String, dynamic> jsonData)? decode,
+    Map<String, dynamic> Function(O object)? encode,
+  }) {
+    if (registeredTypes[O] != null) {
+      throw AzureComplexTypeException(
+        'ComplexType ${O.toString()} is already registered',
+      );
+    }
+
+    registeredTypes[O] = RegisteredType<O>(
+      decode: decode,
+      encode: encode,
+    );
+  }
+
+  @override
+  void unregisterType<O>() {
+    registeredTypes.remove(O);
+  }
+
+  @override
+  Future<O> getTyped<O>({
+    required String key,
+    required String label,
+  }) async {
+    final keyValue = await getKeyValue(key: key, label: label);
+
+    if (registeredTypes[O] == null) {
+      throw AzureComplexTypeException(
+        'ComplexType ${O.toString()} is not registered',
+      );
+    }
+
+    if (registeredTypes[O]!.decode == null) {
+      throw AzureComplexTypeException(
+        'ComplexType ${O.toString()} decode is not registered!',
+      );
+    }
+
+    return registeredTypes[O]!
+        .decode!(json.decode(keyValue.value) as Map<String, dynamic>) as O;
+  }
+
+  @override
+  Future<void> setTyped<O>(
+    O object, {
+    required String key,
+    required String label,
+  }) async {
+    // make sure we're working with registeredType<O> and not
+    // registeredType<dynamic>
+    final registeredType = registeredTypes[O] as RegisteredType<O>?;
+
+    if (registeredType == null) {
+      throw AzureComplexTypeException(
+        'ComplexType ${O.toString()} is not registered',
+      );
+    }
+    if (registeredType.encode == null) {
+      throw AzureComplexTypeException('ComplexType encode not registered!');
+    }
+
+    final json = registeredType.encode!(object);
+
+    await setKeyValue(
+      key: key,
+      label: label,
+      value: jsonEncode(json),
+      contentType: 'application/json',
+    );
   }
 }

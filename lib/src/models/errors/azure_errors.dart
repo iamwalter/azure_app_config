@@ -33,3 +33,14 @@ class AzureRecordLockedException implements Exception {
   String toString() =>
       'AzureRecordLockedException: ${errorResponse.title} - ${errorResponse.detail}';
 }
+
+class AzureComplexTypeException implements Exception {
+  AzureComplexTypeException(this.error);
+
+  final String error;
+
+  @override
+  String toString() {
+    return 'AzureComplexTypeException: $error';
+  }
+}
