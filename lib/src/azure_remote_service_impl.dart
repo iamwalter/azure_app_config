@@ -18,14 +18,14 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     required this.client,
   });
 
-  // HTTP client
   final Client client;
 
-  //
   List<FeatureFilter> featureFilters = [];
 
-  // Map that holds mapping data.
+  // Map that holds registeredType mapping data.
   Map<Type, RegisteredType<dynamic>> registeredTypes = {};
+
+  FeatureFilterSettings? settings;
 
   @override
   Dio get dio => client.dio;
@@ -340,8 +340,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       contentType: 'application/json',
     );
   }
-
-  FeatureFilterSettings? settings;
 
   @override
   void setFeatureFilterSettings({required String user}) {
