@@ -5,7 +5,7 @@ import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/core/registered_type.dart';
-import 'package:azure_app_config/src/feature_filter.dart';
+import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
@@ -24,8 +24,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   // Map that holds registeredType mapping data.
   Map<Type, RegisteredType<dynamic>> registeredTypes = {};
-
-  FeatureFilterSettings? settings;
 
   @override
   Dio get dio => client.dio;
@@ -58,7 +56,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
       for (final featureFilter in featureFilters) {
         if (featureFilter.name == name) {
-          enabled = featureFilter.evaluate(params, settings, key);
+          enabled = featureFilter.evaluate(params, key);
 
           // If any featureFilter returns false, return false.
           if (!enabled) return false;
@@ -339,10 +337,5 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       value: jsonEncode(json),
       contentType: 'application/json',
     );
-  }
-
-  @override
-  void setFeatureFilterSettings({required String user}) {
-    settings = FeatureFilterSettings(user: user);
   }
 }

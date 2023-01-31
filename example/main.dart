@@ -8,15 +8,7 @@ void main() async {
 
   // Creating an instance needs a connection String. This can be
   // obtained through the Azure Portal, under "Access Keys".
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>')
-    // Make sure to register a FeatureFilter before using it.
-    ..registerFeatureFilter(FeatureFilter.percentage())
-    // Provide the FeatureFilters with information about the current user.
-    // When used the result will be consistent for each user
-    // each time the same feature is retrieved.
-    ..setFeatureFilterSettings(
-      user: 'test.user@company.com',
-    );
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
   // Getting a keyvalue
   late KeyValue keyValue;
@@ -44,8 +36,14 @@ void main() async {
     developer.log('Oh no!');
   }
 
-  // To check if a featureflag is enabled while parsing the featurefilters, use
   try {
+    // (!!) Make sure to register a FeatureFilter before using it.
+    service.registerFeatureFilter(
+      FeatureFilter.targeting(
+        user: 'test.user@company.com',
+      ),
+    );
+    // To check if a featureflag is enabled while parsing the featurefilters, use
     final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 

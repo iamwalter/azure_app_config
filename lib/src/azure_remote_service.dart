@@ -1,7 +1,7 @@
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
-import 'package:azure_app_config/src/feature_filter.dart';
+import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
@@ -160,7 +160,7 @@ abstract class AzureRemoteService {
   /// This method registers a [FeatureFilter]. The evaluation will happen when
   /// using the method [getFeatureEnabled].
   ///
-  /// To register the built-in [TimeWindow] filter, use:
+  /// To register Azure's TimeWindow filter, use:
   /// ```dart
   /// service.registerFeatureFilter(FeatureFilter.timeWindow());
   /// ```
@@ -213,9 +213,6 @@ abstract class AzureRemoteService {
     required String key,
     required String label,
   });
-
-  /// Set the settings that the [FeatureFilter]s will use.
-  void setFeatureFilterSettings({required String user});
 
   /// Make Dio available for tests.
   @visibleForTesting

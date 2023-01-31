@@ -1,7 +1,6 @@
 ## 0.13.0
 
-- Implement 'sticky' feature filters that produce consistent results for a specific user and feature. Added the method `setFeatureFilterSettings(...)`.
-
+- Complete Azure's Default 'Targeting' filter by implementing the 'groups' and 'users' feature. 
 
 ## 0.12.0
 
