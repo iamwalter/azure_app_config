@@ -164,6 +164,8 @@ abstract class AzureRemoteService {
   /// ```dart
   /// service.registerFeatureFilter(FeatureFilter.timeWindow());
   /// ```
+  ///
+  /// Note that re-registering a filter will overwrite the previous one.
   void registerFeatureFilter(FeatureFilter filter);
 
   /// Adds or modifies a [KeyValue] in the repository.
