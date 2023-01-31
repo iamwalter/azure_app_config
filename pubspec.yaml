@@ -1,5 +1,5 @@
 name: azure_app_config
-version: 0.12.0
+version: 0.13.0
 description: A Dart package to communicate with Microsoft Azure App Configuration.
 repository: https://github.com/iamwalter/azure_app_config
 

@@ -1,4 +1,10 @@
+## 0.13.0
+
+- Implement 'sticky' feature filters that produce consistent results for a specific user and feature. Added the method `setFeatureFilterSettings(...)`.
+
+
 ## 0.12.0
+
 - Add registering of ComplexTypes for automatic (de)serialization of models.
 
 ## 0.11.0
