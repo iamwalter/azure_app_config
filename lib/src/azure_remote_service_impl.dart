@@ -20,7 +20,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   final Client client;
 
-  List<FeatureFilter> featureFilters = [];
+  Map<String, FeatureFilter> featureFilters = {};
 
   // Map that holds registeredType mapping data.
   Map<Type, RegisteredType<dynamic>> registeredTypes = {};
@@ -30,7 +30,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   @override
   void registerFeatureFilter(FeatureFilter filter) {
-    featureFilters.add(filter);
+    featureFilters[filter.name] = filter;
   }
 
   @override
@@ -54,15 +54,15 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       final name = clientFilter.name;
       final params = clientFilter.parameters;
 
-      for (final featureFilter in featureFilters) {
-        if (featureFilter.name == name) {
-          enabled = featureFilter.evaluate(params, key);
+      if (featureFilters[name] != null) {
+        final filter = featureFilters[name]!;
 
-          // If any featureFilter returns false, return false.
-          if (!enabled) return false;
+        enabled = filter.evaluate(params, key);
 
-          developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
-        }
+        // If any featureFilter returns false, return false.
+        if (!enabled) return false;
+
+        developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
       }
     }
 
