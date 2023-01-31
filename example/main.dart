@@ -9,7 +9,11 @@ void main() async {
   // Creating an instance needs a connection String. This can be
   // obtained through the Azure Portal, under "Access Keys".
   final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>')
+    // Make sure to register a FeatureFilter before using it.
     ..registerFeatureFilter(FeatureFilter.percentage())
+    // Provide the FeatureFilters with information about the current user.
+    // When used the result will be consistent for each user
+    // each time the same feature is retrieved.
     ..setFeatureFilterSettings(
       user: 'test.user@company.com',
     );

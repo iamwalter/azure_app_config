@@ -159,6 +159,11 @@ abstract class AzureRemoteService {
 
   /// This method registers a [FeatureFilter]. The evaluation will happen when
   /// using the method [getFeatureEnabled].
+  ///
+  /// To register the built-in [TimeWindow] filter, use:
+  /// ```dart
+  /// service.registerFeatureFilter(FeatureFilter.timeWindow());
+  /// ```
   void registerFeatureFilter(FeatureFilter filter);
 
   /// Adds or modifies a [KeyValue] in the repository.
@@ -209,6 +214,7 @@ abstract class AzureRemoteService {
     required String label,
   });
 
+  /// Set the settings that the [FeatureFilter]s will use.
   void setFeatureFilterSettings({required String user});
 
   /// Make Dio available for tests.

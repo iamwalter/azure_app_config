@@ -27,7 +27,15 @@ There are two methods of using Azure App Configuration:
 
         // Creating an instance needs a connection String. This can be
         // obtained through the Azure Portal, under "Access Keys".
-        final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+        final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>')
+            // Make sure to register a FeatureFilter before using it.
+            ..registerFeatureFilter(FeatureFilter.percentage())
+            // Provide the FeatureFilters with information about the current user.
+            // When used the result will be consistent for each user
+            // each time the same feature is retrieved.
+            ..setFeatureFilterSettings(
+            user: 'test.user@company.com',
+            );
 
         // Getting a keyvalue
         late KeyValue keyValue;
@@ -50,14 +58,12 @@ There are two methods of using Azure App Configuration:
 
             // To check if the featureflag is enabled, use
             developer.log('${featureFlag.enabled}');
-
-            // .asFeatureFlag() will throw this exception if it's unable to parse.
-        } on AzureKeyValueNotParsableAsFeatureFlagException {
-            rethrow;
+        } // .asFeatureFlag() will throw this exception if it's unable to parse.
+        on AzureKeyValueNotParsableAsFeatureFlagException {
+            developer.log('Oh no!');
         }
 
         // To check if a featureflag is enabled while parsing the featurefilters, use
-
         try {
             final isFeatureEnabled =
                 await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
@@ -74,20 +80,22 @@ There are two methods of using Azure App Configuration:
         // without a label:
         try {
             final keyValues = await service.findKeyValuesBy(
-                keyFilter: '.appconfig.*',
-                labelFilter: AzureFilters.noLabel,
+            key: '.appconfig.*',
+            label: AzureFilters.noLabel,
             );
 
+            // Loop through the values
             for (final keyValue in keyValues) {
-                developer.log(keyValue.value);
+            developer.log(keyValue.value);
             }
 
             // When an invalid filter has been provided, for example, '.appconfig.**',
             // an [AzureFilterValidationException] is thrown.
         } on AzureFilterValidationException catch (e) {
-            developer.log(e.message ?? '');
+            developer.log(e.errorResponse.detail ?? 'Error occurred!');
         }
     }
+
 
 
 ## Complex Types
@@ -133,24 +141,15 @@ This package currently has 2 built-in FeatureFilters based on the defaults which
 
 **Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
+Make sure to register the FeatureFilter before calling <br>
+`service.registerFeatureFilter(FeatureFilter.timeWindow())` 
+or <br>
+`service.registerFeatureFilter(FeatureFilter.percentage())`. 
+
 ### Implement your own FeatureFilter
 
-This package enables you to create custom FeatureFilters by extending the FeatureFilter class. For example, this is how the Percentage filter is implemented:
+This package enables you to create custom FeatureFilters by extending the FeatureFilter class. An example of this can be found by looking at how the built-in FeatureFilters are implemented [here](lib/src/feature_filter.dart).
 
-    class Percentage extends FeatureFilter {
-      Percentage() : super(name: "Microsoft.Targeting");
-
-      @override
-      bool evaluate(Map<String, dynamic> parameters) {
-        final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
-        final random = Random().nextInt(100);
-
-        return random < value;
-      }
-    
-
-
-Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The build-in filters are automatically registered.
 
 ## More Information
 For more information about Azure App Configuration, take a look at the following resources.

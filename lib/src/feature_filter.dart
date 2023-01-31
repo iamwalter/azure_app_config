@@ -27,6 +27,16 @@ abstract class FeatureFilter {
   final String name;
 
   /// The callback that is executed while evaluating the [FeatureFilter].
+  ///
+  /// The [parameters] parameter holds the parameters that can be configured in the
+  /// App Configuration Dashboard.
+  ///
+  /// The [settings] object gives access to the global settings object that can
+  /// be used to check certain values, e.g. the current user.
+  ///
+  /// The [featureKey] parameter is the key string that is being checked.
+  /// For a feature flag '.appconfig.featureflag/myKey' the key will equal
+  /// 'myKey'.
   bool evaluate(
     Map<String, dynamic> parameters,
     FeatureFilterSettings? settings,
@@ -39,6 +49,7 @@ class Percentage extends FeatureFilter {
   /// Instantiate the [Percentage] filter.
   Percentage() : super(name: 'Microsoft.Targeting');
 
+  // Get the first 10 numbers from a md5 hash
   int extractNumbersFromMD5(String md5Hash) {
     final exp = RegExp(r'\d+');
 
@@ -54,9 +65,14 @@ class Percentage extends FeatureFilter {
     String featureKey,
   ) {
     int? seed;
-
+    // check if a user object is provided
     if (settings?.user != null) {
-      final userHash = md5.convert(utf8.encode(settings!.user)).toString();
+      // also encoding the featurekey, to make sure that the result is different
+      // for each feature.
+      final userHash =
+          md5.convert(utf8.encode('$featureKey-${settings!.user}')).toString();
+      // get the seed to use for the random based on the user object,
+      // to ensure the same result for the same user.
       seed = extractNumbersFromMD5(userHash);
     }
 

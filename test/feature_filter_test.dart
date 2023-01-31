@@ -22,19 +22,19 @@ Percentage filter should return the same value for the same user string''', () {
 
     var actual = filter.evaluate(
       params,
-      const FeatureFilterSettings(user: 'test.user@company.com'),
+      const FeatureFilterSettings(user: 'test.user1@company.com'),
+      'feature-a',
+    );
+
+    expect(actual, true);
+
+    actual = filter.evaluate(
+      params,
+      const FeatureFilterSettings(user: 'test.user2@company.com'),
       'feature-a',
     );
 
     expect(actual, false);
-
-    actual = filter.evaluate(
-      params,
-      const FeatureFilterSettings(user: 'test.user8@company.com'),
-      'feature-b',
-    );
-
-    expect(actual, true);
   });
 
   test('Time Filter should return good result based on current time and input',

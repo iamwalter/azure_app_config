@@ -47,6 +47,9 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     var enabled = feature.enabled;
 
+    // If the feature is disabled, just return false.
+    if (!enabled) return false;
+
     final clientFilters = feature.getClientFilters();
 
     for (final clientFilter in clientFilters) {
@@ -56,6 +59,9 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       for (final featureFilter in featureFilters) {
         if (featureFilter.name == name) {
           enabled = featureFilter.evaluate(params, settings, key);
+
+          // If any featureFilter returns false, return false.
+          if (!enabled) return false;
 
           developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
         }
