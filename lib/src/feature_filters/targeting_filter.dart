@@ -43,10 +43,10 @@ class TargetingFilter extends FeatureFilter {
       seed = _extractNumbersFromMD5(userHash);
     }
 
-    /// When the passed in [user] matches, returns true.
-    /// When the [group] parameter matches, uses the groups percentage.
-    ///
-    /// If none if the above are provided, it uses the default rollout percentage.
+    // When the passed in [userIdentifier] matches, returns true.
+    // When the [userIdentifier] parameter matches, uses the groups percentage.
+    //
+    // If none if the above are provided, it uses the default rollout percentage.
     final users = parameters['Audience']['Users'] as List<dynamic>;
 
     if (users.contains(userIdentifier)) return true;
