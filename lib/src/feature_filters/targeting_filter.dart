@@ -31,40 +31,40 @@ class TargetingFilter extends FeatureFilter {
     Map<String, dynamic> parameters,
     String featureKey,
   ) {
-    int? seed;
-
-    if (userIdentifier != null) {
-      // also encoding the featurekey, to make sure that the result is different
-      // for each feature.
-      final userHash =
-          md5.convert(utf8.encode('$featureKey-$userIdentifier')).toString();
-      // get the seed to use for the random based on the user object,
-      // to ensure the same result for the same user.
-      seed = _extractNumbersFromMD5(userHash);
-    }
+    final audienceUsers = parameters['Audience']['Users'] as List<dynamic>;
 
     // When the passed in [userIdentifier] matches, returns true.
-    // When the [userIdentifier] parameter matches, uses the groups percentage.
-    //
-    // If none if the above are provided, it uses the default rollout percentage.
-    final users = parameters['Audience']['Users'] as List<dynamic>;
+    if (audienceUsers.contains(userIdentifier)) return true;
 
-    if (users.contains(userIdentifier)) return true;
+    final audienceGroups = parameters['Audience']['Groups'] as List<dynamic>;
 
-    final groups = parameters['Audience']['Groups'] as List<dynamic>;
+    int? rolloutPercentage;
 
-    int? value;
-
-    for (final subGroup in groups) {
+    for (final subGroup in audienceGroups) {
+      // When the [groupIdentifier] parameter matches, uses the groups percentage.
       if (subGroup['Name'] == groupIdentifier) {
-        value = subGroup['RolloutPercentage'] as int;
+        rolloutPercentage = subGroup['RolloutPercentage'] as int;
       }
     }
 
-    value ??= parameters['Audience']['DefaultRolloutPercentage'] as int;
+    // If none if the above are provided, it uses the default rollout percentage.
+    rolloutPercentage ??=
+        parameters['Audience']['DefaultRolloutPercentage'] as int;
 
-    final random = Random(seed).nextInt(100);
+    int? seed;
 
-    return random < value;
+    // If a user identifier is passed, use it to generate a seed
+    if (userIdentifier != null) {
+      // Hash the feature key and user identifier to ensure a unique result for
+      // each feature
+      final userHash =
+          md5.convert(utf8.encode('$featureKey-$userIdentifier')).toString();
+
+      // Get the seed based on the hashed user identifier to ensure consistent
+      // results for the same user + feature
+      seed = _extractNumbersFromMD5(userHash);
+    }
+
+    return Random(seed).nextInt(100) < rolloutPercentage;
   }
 }
