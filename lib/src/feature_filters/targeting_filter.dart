@@ -9,10 +9,11 @@ import 'package:crypto/crypto.dart';
 /// Microsoft's default Targeting Filter.
 class TargetingFilter extends FeatureFilter {
   /// Instantiate the [TargetingFilter] filter.
-  TargetingFilter({this.user, this.group}) : super(name: 'Microsoft.Targeting');
+  TargetingFilter({this.userName, this.groupName})
+      : super(name: 'Microsoft.Targeting');
 
-  String? user;
-  String? group;
+  String? userName;
+  String? groupName;
 
   // Get the first 10 numbers from a md5 hash
   int _extractNumbersFromMD5(String md5Hash) {
@@ -30,10 +31,11 @@ class TargetingFilter extends FeatureFilter {
   ) {
     int? seed;
 
-    if (user != null) {
+    if (userName != null) {
       // also encoding the featurekey, to make sure that the result is different
       // for each feature.
-      final userHash = md5.convert(utf8.encode('$featureKey-$user')).toString();
+      final userHash =
+          md5.convert(utf8.encode('$featureKey-$userName')).toString();
       // get the seed to use for the random based on the user object,
       // to ensure the same result for the same user.
       seed = _extractNumbersFromMD5(userHash);
@@ -45,14 +47,14 @@ class TargetingFilter extends FeatureFilter {
     /// If none if the above are provided, it uses the default rollout percentage.
     final users = parameters['Audience']['Users'] as List<dynamic>;
 
-    if (users.contains(user)) return true;
+    if (users.contains(userName)) return true;
 
     final groups = parameters['Audience']['Groups'] as List<dynamic>;
 
     int? value;
 
     for (final subGroup in groups) {
-      if (subGroup['Name'] == group) {
+      if (subGroup['Name'] == groupName) {
         value = subGroup['RolloutPercentage'] as int;
       }
     }
