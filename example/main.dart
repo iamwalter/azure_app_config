@@ -36,8 +36,14 @@ void main() async {
     developer.log('Oh no!');
   }
 
-  // To check if a featureflag is enabled while parsing the featurefilters, use
   try {
+    // (!!) Make sure to register a FeatureFilter before using it.
+    service.registerFeatureFilter(
+      FeatureFilter.targeting(
+        user: 'test.user@company.com',
+      ),
+    );
+    // To check if a featureflag is enabled while parsing the featurefilters, use
     final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 

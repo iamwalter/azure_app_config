@@ -1,7 +1,7 @@
 import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
-import 'package:azure_app_config/src/feature_filter.dart';
+import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
@@ -159,6 +159,13 @@ abstract class AzureRemoteService {
 
   /// This method registers a [FeatureFilter]. The evaluation will happen when
   /// using the method [getFeatureEnabled].
+  ///
+  /// To register Azure's TimeWindow filter, use:
+  /// ```dart
+  /// service.registerFeatureFilter(FeatureFilter.timeWindow());
+  /// ```
+  ///
+  /// Note that re-registering a filter will overwrite the previous one.
   void registerFeatureFilter(FeatureFilter filter);
 
   /// Adds or modifies a [KeyValue] in the repository.

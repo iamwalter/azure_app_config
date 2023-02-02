@@ -28,6 +28,7 @@ There are two methods of using Azure App Configuration:
         // Creating an instance needs a connection String. This can be
         // obtained through the Azure Portal, under "Access Keys".
         final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+            
 
         // Getting a keyvalue
         late KeyValue keyValue;
@@ -50,15 +51,19 @@ There are two methods of using Azure App Configuration:
 
             // To check if the featureflag is enabled, use
             developer.log('${featureFlag.enabled}');
-
-            // .asFeatureFlag() will throw this exception if it's unable to parse.
-        } on AzureKeyValueNotParsableAsFeatureFlagException {
-            rethrow;
+        } // .asFeatureFlag() will throw this exception if it's unable to parse.
+        on AzureKeyValueNotParsableAsFeatureFlagException {
+            developer.log('Oh no!');
         }
-
-        // To check if a featureflag is enabled while parsing the featurefilters, use
-
+        
         try {
+            // (!!) Make sure to register a FeatureFilter before using it.
+            service.registerFeatureFilter(
+                FeatureFilter.targeting(
+                    user: 'test.user@company.com',
+                ),
+            );
+            // To check if a featureflag is enabled while parsing the featurefilters, use
             final isFeatureEnabled =
                 await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 
@@ -74,20 +79,22 @@ There are two methods of using Azure App Configuration:
         // without a label:
         try {
             final keyValues = await service.findKeyValuesBy(
-                keyFilter: '.appconfig.*',
-                labelFilter: AzureFilters.noLabel,
+            key: '.appconfig.*',
+            label: AzureFilters.noLabel,
             );
 
+            // Loop through the values
             for (final keyValue in keyValues) {
-                developer.log(keyValue.value);
+            developer.log(keyValue.value);
             }
 
             // When an invalid filter has been provided, for example, '.appconfig.**',
             // an [AzureFilterValidationException] is thrown.
         } on AzureFilterValidationException catch (e) {
-            developer.log(e.message ?? '');
+            developer.log(e.errorResponse.detail ?? 'Error occurred!');
         }
     }
+
 
 
 ## Complex Types
@@ -129,28 +136,19 @@ encode and decode functions. After registering the types, the library will autom
 ### FeatureFilters
 This package currently has 2 built-in FeatureFilters based on the defaults which can be found in the App Configuration dashboard:
 
-**Microsoft.Targeting** -> Enable a flag based on a percentage. Use 'Default Percentage' for this. The Groups section is still a work in progress, and is not included in this library. 
+**Microsoft.Targeting** -> Enable a flag based on some Targeting parameters which can be found in the Azure dashboard.  
 
 **Microsoft.TimeWindow** -> Enable a feature flag during a specified window of time.
 
+Make sure to register the FeatureFilter before retrieving a feature's value. <br>
+`service.registerFeatureFilter(FeatureFilter.timeWindow())` 
+or <br>
+`service.registerFeatureFilter(FeatureFilter.targeting())`. 
+
 ### Implement your own FeatureFilter
 
-This package enables you to create custom FeatureFilters by extending the FeatureFilter class. For example, this is how the Percentage filter is implemented:
+This package enables you to create custom FeatureFilters by extending the FeatureFilter class. An example of this can be found by looking at how the built-in FeatureFilters are implemented [here](lib/src/feature_filters/targeting_filter.dart).
 
-    class Percentage extends FeatureFilter {
-      Percentage() : super(name: "Microsoft.Targeting");
-
-      @override
-      bool evaluate(Map<String, dynamic> parameters) {
-        final value = parameters['Audience']['DefaultRolloutPercentage'] as int;
-        final random = Random().nextInt(100);
-
-        return random < value;
-      }
-    
-
-
-Register the FeatureFilter by calling `service.registerFeatureFilter(filter)`. The build-in filters are automatically registered.
 
 ## More Information
 For more information about Azure App Configuration, take a look at the following resources.

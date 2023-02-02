@@ -5,7 +5,7 @@ import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/core/registered_type.dart';
-import 'package:azure_app_config/src/feature_filter.dart';
+import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:azure_app_config/src/models/key.dart';
@@ -20,17 +20,17 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
   final Client client;
 
-  List<FeatureFilter> featureFilters = [
-    FeatureFilter.percentage(),
-    FeatureFilter.timeWindow(),
-  ];
+  Map<String, FeatureFilter> featureFilters = {};
+
+  // Map that holds registeredType mapping data.
+  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
 
   @override
   Dio get dio => client.dio;
 
   @override
   void registerFeatureFilter(FeatureFilter filter) {
-    featureFilters.add(filter);
+    featureFilters[filter.name] = filter;
   }
 
   @override
@@ -45,18 +45,24 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     var enabled = feature.enabled;
 
+    // If the feature is disabled, just return false.
+    if (!enabled) return false;
+
     final clientFilters = feature.getClientFilters();
 
     for (final clientFilter in clientFilters) {
       final name = clientFilter.name;
       final params = clientFilter.parameters;
 
-      for (final featureFilter in featureFilters) {
-        if (featureFilter.name == name) {
-          enabled = featureFilter.evaluate(params);
+      if (featureFilters[name] != null) {
+        final filter = featureFilters[name]!;
 
-          developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
-        }
+        enabled = filter.evaluate(params, key);
+
+        // If any featureFilter returns false, return false.
+        if (!enabled) return false;
+
+        developer.log('AZURE FILTER [$key] => ${clientFilter.name}');
       }
     }
 
@@ -258,9 +264,6 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     return items;
   }
-
-  // Map that holds mapping data.
-  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
 
   @override
   void registerType<O>({
