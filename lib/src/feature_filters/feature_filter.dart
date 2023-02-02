@@ -11,10 +11,15 @@ abstract class FeatureFilter {
 
   /// Microsoft's default 'Targeting' Filter.
   ///
-  /// When the passed in [user] matches, returns true.
-  /// When the [group] parameter matches, uses the groups percentage.
+  /// When the passed in [user] matches, returns true. If it does not match,
+  /// passing in a user will still make the filter 'sticky', meaning it will
+  /// return the same result. User can be any string, for example an email,
+  /// username or a unique device ID. If the [user] param is ommitted, the
+  /// filter's result will be random each time.
   ///
-  /// If none if the above are provided, it uses the default rollout percentage.
+  /// When the [group] parameter matches, the filter uses the groups percentage.
+  ///
+  /// If no group or user match the filter uses the 'Default Percentage'.
   factory FeatureFilter.targeting({
     String? user,
     String? group,

@@ -9,18 +9,13 @@ import 'package:crypto/crypto.dart';
 /// Microsoft's default Targeting Filter.
 class TargetingFilter extends FeatureFilter {
   /// Instantiate the [TargetingFilter] filter.
-  ///
-  /// When the passed in [user] matches, returns true.
-  /// When the [group] parameter matches, uses the groups percentage.
-  ///
-  /// If none if the above are provided, it uses the default rollout percentage.
   TargetingFilter({this.user, this.group}) : super(name: 'Microsoft.Targeting');
 
   String? user;
   String? group;
 
   // Get the first 10 numbers from a md5 hash
-  int extractNumbersFromMD5(String md5Hash) {
+  int _extractNumbersFromMD5(String md5Hash) {
     final exp = RegExp(r'\d+');
 
     return int.parse(
@@ -41,9 +36,13 @@ class TargetingFilter extends FeatureFilter {
       final userHash = md5.convert(utf8.encode('$featureKey-$user')).toString();
       // get the seed to use for the random based on the user object,
       // to ensure the same result for the same user.
-      seed = extractNumbersFromMD5(userHash);
+      seed = _extractNumbersFromMD5(userHash);
     }
 
+    /// When the passed in [user] matches, returns true.
+    /// When the [group] parameter matches, uses the groups percentage.
+    ///
+    /// If none if the above are provided, it uses the default rollout percentage.
     final users = parameters['Audience']['Users'] as List<dynamic>;
 
     if (users.contains(user)) return true;
