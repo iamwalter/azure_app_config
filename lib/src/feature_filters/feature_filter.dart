@@ -25,8 +25,8 @@ abstract class FeatureFilter {
     String? group,
   }) =>
       TargetingFilter(
-        userName: user,
-        groupName: group,
+        userIdentifier: user,
+        groupIdentifier: group,
       );
 
   /// Represents the FeatureFilter name. Make sure this name is the same as the

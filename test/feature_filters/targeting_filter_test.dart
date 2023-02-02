@@ -22,7 +22,7 @@ void main() {
   test(
     '''if user is provided in the params return true''',
     () {
-      final filter = TargetingFilter(userName: 'user1');
+      final filter = TargetingFilter(userIdentifier: 'user1');
 
       final actual = filter.evaluate(params, '');
 
@@ -33,7 +33,7 @@ void main() {
   test(
     '''if user is not provided in the params use the defaultrolloutprecentage''',
     () {
-      final filter = TargetingFilter(userName: 'unknownUser');
+      final filter = TargetingFilter(userIdentifier: 'unknownUser');
 
       final actual = filter.evaluate(params, '');
 
@@ -52,7 +52,7 @@ void main() {
         },
       };
 
-      final filter = TargetingFilter(userName: 'unknownUser');
+      final filter = TargetingFilter(userIdentifier: 'unknownUser');
 
       var actual = filter.evaluate(params, 'featureKey-a');
 
