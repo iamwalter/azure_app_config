@@ -16,86 +16,137 @@ There are two methods of using Azure App Configuration:
 2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to provide a custom way of signing requests.
 
 ## Example 
+Example 1: Creating an instance of AzureRemoteService
 
-    import 'dart:developer' as developer;
+```dart
+import 'package:azure_app_config/azure_app_config.dart';
 
-    import 'package:azure_app_config/azure_app_config.dart';
+void main() {
+  // Creating an instance needs a connection String. This can be
+  // obtained through the Azure Portal, under "Access Keys".
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
-    void main() async {
-        const exampleKey = 'example_key';
-        const exampleLabel = 'example_label';
+  // Use the service instance to interact with Azure App Configuration.
+  // ...
+}
+```
+Example 2: Retrieving a key value from Azure App Configuration
+```dart
+import 'package:azure_app_config/azure_app_config.dart';
 
-        // Creating an instance needs a connection String. This can be
-        // obtained through the Azure Portal, under "Access Keys".
-        final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
-            
+void main() async {
+  const exampleKey = 'example_key';
+  const exampleLabel = 'example_label';
 
-        // Getting a keyvalue
-        late KeyValue keyValue;
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
-        try {
-            keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
-        } catch (err) {
-            // Handle any exceptions that might occur when interacting with the Azure
-            // service
-            developer.log('Error occurred while getting key value: $err');
-        }
+  // Getting a key value.
+  try {
+    final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
+    // Use the keyValue instance to retrieve any property of the key value.
+    // ...
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service.
+  }
+}
+```
+Example 3: Retrieving a feature flag from Azure App Configuration
+```dart
+import 'dart:developer' as developer;
 
-        // Now you can retrieve any property of the keyValue, for instance
-        developer.log(keyValue.value);
+import 'package:azure_app_config/azure_app_config.dart';
 
-        // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
-        // to get the properties of the FeatureFlag
-        try {
-            final featureFlag = keyValue.asFeatureFlag();
+void main() async {
+  const exampleKey = 'example_key';
+  const exampleLabel = 'example_label';
 
-            // To check if the featureflag is enabled, use
-            developer.log('${featureFlag.enabled}');
-        } // .asFeatureFlag() will throw this exception if it's unable to parse.
-        on AzureKeyValueNotParsableAsFeatureFlagException {
-            developer.log('Oh no!');
-        }
-        
-        try {
-            // (!!) Make sure to register a FeatureFilter before using it.
-            service.registerFeatureFilter(
-                FeatureFilter.targeting(
-                    user: 'test.user@company.com',
-                ),
-            );
-            // To check if a featureflag is enabled while parsing the featurefilters, use
-            final isFeatureEnabled =
-                await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
-            developer.log('$isFeatureEnabled');
-        } catch (err) {
-            // Handle any exceptions that might occur when interacting with the Azure
-            // service
-            developer.log('Error occurred while checking if feature is enabled: $err');
-        }
+  try {
+    final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
 
-        // To find FeatureFlags based on a key and label filter use findKeyValuesBy().
-        // This example searches for the keyValues that start with '.appconfig.'
-        // without a label:
-        try {
-            final keyValues = await service.findKeyValuesBy(
-            key: '.appconfig.*',
-            label: AzureFilters.noLabel,
-            );
+    // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
+    // to get the properties of the FeatureFlag.
+    final featureFlag = keyValue.asFeatureFlag();
 
-            // Loop through the values
-            for (final keyValue in keyValues) {
-            developer.log(keyValue.value);
-            }
+    // To check if the featureflag is enabled, use
+    developer.log('${featureFlag.enabled}');
+  } // .asFeatureFlag() will throw this exception if it's unable to parse.
+  on AzureKeyValueNotParsableAsFeatureFlagException {
+    developer.log('Oh no!');
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service.
+  }
+}
+```
+Example 4: Retrieving a feature flag with feature filters from Azure App Configuration
+```dart
+import 'dart:developer' as developer;
 
-            // When an invalid filter has been provided, for example, '.appconfig.**',
-            // an [AzureFilterValidationException] is thrown.
-        } on AzureFilterValidationException catch (e) {
-            developer.log(e.errorResponse.detail ?? 'Error occurred!');
-        }
+import 'package:azure_app_config/azure_app_config.dart';
+
+void main() async {
+  const exampleKey = 'example_key';
+  const exampleLabel = 'example_label';
+
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+
+  try {
+    // Register a FeatureFilter before using it.
+    service.registerFeatureFilter(
+      FeatureFilter.targeting(
+        user: 'test.user@company.com',
+      ),
+    );
+
+    // To check if a featureflag is enabled while parsing the featurefilters, use
+    final isFeatureEnabled = await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
+
+    developer.log('$isFeatureEnabled');
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service.
+  }
+}
+```
+
+Example 5: Finding key values based on a key and label filter
+```dart
+import 'dart:developer' as developer;
+
+import 'package:azure_app_config/azure_app_config.dart';
+
+void main() async {
+  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+
+  try {
+    // Find key values based on a key and label filter.
+    // This example searches for the keyValues that start with '.appconfig.'
+    // without a label.
+    final keyValues = await service.findKeyValuesBy(
+      key: '.appconfig.*',
+      label: AzureFilters.noLabel,
+    );
+
+    // Loop through the values.
+    for (final keyValue in keyValues) {
+      developer.log(keyValue.value);
+      // Use the keyValue instance to retrieve any property of the key value.
+      // ...
     }
-
-
+  } on AzureFilterValidationException catch (e) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service.
+    developer.log(e.errorResponse.detail ?? 'Error occurred!');
+  } catch (err) {
+    // Handle any exceptions that might occur when interacting with the Azure
+    // service.
+    developer.log('Error occurred while finding key values: $err');
+  }
+}
+```
 
 ## Complex Types
 
