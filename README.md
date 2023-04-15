@@ -93,15 +93,15 @@ void main() async {
 
   final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
 
+  // Register a FeatureFilter before using it.
+  service.registerFeatureFilter(
+    FeatureFilter.targeting(
+      user: 'test.user@company.com',
+    ),
+  );
+  
   try {
-    // Register a FeatureFilter before using it.
-    service.registerFeatureFilter(
-      FeatureFilter.targeting(
-        user: 'test.user@company.com',
-      ),
-    );
-
-    // To check if a featureflag is enabled while parsing the featurefilters, use
+    // getFeatureEnabled() will take the feature filters into account when evaluating. 
     final isFeatureEnabled = await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 
     developer.log('$isFeatureEnabled');
@@ -137,13 +137,12 @@ void main() async {
       // ...
     }
   } on AzureFilterValidationException catch (e) {
-    // Handle any exceptions that might occur when interacting with the Azure
-    // service.
+    // When an invalid filter has been provided, for example, '.appconfig.**',
+    // an [AzureFilterValidationException] is thrown.
     developer.log(e.errorResponse.detail ?? 'Error occurred!');
   } catch (err) {
     // Handle any exceptions that might occur when interacting with the Azure
     // service.
-    developer.log('Error occurred while finding key values: $err');
   }
 }
 ```
