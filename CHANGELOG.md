@@ -1,3 +1,7 @@
+## 1.0.0
+
+- README update 
+
 ## 0.13.0
 
 - Complete Azure's Default 'Targeting' filter by implementing the 'groups' and 'users' feature. 
