@@ -91,7 +91,7 @@ class ClientImpl implements Client {
     try {
       return await callBack();
     } on DioError catch (e) {
-      if (e.type == DioErrorType.response) {
+      if (e.type == DioErrorType.badResponse) {
         if (e.response?.statusCode == 400) {
           // Expecting a response object from API
           final errorResponse = ErrorResponse.fromJson(
@@ -116,10 +116,12 @@ class ClientImpl implements Client {
 
           throw AzureRecordLockedException(errorResponse);
         }
-      }
+      } 
 
-      if (e.type == DioErrorType.other) {
-        throw e.error as Exception;
+      if (e.type == DioErrorType.unknown) {
+        throw (e.error as Exception?) ?? 
+        Exception('''
+Something went wrong fetching values from Azure App Configuration''');
       }
 
       rethrow;
