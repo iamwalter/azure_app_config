@@ -1,6 +1,7 @@
 ## 1.0.0
 
-- README update 
+- Improved Readme 
+- Updated dependencies to latest versions
 
 ## 0.13.0
 
