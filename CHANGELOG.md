@@ -1,4 +1,4 @@
-## 1.0.0
+## 0.14.0
 
 - Improved Readme 
 - Updated dependencies to latest versions
