@@ -116,12 +116,13 @@ class ClientImpl implements Client {
 
           throw AzureRecordLockedException(errorResponse);
         }
-      } 
+      }
 
       if (e.type == DioErrorType.unknown) {
-        throw (e.error as Exception?) ?? 
-        Exception('''
-Something went wrong fetching values from Azure App Configuration''');
+        throw Exception(
+          e.error ??
+              '''Something went wrong communicating with Azure App Configuration''',
+        );
       }
 
       rethrow;
