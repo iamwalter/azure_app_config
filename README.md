@@ -6,7 +6,6 @@ This package makes it easier to communicate with Microsoft Azure App Configurati
 ## Installation
 To use this plugin, add `azure_app_config` to your `pubspec.yaml` file.
 
-
 ## Authentication
 
 There are two methods of authenticating Azure App Configuration:
@@ -62,24 +61,20 @@ void main() async {
   const exampleLabel = 'example_label';
 
   final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  
+  final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
 
-  try {
-    final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
+  // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
+  // to get the properties of the FeatureFlag
+  final featureFlag = keyValue.asFeatureFlag();
 
-    // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
-    // to get the properties of the FeatureFlag.
-    final featureFlag = keyValue.asFeatureFlag();
-
+  // .asFeatureFlag() will return null if it's unable to parse.
+  if (featureFlag != null) {
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
-  } // .asFeatureFlag() will throw this exception if it's unable to parse.
-  on AzureKeyValueNotParsableAsFeatureFlagException {
-    developer.log('Oh no!');
-  } catch (err) {
-    // Handle any exceptions that might occur when interacting with the Azure
-    // service.
   }
-}
+} 
+
 ```
 Example 4: Retrieving a feature flag with feature filters from Azure App Configuration
 ```dart
@@ -208,8 +203,3 @@ For more information about Azure App Configuration, take a look at the following
 
 
 Feel free to submit any pull requests!
-
-
-
-
-Package created by Walter Tesevic commissioned by Ordina

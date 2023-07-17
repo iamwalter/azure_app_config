@@ -36,13 +36,12 @@ class KeyValue with _$KeyValue {
 
   /// Returns the [KeyValue] as a [FeatureFlag].
   ///
-  /// Throws [AzureKeyValueNotParsableAsFeatureFlagException] when not able to
-  /// be parsed.
-  FeatureFlag asFeatureFlag() {
+  /// Returns null when not able to be parsed.
+  FeatureFlag? asFeatureFlag() {
     try {
       return FeatureFlag.fromJson(jsonDecode(value) as Map<String, Object?>);
     } catch (e) {
-      throw AzureKeyValueNotParsableAsFeatureFlagException();
+      return null;
     }
   }
 }

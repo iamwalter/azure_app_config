@@ -26,14 +26,12 @@ void main() async {
 
   // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
   // to get the properties of the FeatureFlag
-  try {
-    final featureFlag = keyValue.asFeatureFlag();
+  final featureFlag = keyValue.asFeatureFlag();
 
+  // .asFeatureFlag() will return null if it's unable to parse.
+  if (featureFlag != null) {
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
-  } // .asFeatureFlag() will throw this exception if it's unable to parse.
-  on AzureKeyValueNotParsableAsFeatureFlagException {
-    developer.log('Oh no!');
   }
 
   try {

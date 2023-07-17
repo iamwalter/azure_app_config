@@ -57,38 +57,37 @@ abstract class AzureRemoteService {
     required String label,
   });
 
-  /// Sets a given Feature to be enabled or disabled based on [isEnabled].
-  ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Updates a given Feature to be enabled or disabled based on [isEnabled].
+  /// 
+  /// The [FeatureFlag] must already exist. Use [setFeatureFlag] for new values.
+  /// 
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> setFeatureEnabled({
     required String key,
     required String label,
     required bool isEnabled,
   });
 
-  /// Sets a given feature to be enabled.
+  /// Updates an existing [FeatureFlag] to be enabled.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> enableFeature({
     required String key,
     required String label,
   });
 
-  /// Sets a given feature to be disabled.
+  /// Updates an existing [FeatureFlag] to be disabled.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> disableFeature({
     required String key,
     required String label,
   });
 
-  /// Retrieve a list of [FeatureFlag].
+  /// Retrieve a list of [FeatureFlag]s.
   Future<List<FeatureFlag>> getFeatureFlags();
 
-  /// Retrieve a list of [KeyValue].
+  /// Retrieve a list of [KeyValue]s.
   Future<List<KeyValue>> getKeyValues();
 
   ///  Retrieve [KeyValue] records based on filters.
@@ -175,6 +174,15 @@ abstract class AzureRemoteService {
     String? value,
     String? contentType,
     Map<String, dynamic>? tags,
+  });
+
+  /// Add a new FeatureFlag to the repository.
+  Future<Response<dynamic>> setFeatureFlag({
+    required String key,
+    required String label,
+    required bool enabled,
+    String description = '',
+    Map<String, dynamic>? conditions,
   });
 
   /// Register a mapping for a Type.

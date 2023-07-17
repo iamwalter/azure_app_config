@@ -1,3 +1,10 @@
+## 0.15.0
+
+- Added method: setFeatureFlag()
+- Methods setFeatureEnabled, enableFeature and disableFeature now only take the last part of the key because this is more user friendly. So, before -> '.appconfig.featureflag/mykey'. After -> 'mykey'
+- KeyValue.asFeatureFlag() now returns null if it's not parsable instead of throwing an AzureKeyValueNotParsableAsFeatureFlagException.
+- Update dependencies 
+
 ## 0.14.0
 
 - Improved Readme 
