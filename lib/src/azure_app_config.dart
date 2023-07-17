@@ -1,5 +1,5 @@
 import 'package:azure_app_config/src/azure_filters.dart';
-import 'package:azure_app_config/src/azure_remote_service_impl.dart';
+import 'package:azure_app_config/src/azure_app_config_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
@@ -8,6 +8,9 @@ import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+
+@Deprecated('Use AzureAppConfig instead of AzureRemoteService')
+typedef AzureRemoteService = AzureAppConfig;
 
 /// This class represents the Microsoft Azure App Configuration.
 ///
@@ -19,23 +22,23 @@ import 'package:meta/meta.dart';
 ///
 /// Please note that when a connection string is invalid or not specified,
 /// an [ArgumentError] will occur when creating an
-/// instance of [AzureRemoteService].
-abstract class AzureRemoteService {
-  /// Instantiate an instance of [AzureRemoteService] using a [connectionString]
-  factory AzureRemoteService({
+/// instance of [AzureAppConfig].
+abstract class AzureAppConfig {
+  /// Instantiate an instance of [AzureAppConfig] using a [connectionString]
+  factory AzureAppConfig({
     required String connectionString,
   }) {
     final client = Client(connectionString: connectionString);
 
-    return AzureRemoteServiceImpl(client: client);
+    return AzureAppConfigImpl(client: client);
   }
 
-  /// Instantiate an instance of [AzureRemoteService] using an endpoint and
+  /// Instantiate an instance of [AzureAppConfig] using an endpoint and
   /// providing a custom interceptor.
   ///
   /// Using this method you are able to intercept requests and provide a custom
   /// method of signing API requests.
-  factory AzureRemoteService.customAuthentication({
+  factory AzureAppConfig.customAuthentication({
     required String endpoint,
     required Interceptor interceptor,
   }) {
@@ -44,7 +47,7 @@ abstract class AzureRemoteService {
       interceptor: interceptor,
     );
 
-    return AzureRemoteServiceImpl(client: client);
+    return AzureAppConfigImpl(client: client);
   }
 
   /// Retrieves whether a [FeatureFlag] is enabled, using registered

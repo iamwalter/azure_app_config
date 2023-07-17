@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:azure_app_config/azure_app_config.dart';
-import 'package:azure_app_config/src/azure_remote_service_impl.dart';
+import 'package:azure_app_config/src/azure_app_config_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 
 import 'package:http_mock_adapter/http_mock_adapter.dart';
@@ -9,7 +9,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'azure_remote_service_test.mocks.dart';
+import 'azure_app_config_service_test.mocks.dart';
 
 const testKeyValue = KeyValue(
   etag: 'etag',
@@ -27,7 +27,7 @@ const testKey = AzureKey(name: 'test');
 void main() {
   test('when the connection string does not contain all required values.', () {
     expect(
-      () => AzureRemoteService(
+      () => AzureAppConfig(
         connectionString: 'server=test;hello=bye;up=down;',
       ),
       throwsA(isA<ArgumentError>()),
@@ -35,11 +35,11 @@ void main() {
   });
 
   late DioAdapter dioAdapter;
-  late AzureRemoteService service;
+  late AzureAppConfig service;
   const endpoint = 'https://test.website.com';
 
   setUp(() {
-    service = AzureRemoteService(
+    service = AzureAppConfig(
       connectionString: 'Endpoint=$endpoint;Secret=tttestSecret;Id=testId',
     );
 
@@ -54,7 +54,7 @@ void main() {
       'should call client with correct arguments and headers when full',
       () async {
         final client = MockClient();
-        final service = AzureRemoteServiceImpl(client: client);
+        final service = AzureAppConfigImpl(client: client);
 
         await service.setKeyValue(
           key: key,
@@ -84,7 +84,7 @@ void main() {
     test('should call client with correct arguments and headers when empty',
         () async {
       final client = MockClient();
-      final service = AzureRemoteServiceImpl(client: client);
+      final service = AzureAppConfigImpl(client: client);
 
       await service.setKeyValue(
         key: key,

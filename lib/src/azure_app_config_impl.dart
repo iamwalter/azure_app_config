@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:azure_app_config/src/azure_filters.dart';
-import 'package:azure_app_config/src/azure_remote_service.dart';
+import 'package:azure_app_config/src/azure_app_config.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/core/registered_type.dart';
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
@@ -12,9 +12,9 @@ import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 
-class AzureRemoteServiceImpl implements AzureRemoteService {
+class AzureAppConfigImpl implements AzureAppConfig {
   /// Constructs an instance and registers default [FeatureFilter]s.
-  AzureRemoteServiceImpl({
+  AzureAppConfigImpl({
     required this.client,
   });
 
