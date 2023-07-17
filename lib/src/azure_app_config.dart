@@ -1,5 +1,5 @@
-import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/azure_app_config_impl.dart';
+import 'package:azure_app_config/src/azure_filters.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';

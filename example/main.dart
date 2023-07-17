@@ -41,7 +41,7 @@ void main() async {
         user: 'test.user@company.com',
       ),
     );
-    // To check if a featureflag is enabled while parsing the featurefilters, use
+    // To check if a FeatureFlag is enabled while parsing FeatureFilters, use
     final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 
