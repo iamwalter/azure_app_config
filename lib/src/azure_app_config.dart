@@ -1,5 +1,5 @@
+import 'package:azure_app_config/src/azure_app_config_impl.dart';
 import 'package:azure_app_config/src/azure_filters.dart';
-import 'package:azure_app_config/src/azure_remote_service_impl.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
 import 'package:azure_app_config/src/models/errors/azure_errors.dart';
@@ -8,6 +8,9 @@ import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+
+@Deprecated('Use AzureAppConfig instead of AzureRemoteService')
+typedef AzureRemoteService = AzureAppConfig;
 
 /// This class represents the Microsoft Azure App Configuration.
 ///
@@ -19,23 +22,23 @@ import 'package:meta/meta.dart';
 ///
 /// Please note that when a connection string is invalid or not specified,
 /// an [ArgumentError] will occur when creating an
-/// instance of [AzureRemoteService].
-abstract class AzureRemoteService {
-  /// Instantiate an instance of [AzureRemoteService] using a [connectionString]
-  factory AzureRemoteService({
+/// instance of [AzureAppConfig].
+abstract class AzureAppConfig {
+  /// Instantiate an instance of [AzureAppConfig] using a [connectionString]
+  factory AzureAppConfig({
     required String connectionString,
   }) {
     final client = Client(connectionString: connectionString);
 
-    return AzureRemoteServiceImpl(client: client);
+    return AzureAppConfigImpl(client: client);
   }
 
-  /// Instantiate an instance of [AzureRemoteService] using an endpoint and
+  /// Instantiate an instance of [AzureAppConfig] using an endpoint and
   /// providing a custom interceptor.
   ///
   /// Using this method you are able to intercept requests and provide a custom
   /// method of signing API requests.
-  factory AzureRemoteService.customAuthentication({
+  factory AzureAppConfig.customAuthentication({
     required String endpoint,
     required Interceptor interceptor,
   }) {
@@ -44,7 +47,7 @@ abstract class AzureRemoteService {
       interceptor: interceptor,
     );
 
-    return AzureRemoteServiceImpl(client: client);
+    return AzureAppConfigImpl(client: client);
   }
 
   /// Retrieves whether a [FeatureFlag] is enabled, using registered
@@ -57,38 +60,37 @@ abstract class AzureRemoteService {
     required String label,
   });
 
-  /// Sets a given Feature to be enabled or disabled based on [isEnabled].
-  ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Updates a given Feature to be enabled or disabled based on [isEnabled].
+  /// 
+  /// The [FeatureFlag] must already exist. Use [setFeatureFlag] for new values.
+  /// 
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> setFeatureEnabled({
     required String key,
     required String label,
     required bool isEnabled,
   });
 
-  /// Sets a given feature to be enabled.
+  /// Updates an existing [FeatureFlag] to be enabled.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> enableFeature({
     required String key,
     required String label,
   });
 
-  /// Sets a given feature to be disabled.
+  /// Updates an existing [FeatureFlag] to be disabled.
   ///
-  /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
-  /// [KeyValue] does not parse to a [FeatureFlag].
+  /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> disableFeature({
     required String key,
     required String label,
   });
 
-  /// Retrieve a list of [FeatureFlag].
+  /// Retrieve a list of [FeatureFlag]s.
   Future<List<FeatureFlag>> getFeatureFlags();
 
-  /// Retrieve a list of [KeyValue].
+  /// Retrieve a list of [KeyValue]s.
   Future<List<KeyValue>> getKeyValues();
 
   ///  Retrieve [KeyValue] records based on filters.
@@ -175,6 +177,15 @@ abstract class AzureRemoteService {
     String? value,
     String? contentType,
     Map<String, dynamic>? tags,
+  });
+
+  /// Add a new FeatureFlag to the repository.
+  Future<Response<dynamic>> setFeatureFlag({
+    required String key,
+    required String label,
+    required bool enabled,
+    String description = '',
+    Map<String, dynamic>? conditions,
   });
 
   /// Register a mapping for a Type.

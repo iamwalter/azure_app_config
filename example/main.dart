@@ -8,7 +8,7 @@ void main() async {
 
   // Creating an instance needs a connection String. This can be
   // obtained through the Azure Portal, under "Access Keys".
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
 
   // Getting a keyvalue
   late KeyValue keyValue;
@@ -26,14 +26,12 @@ void main() async {
 
   // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
   // to get the properties of the FeatureFlag
-  try {
-    final featureFlag = keyValue.asFeatureFlag();
+  final featureFlag = keyValue.asFeatureFlag();
 
+  // .asFeatureFlag() will return null if it's unable to parse.
+  if (featureFlag != null) {
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
-  } // .asFeatureFlag() will throw this exception if it's unable to parse.
-  on AzureKeyValueNotParsableAsFeatureFlagException {
-    developer.log('Oh no!');
   }
 
   try {
@@ -43,7 +41,7 @@ void main() async {
         user: 'test.user@company.com',
       ),
     );
-    // To check if a featureflag is enabled while parsing the featurefilters, use
+    // To check if a FeatureFlag is enabled while parsing FeatureFilters, use
     final isFeatureEnabled =
         await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
 

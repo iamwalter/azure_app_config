@@ -1,8 +1,10 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:azure_app_config/src/azure_app_config.dart';
 import 'package:azure_app_config/src/azure_filters.dart';
-import 'package:azure_app_config/src/azure_remote_service.dart';
 import 'package:azure_app_config/src/core/client.dart';
 import 'package:azure_app_config/src/core/registered_type.dart';
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
@@ -12,9 +14,9 @@ import 'package:azure_app_config/src/models/key.dart';
 import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 
-class AzureRemoteServiceImpl implements AzureRemoteService {
+class AzureAppConfigImpl implements AzureAppConfig {
   /// Constructs an instance and registers default [FeatureFilter]s.
-  AzureRemoteServiceImpl({
+  AzureAppConfigImpl({
     required this.client,
   });
 
@@ -28,6 +30,10 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   @override
   Dio get dio => client.dio;
 
+  static const String _featureFlagPrefix = '.appconfig.featureflag/';
+  static const String _keyValueContentType =
+      'application/vnd.microsoft.appconfig.kv+json';
+
   @override
   void registerFeatureFilter(FeatureFilter filter) {
     featureFilters[filter.name] = filter;
@@ -39,9 +45,13 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     required String label,
   }) async {
     final keyValue =
-        await getKeyValue(key: '.appconfig.featureflag/$key', label: label);
+        await getKeyValue(key: '$_featureFlagPrefix$key', label: label);
 
     final feature = keyValue.asFeatureFlag();
+
+    if (feature == null) {
+      throw AzureKeyValueNotParsableAsFeatureFlagException();
+    }
 
     var enabled = feature.enabled;
 
@@ -76,13 +86,9 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     final keyValues = await getKeyValues();
 
     for (final kv in keyValues) {
-      try {
-        final featureFlag = kv.asFeatureFlag();
+      final featureFlag = kv.asFeatureFlag();
 
-        featureFlags.add(featureFlag);
-      } on AzureKeyValueNotParsableAsFeatureFlagException {
-        continue;
-      }
+      if (featureFlag != null) featureFlags.add(featureFlag);
     }
 
     return featureFlags;
@@ -167,13 +173,15 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     if (contentType != null) data['content_type'] = contentType;
     if (tags != null) data['tags'] = tags;
 
+    final headers = {
+      'Content-Type': _keyValueContentType,
+    };
+
     return client.put(
       path: path,
       params: params,
       data: data,
-      headers: {
-        'Content-Type': 'application/vnd.microsoft.appconfig.kv+json',
-      },
+      headers: headers,
     );
   }
 
@@ -197,26 +205,24 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
     required String label,
     required bool isEnabled,
   }) async {
-    final keyValue = await getKeyValue(key: key, label: label);
-
-    final FeatureFlag? featureFlag;
-
-    featureFlag = keyValue.asFeatureFlag();
-
-    final modifiedFeatureFlag = featureFlag.copyWith(enabled: isEnabled);
-
-    final data =
-        keyValue.copyWith(value: json.encode(modifiedFeatureFlag.toJson()));
-
-    return client.put(
-      path: '/kv/${keyValue.key}',
-      params: {'label': keyValue.label ?? ''},
-      data: data.toJson(),
-      headers: {
-        'Content-Type':
-            'application/vnd.microsoft.appconfig.kv+json; charset=utf-8',
-      },
+    final keyValue = await getKeyValue(
+      key: '$_featureFlagPrefix$key',
+      label: label,
     );
+
+    final featureFlag = keyValue.asFeatureFlag();
+
+    final description = featureFlag?.description;
+    final conditions = featureFlag?.conditions;
+
+    return setFeatureFlag(
+      key: key,
+      label: label,
+      enabled: isEnabled,
+      description: description,
+      conditions: conditions,
+    );
+
   }
 
   @override
@@ -272,7 +278,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
   }) {
     if (registeredTypes[O] != null) {
       throw AzureComplexTypeException(
-        'ComplexType ${O.toString()} is already registered',
+        'ComplexType $O is already registered',
       );
     }
 
@@ -296,13 +302,13 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     if (registeredTypes[O] == null) {
       throw AzureComplexTypeException(
-        'ComplexType ${O.toString()} is not registered',
+        'ComplexType $O is not registered',
       );
     }
 
     if (registeredTypes[O]!.decode == null) {
       throw AzureComplexTypeException(
-        'ComplexType ${O.toString()} decode is not registered!',
+        'ComplexType $O decode is not registered!',
       );
     }
 
@@ -322,7 +328,7 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
 
     if (registeredType == null) {
       throw AzureComplexTypeException(
-        'ComplexType ${O.toString()} is not registered',
+        'ComplexType O is not registered',
       );
     }
     if (registeredType.encode == null) {
@@ -337,5 +343,33 @@ class AzureRemoteServiceImpl implements AzureRemoteService {
       value: jsonEncode(json),
       contentType: 'application/json',
     );
+  }
+
+  @override
+  Future<Response<dynamic>> setFeatureFlag({
+    required String key,
+    required String? label,
+    required bool enabled,
+    String? description = '',
+    Map<String, dynamic>? conditions,
+  }) async {
+    const featureFlagContentType =
+        'application/vnd.microsoft.appconfig.ff+json;charset=utf-8';
+
+    final response = await setKeyValue(
+      key: '$_featureFlagPrefix$key',
+      label: label ?? '',
+      value: jsonEncode(
+        FeatureFlag(
+          id: key,
+          description: description ?? '',
+          enabled: enabled,
+          conditions: conditions ?? {},
+        ).toJson(),
+      ),
+      contentType: featureFlagContentType,
+    );
+
+    return response;
   }
 }

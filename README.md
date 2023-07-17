@@ -6,17 +6,16 @@ This package makes it easier to communicate with Microsoft Azure App Configurati
 ## Installation
 To use this plugin, add `azure_app_config` to your `pubspec.yaml` file.
 
-
 ## Authentication
 
 There are two methods of authenticating Azure App Configuration:
 
 1. (simple) Use the connection string which can be obtained from the App Configuration Dashboard under 'Access keys'. If the connection string is invalid or not specified, an ArgumentError will occur.
 
-2. (complex) Use the factory constructor `AzureRemoteService.customAuthentication()` which enables you to provide a custom way of signing requests.
+2. (complex) Use the factory constructor `AzureAppConfig.customAuthentication()` which enables you to provide a custom way of signing requests.
 
 ## Example 
-Example 1: Creating an instance of AzureRemoteService
+Example 1: Creating an instance of AzureAppConfig
 
 ```dart
 import 'package:azure_app_config/azure_app_config.dart';
@@ -24,7 +23,7 @@ import 'package:azure_app_config/azure_app_config.dart';
 void main() {
   // Creating an instance needs a connection String. This can be
   // obtained through the Azure Portal, under "Access Keys".
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
 
   // Use the service instance to interact with Azure App Configuration.
   // ...
@@ -38,7 +37,7 @@ void main() async {
   const exampleKey = 'example_key';
   const exampleLabel = 'example_label';
 
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
 
   // Getting a key value.
   try {
@@ -61,25 +60,21 @@ void main() async {
   const exampleKey = 'example_key';
   const exampleLabel = 'example_label';
 
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
+  
+  final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
 
-  try {
-    final keyValue = await service.getKeyValue(key: exampleKey, label: exampleLabel);
+  // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
+  // to get the properties of the FeatureFlag
+  final featureFlag = keyValue.asFeatureFlag();
 
-    // If the KeyValue is a FeatureFlag, you can use .asFeatureFlag()
-    // to get the properties of the FeatureFlag.
-    final featureFlag = keyValue.asFeatureFlag();
-
+  // .asFeatureFlag() will return null if it's unable to parse.
+  if (featureFlag != null) {
     // To check if the featureflag is enabled, use
     developer.log('${featureFlag.enabled}');
-  } // .asFeatureFlag() will throw this exception if it's unable to parse.
-  on AzureKeyValueNotParsableAsFeatureFlagException {
-    developer.log('Oh no!');
-  } catch (err) {
-    // Handle any exceptions that might occur when interacting with the Azure
-    // service.
   }
-}
+} 
+
 ```
 Example 4: Retrieving a feature flag with feature filters from Azure App Configuration
 ```dart
@@ -91,7 +86,7 @@ void main() async {
   const exampleKey = 'example_key';
   const exampleLabel = 'example_label';
 
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
 
   // Register a FeatureFilter before using it.
   service.registerFeatureFilter(
@@ -119,7 +114,7 @@ import 'dart:developer' as developer;
 import 'package:azure_app_config/azure_app_config.dart';
 
 void main() async {
-  final service = AzureRemoteService(connectionString: '<CONNECTION_STRING>');
+  final service = AzureAppConfig(connectionString: '<CONNECTION_STRING>');
 
   try {
     // Find key values based on a key and label filter.
@@ -208,8 +203,3 @@ For more information about Azure App Configuration, take a look at the following
 
 
 Feel free to submit any pull requests!
-
-
-
-
-Package created by Walter Tesevic commissioned by Ordina

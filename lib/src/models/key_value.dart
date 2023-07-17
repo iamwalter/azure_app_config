@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:azure_app_config/src/models/errors/azure_errors.dart';
 import 'package:azure_app_config/src/models/feature_flag.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -21,12 +20,14 @@ class KeyValue with _$KeyValue {
   const factory KeyValue({
     required String etag,
     required String key,
+    required bool locked,
+    required Map<String, dynamic> tags,
+    @JsonKey(name: 'last_modified') required String lastModified,
     String? label,
     @JsonKey(name: 'content_type') String? contentType,
     @Default('') String value,
-    required Map<String, dynamic> tags,
-    required bool locked,
-    @JsonKey(name: 'last_modified') required String lastModified,
+
+
   }) = _KeyValue;
 
   factory KeyValue.fromJson(Map<String, Object?> json) =>
@@ -36,13 +37,12 @@ class KeyValue with _$KeyValue {
 
   /// Returns the [KeyValue] as a [FeatureFlag].
   ///
-  /// Throws [AzureKeyValueNotParsableAsFeatureFlagException] when not able to
-  /// be parsed.
-  FeatureFlag asFeatureFlag() {
+  /// Returns null when not able to be parsed.
+  FeatureFlag? asFeatureFlag() {
     try {
       return FeatureFlag.fromJson(jsonDecode(value) as Map<String, Object?>);
     } catch (e) {
-      throw AzureKeyValueNotParsableAsFeatureFlagException();
+      return null;
     }
   }
 }

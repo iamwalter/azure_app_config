@@ -90,8 +90,8 @@ class ClientImpl implements Client {
   ) async {
     try {
       return await callBack();
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.badResponse) {
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.badResponse) {
         if (e.response?.statusCode == 400) {
           // Expecting a response object from API
           final errorResponse = ErrorResponse.fromJson(
@@ -118,7 +118,7 @@ class ClientImpl implements Client {
         }
       }
 
-      if (e.type == DioErrorType.unknown) {
+      if (e.type == DioExceptionType.unknown) {
         throw Exception(
           e.error ??
               '''Something went wrong communicating with Azure App Configuration''',
