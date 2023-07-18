@@ -39,4 +39,8 @@ class FeatureFlag with _$FeatureFlag {
 
     return filters;
   }
+
+  /// Pre-defined content type for a FeatureFlag.
+  static const String contentType =
+      'application/vnd.microsoft.appconfig.ff+json;charset=utf-8';
 }

@@ -30,6 +30,13 @@ void main() {
     },
   );
 
+  test('should have correct pre-defined contentType', () {
+    expect(
+      FeatureFlag.contentType,
+      'application/vnd.microsoft.appconfig.ff+json;charset=utf-8',
+    );
+  });
+
   test('should be parsable from JSON', () async {
     final jsonMap = json.decode(fixture('featureflag_fixture.json'))
         as Map<String, dynamic>;
