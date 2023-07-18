@@ -1,3 +1,7 @@
+## 0.15.1
+
+- Add constant FeatureFlag.contentType
+
 ## 0.15.0
 
 - Deprecate 'AzureRemoteService' for 'AzureAppConfig'

@@ -222,7 +222,6 @@ class AzureAppConfigImpl implements AzureAppConfig {
       description: description,
       conditions: conditions,
     );
-
   }
 
   @override
@@ -353,9 +352,6 @@ class AzureAppConfigImpl implements AzureAppConfig {
     String? description = '',
     Map<String, dynamic>? conditions,
   }) async {
-    const featureFlagContentType =
-        'application/vnd.microsoft.appconfig.ff+json;charset=utf-8';
-
     final response = await setKeyValue(
       key: '$_featureFlagPrefix$key',
       label: label ?? '',
@@ -367,7 +363,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
           conditions: conditions ?? {},
         ).toJson(),
       ),
-      contentType: featureFlagContentType,
+      contentType: FeatureFlag.contentType,
     );
 
     return response;
