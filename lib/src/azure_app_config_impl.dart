@@ -214,10 +214,12 @@ class AzureAppConfigImpl implements AzureAppConfig {
 
     final description = featureFlag?.description;
     final conditions = featureFlag?.conditions;
+    final id = featureFlag?.id;
 
     return setFeatureFlag(
       key: key,
       label: label,
+      name: id,
       enabled: isEnabled,
       description: description,
       conditions: conditions,
@@ -349,6 +351,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
     required String key,
     required String? label,
     required bool enabled,
+    String? name,
     String? description = '',
     Map<String, dynamic>? conditions,
   }) async {
@@ -357,7 +360,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
       label: label ?? '',
       value: jsonEncode(
         FeatureFlag(
-          id: key,
+          id: name ?? key,
           description: description ?? '',
           enabled: enabled,
           conditions: conditions ?? {},
