@@ -184,6 +184,7 @@ abstract class AzureAppConfig {
     required String key,
     required String label,
     required bool enabled,
+    String? name,
     String description = '',
     Map<String, dynamic>? conditions,
   });

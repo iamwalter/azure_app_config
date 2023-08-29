@@ -1,3 +1,7 @@
+## 0.15.2
+
+- Added optional parameter 'name' to setFeatureFlag()
+
 ## 0.15.1
 
 - Add constant FeatureFlag.contentType
