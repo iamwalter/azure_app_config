@@ -12,7 +12,7 @@ void main() {
     parameters: {
       'tParam': {
         'tKey': 'tValue',
-      }
+      },
     },
   );
 

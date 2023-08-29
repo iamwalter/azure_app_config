@@ -1,6 +1,7 @@
 ## 0.15.2
 
 - Added optional parameter 'name' to setFeatureFlag()
+- Update dependencies
 
 ## 0.15.1
 

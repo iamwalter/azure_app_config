@@ -15,7 +15,7 @@ import 'azure_remote_interceptor_test.mocks.dart';
 @GenerateNiceMocks([
   MockSpec<Uri>(),
   MockSpec<RequestInterceptorHandler>(),
-  MockSpec<RequestOptions>()
+  MockSpec<RequestOptions>(),
 ])
 void main() {
   /// Using the values from a 'real' call

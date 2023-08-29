@@ -115,7 +115,7 @@ void main() {
           'items': [
             key1.toJson(),
             key2.toJson(),
-          ]
+          ],
         });
       },
       queryParameters: {'api_version': '1.0'},
@@ -160,7 +160,7 @@ void main() {
           'items': [
             testKeyValue.toJson(),
             testKeyValue.toJson(),
-          ]
+          ],
         });
       },
       queryParameters: {'api_version': '1.0'},
@@ -211,13 +211,13 @@ void main() {
           'items': [
             key1.toJson(),
             key2.toJson(),
-          ]
+          ],
         });
       },
       queryParameters: {
         'api_version': '1.0',
         'key': 'key*',
-        'label': AzureFilters.noLabel
+        'label': AzureFilters.noLabel,
       },
     );
 
@@ -243,7 +243,7 @@ void main() {
           'items': [
             key1.toJson(),
             key2.toJson(),
-          ]
+          ],
         });
       },
       queryParameters: {'api_version': '1.0', 'key': 'key*', 'label': 'CZ'},
@@ -268,7 +268,7 @@ void main() {
             testKey.toJson(),
             testKey.toJson(),
             testKey.toJson(),
-          ]
+          ],
         });
       },
       queryParameters: {'api_version': '1.0', 'name': 'testSearchQuery'},
