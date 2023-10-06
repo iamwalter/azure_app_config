@@ -169,6 +169,40 @@ void main() {
     expect(actual, expected);
   });
 
+  test('getKeyValues should return all keyvalues with nextlink', () async {
+    final nextLinkKeyValue = testKeyValue.copyWith(key: 'differentkey');
+    final expected = <KeyValue>[testKeyValue, testKeyValue, nextLinkKeyValue];
+
+    dioAdapter
+      ..onGet(
+        '$endpoint/kv',
+        (server) {
+          return server.reply(200, {
+            'items': [
+              testKeyValue.toJson(),
+              testKeyValue.toJson(),
+            ],
+            '@nextLink': '/kv/myNextLink',
+          });
+        },
+        queryParameters: {'api_version': '1.0'},
+      )
+      ..onGet(
+        '$endpoint/kv/myNextLink',
+        (server) {
+          return server.reply(200, {
+            'items': [
+              nextLinkKeyValue.toJson(),
+            ],
+          });
+        },
+        queryParameters: {'api_version': '1.0'},
+      );
+
+    final actual = await service.getKeyValues();
+    expect(actual, expected);
+  });
+
   test('getFeatureFlags should retrieve feature flags', () async {
     const testFeatureFlag = FeatureFlag(
       id: 'id',

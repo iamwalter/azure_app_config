@@ -95,8 +95,9 @@ class AzureAppConfigImpl implements AzureAppConfig {
   }
 
   @override
-  Future<List<KeyValue>> getKeyValues() async {
-    const path = '/kv';
+  Future<List<KeyValue>> getKeyValues({String? nextLink}) async {
+    final path = (nextLink != null) ? nextLink : '/kv';
+
     final params = {
       'label': '*',
     };
@@ -108,8 +109,17 @@ class AzureAppConfigImpl implements AzureAppConfig {
     final data = response.data;
 
     final items = <KeyValue>[];
+    
     for (final json in data['items'] as List<dynamic>) {
       items.add(KeyValue.fromJson(json as Map<String, Object?>));
+    }
+
+    final next = data['@nextLink'] as String?;
+
+    if (next != null) {
+      final newItems = await getKeyValues(nextLink: next);
+
+      items.addAll(newItems);
     }
 
     return items;
