@@ -1,3 +1,6 @@
+## 0.16.0
+- Fix getKeyValues() only retrieving up to 100 items.
+
 ## 0.15.2
 
 - Added optional parameter 'name' to setFeatureFlag()
