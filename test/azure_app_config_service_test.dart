@@ -170,18 +170,25 @@ void main() {
   });
 
   test('getKeyValues should return all keyvalues with nextlink', () async {
-    final nextLinkKeyValue = testKeyValue.copyWith(key: 'differentkey');
-    final expected = <KeyValue>[testKeyValue, testKeyValue, nextLinkKeyValue];
+    final item1 = testKeyValue.copyWith(key: '1');
+    final item2 = testKeyValue.copyWith(key: '2');
+    final item3 = testKeyValue.copyWith(key: '3');
+
+    final expected = [
+      item1,
+      item2,
+      item3,
+      item3,
+      item2,
+      item1,
+    ];
 
     dioAdapter
       ..onGet(
         '$endpoint/kv',
         (server) {
           return server.reply(200, {
-            'items': [
-              testKeyValue.toJson(),
-              testKeyValue.toJson(),
-            ],
+            'items': [item1, item2]..map((e) => e.toJson()),
             '@nextLink': '/kv/myNextLink',
           });
         },
@@ -191,9 +198,17 @@ void main() {
         '$endpoint/kv/myNextLink',
         (server) {
           return server.reply(200, {
-            'items': [
-              nextLinkKeyValue.toJson(),
-            ],
+            'items': [item3, item3]..map((i) => i.toJson()),
+            '@nextLink': '/kv/myNextLink2',
+          });
+        },
+        queryParameters: {'api_version': '1.0'},
+      )
+      ..onGet(
+        '$endpoint/kv/myNextLink2',
+        (server) {
+          return server.reply(200, {
+            'items': [item2, item1]..map((i) => i.toJson()),
           });
         },
         queryParameters: {'api_version': '1.0'},
