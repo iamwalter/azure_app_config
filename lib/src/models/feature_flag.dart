@@ -27,11 +27,11 @@ class FeatureFlag with _$FeatureFlag {
 
   /// Gets the filters associated to the [FeatureFlag].
   List<ClientFilter> getClientFilters() {
-    final clientFilters = conditions['client_filters'] as List<dynamic>;
+    final clientFilters = conditions['client_filters'] as List<dynamic>?;
 
     final filters = <ClientFilter>[];
 
-    for (final json in clientFilters) {
+    for (final json in clientFilters ?? []) {
       final filter = ClientFilter.fromJson(json as Map<String, Object?>);
 
       filters.add(filter);

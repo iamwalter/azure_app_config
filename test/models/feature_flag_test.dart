@@ -46,14 +46,25 @@ void main() {
     expect(actual, tFeatureFlag);
   });
 
-  test(
-    'getClientFilters() should get client filters',
-    () async {
-      final expected = [filter1, filter2];
+  group(
+    'getClientFilters()',
+    () {
+      test(
+        'should get client filters',
+        () async {
+          final expected = [filter1, filter2];
 
-      final actual = tFeatureFlag.getClientFilters();
+          final actual = tFeatureFlag.getClientFilters();
 
-      expect(actual, expected);
+          expect(actual, expected);
+
+          final tFeatureFlag2 = tFeatureFlag.copyWith(conditions: {});
+
+          final actual_ = tFeatureFlag2.getClientFilters();
+
+          expect(actual_, <ClientFilter>[]);
+        },
+      );
     },
   );
 }
