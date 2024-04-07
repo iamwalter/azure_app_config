@@ -12,7 +12,7 @@ part of 'key_value.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 KeyValue _$KeyValueFromJson(Map<String, dynamic> json) {
   return _KeyValue.fromJson(json);
@@ -113,10 +113,11 @@ class _$KeyValueCopyWithImpl<$Res, $Val extends KeyValue>
 }
 
 /// @nodoc
-abstract class _$$_KeyValueCopyWith<$Res> implements $KeyValueCopyWith<$Res> {
-  factory _$$_KeyValueCopyWith(
-          _$_KeyValue value, $Res Function(_$_KeyValue) then) =
-      __$$_KeyValueCopyWithImpl<$Res>;
+abstract class _$$KeyValueImplCopyWith<$Res>
+    implements $KeyValueCopyWith<$Res> {
+  factory _$$KeyValueImplCopyWith(
+          _$KeyValueImpl value, $Res Function(_$KeyValueImpl) then) =
+      __$$KeyValueImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -131,11 +132,11 @@ abstract class _$$_KeyValueCopyWith<$Res> implements $KeyValueCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_KeyValueCopyWithImpl<$Res>
-    extends _$KeyValueCopyWithImpl<$Res, _$_KeyValue>
-    implements _$$_KeyValueCopyWith<$Res> {
-  __$$_KeyValueCopyWithImpl(
-      _$_KeyValue _value, $Res Function(_$_KeyValue) _then)
+class __$$KeyValueImplCopyWithImpl<$Res>
+    extends _$KeyValueCopyWithImpl<$Res, _$KeyValueImpl>
+    implements _$$KeyValueImplCopyWith<$Res> {
+  __$$KeyValueImplCopyWithImpl(
+      _$KeyValueImpl _value, $Res Function(_$KeyValueImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -150,7 +151,7 @@ class __$$_KeyValueCopyWithImpl<$Res>
     Object? contentType = freezed,
     Object? value = null,
   }) {
-    return _then(_$_KeyValue(
+    return _then(_$KeyValueImpl(
       etag: null == etag
           ? _value.etag
           : etag // ignore: cast_nullable_to_non_nullable
@@ -189,8 +190,8 @@ class __$$_KeyValueCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_KeyValue extends _KeyValue {
-  const _$_KeyValue(
+class _$KeyValueImpl extends _KeyValue {
+  const _$KeyValueImpl(
       {required this.etag,
       required this.key,
       required this.locked,
@@ -202,8 +203,8 @@ class _$_KeyValue extends _KeyValue {
       : _tags = tags,
         super._();
 
-  factory _$_KeyValue.fromJson(Map<String, dynamic> json) =>
-      _$$_KeyValueFromJson(json);
+  factory _$KeyValueImpl.fromJson(Map<String, dynamic> json) =>
+      _$$KeyValueImplFromJson(json);
 
   @override
   final String etag;
@@ -237,10 +238,10 @@ class _$_KeyValue extends _KeyValue {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_KeyValue &&
+            other is _$KeyValueImpl &&
             (identical(other.etag, etag) || other.etag == etag) &&
             (identical(other.key, key) || other.key == key) &&
             (identical(other.locked, locked) || other.locked == locked) &&
@@ -269,12 +270,12 @@ class _$_KeyValue extends _KeyValue {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_KeyValueCopyWith<_$_KeyValue> get copyWith =>
-      __$$_KeyValueCopyWithImpl<_$_KeyValue>(this, _$identity);
+  _$$KeyValueImplCopyWith<_$KeyValueImpl> get copyWith =>
+      __$$KeyValueImplCopyWithImpl<_$KeyValueImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_KeyValueToJson(
+    return _$$KeyValueImplToJson(
       this,
     );
   }
@@ -289,10 +290,11 @@ abstract class _KeyValue extends KeyValue {
       @JsonKey(name: 'last_modified') required final String lastModified,
       final String? label,
       @JsonKey(name: 'content_type') final String? contentType,
-      final String value}) = _$_KeyValue;
+      final String value}) = _$KeyValueImpl;
   const _KeyValue._() : super._();
 
-  factory _KeyValue.fromJson(Map<String, dynamic> json) = _$_KeyValue.fromJson;
+  factory _KeyValue.fromJson(Map<String, dynamic> json) =
+      _$KeyValueImpl.fromJson;
 
   @override
   String get etag;
@@ -314,6 +316,6 @@ abstract class _KeyValue extends KeyValue {
   String get value;
   @override
   @JsonKey(ignore: true)
-  _$$_KeyValueCopyWith<_$_KeyValue> get copyWith =>
+  _$$KeyValueImplCopyWith<_$KeyValueImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

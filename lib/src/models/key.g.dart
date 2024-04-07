@@ -6,11 +6,12 @@ part of 'key.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AzureKey _$$_AzureKeyFromJson(Map<String, dynamic> json) => _$_AzureKey(
+_$AzureKeyImpl _$$AzureKeyImplFromJson(Map<String, dynamic> json) =>
+    _$AzureKeyImpl(
       name: json['name'] as String,
     );
 
-Map<String, dynamic> _$$_AzureKeyToJson(_$_AzureKey instance) =>
+Map<String, dynamic> _$$AzureKeyImplToJson(_$AzureKeyImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
     };

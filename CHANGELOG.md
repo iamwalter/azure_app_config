@@ -1,21 +1,23 @@
+## 0.17.0
+- Fix issue where `FeatureFlag`s could sometimes not be retrieved.
+
 ## 0.16.0
-- Fix getKeyValues() only retrieving up to 100 items.
+- An issue that limited getKeyValues() to retrieving only up to 100 items has been resolved.
 
 ## 0.15.2
 
-- Added optional parameter 'name' to setFeatureFlag()
-- Update dependencies
+- This version introduces an optional parameter 'name' for the `setFeatureFlag()` method.
 
 ## 0.15.1
 
-- Add constant FeatureFlag.contentType
+- Add constant `FeatureFlag.contentType`
 
 ## 0.15.0
 
-- Deprecate 'AzureRemoteService' for 'AzureAppConfig'
-- Added method: setFeatureFlag()
-- Methods setFeatureEnabled, enableFeature and disableFeature now only take the last part of the key because this is more user friendly. So, before -> '.appconfig.featureflag/mykey'. After -> 'mykey'
-- KeyValue.asFeatureFlag() now returns null if it's not parsable instead of throwing an AzureKeyValueNotParsableAsFeatureFlagException.
+- `AzureRemoteService` is deprecated in favor of `AzureAppConfig`.
+- Added method: `setFeatureFlag()`
+- Simplified feature flag methods to use key names only (before: .appconfig.featureflag/mykey, now: mykey).
+- `KeyValue.asFeatureFlag()` now returns null if it's not parsable instead of throwing an `AzureKeyValueNotParsableAsFeatureFlagException`.
 - Update dependencies 
 
 ## 0.14.0
@@ -33,8 +35,8 @@
 
 ## 0.11.0
 
-- Add factory constructor AzureRemoteService.customAuthentication() to provide custom way of signing requests.
-- Add ability to find Azure Keys by using the `findKeyBy` method.
+- Add factory constructor `AzureRemoteService.customAuthentication()` to provide custom way of signing requests.
+- Add ability to find `AzureKey`s by introducing the `findKeyBy` method.
 
 ## 0.10.0
 
