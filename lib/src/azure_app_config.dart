@@ -61,9 +61,9 @@ abstract class AzureAppConfig {
   });
 
   /// Updates a given Feature to be enabled or disabled based on [isEnabled].
-  /// 
+  ///
   /// The [FeatureFlag] must already exist. Use [setFeatureFlag] for new values.
-  /// 
+  ///
   /// Throws a [AzureRecordNotFoundException] if the [KeyValue] does not exist.
   Future<Response<dynamic>> setFeatureEnabled({
     required String key,

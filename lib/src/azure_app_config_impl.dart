@@ -109,7 +109,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
     final data = response.data;
 
     final items = <KeyValue>[];
-    
+
     for (final json in data['items'] as List<dynamic>) {
       items.add(KeyValue.fromJson(json as Map<String, Object?>));
     }

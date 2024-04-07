@@ -26,8 +26,6 @@ class KeyValue with _$KeyValue {
     String? label,
     @JsonKey(name: 'content_type') String? contentType,
     @Default('') String value,
-
-
   }) = _KeyValue;
 
   factory KeyValue.fromJson(Map<String, Object?> json) =>
