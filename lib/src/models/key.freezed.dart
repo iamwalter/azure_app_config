@@ -12,7 +12,7 @@ part of 'key.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 AzureKey _$AzureKeyFromJson(Map<String, dynamic> json) {
   return _AzureKey.fromJson(json);
@@ -61,21 +61,22 @@ class _$AzureKeyCopyWithImpl<$Res, $Val extends AzureKey>
 }
 
 /// @nodoc
-abstract class _$$_AzureKeyCopyWith<$Res> implements $AzureKeyCopyWith<$Res> {
-  factory _$$_AzureKeyCopyWith(
-          _$_AzureKey value, $Res Function(_$_AzureKey) then) =
-      __$$_AzureKeyCopyWithImpl<$Res>;
+abstract class _$$AzureKeyImplCopyWith<$Res>
+    implements $AzureKeyCopyWith<$Res> {
+  factory _$$AzureKeyImplCopyWith(
+          _$AzureKeyImpl value, $Res Function(_$AzureKeyImpl) then) =
+      __$$AzureKeyImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name});
 }
 
 /// @nodoc
-class __$$_AzureKeyCopyWithImpl<$Res>
-    extends _$AzureKeyCopyWithImpl<$Res, _$_AzureKey>
-    implements _$$_AzureKeyCopyWith<$Res> {
-  __$$_AzureKeyCopyWithImpl(
-      _$_AzureKey _value, $Res Function(_$_AzureKey) _then)
+class __$$AzureKeyImplCopyWithImpl<$Res>
+    extends _$AzureKeyCopyWithImpl<$Res, _$AzureKeyImpl>
+    implements _$$AzureKeyImplCopyWith<$Res> {
+  __$$AzureKeyImplCopyWithImpl(
+      _$AzureKeyImpl _value, $Res Function(_$AzureKeyImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -83,7 +84,7 @@ class __$$_AzureKeyCopyWithImpl<$Res>
   $Res call({
     Object? name = null,
   }) {
-    return _then(_$_AzureKey(
+    return _then(_$AzureKeyImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -94,11 +95,11 @@ class __$$_AzureKeyCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AzureKey implements _AzureKey {
-  const _$_AzureKey({required this.name});
+class _$AzureKeyImpl implements _AzureKey {
+  const _$AzureKeyImpl({required this.name});
 
-  factory _$_AzureKey.fromJson(Map<String, dynamic> json) =>
-      _$$_AzureKeyFromJson(json);
+  factory _$AzureKeyImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AzureKeyImplFromJson(json);
 
   @override
   final String name;
@@ -109,10 +110,10 @@ class _$_AzureKey implements _AzureKey {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AzureKey &&
+            other is _$AzureKeyImpl &&
             (identical(other.name, name) || other.name == name));
   }
 
@@ -123,26 +124,27 @@ class _$_AzureKey implements _AzureKey {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AzureKeyCopyWith<_$_AzureKey> get copyWith =>
-      __$$_AzureKeyCopyWithImpl<_$_AzureKey>(this, _$identity);
+  _$$AzureKeyImplCopyWith<_$AzureKeyImpl> get copyWith =>
+      __$$AzureKeyImplCopyWithImpl<_$AzureKeyImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AzureKeyToJson(
+    return _$$AzureKeyImplToJson(
       this,
     );
   }
 }
 
 abstract class _AzureKey implements AzureKey {
-  const factory _AzureKey({required final String name}) = _$_AzureKey;
+  const factory _AzureKey({required final String name}) = _$AzureKeyImpl;
 
-  factory _AzureKey.fromJson(Map<String, dynamic> json) = _$_AzureKey.fromJson;
+  factory _AzureKey.fromJson(Map<String, dynamic> json) =
+      _$AzureKeyImpl.fromJson;
 
   @override
   String get name;
   @override
   @JsonKey(ignore: true)
-  _$$_AzureKeyCopyWith<_$_AzureKey> get copyWith =>
+  _$$AzureKeyImplCopyWith<_$AzureKeyImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

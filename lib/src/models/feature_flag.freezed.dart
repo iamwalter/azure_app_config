@@ -12,7 +12,7 @@ part of 'feature_flag.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 FeatureFlag _$FeatureFlagFromJson(Map<String, dynamic> json) {
   return _FeatureFlag.fromJson(json);
@@ -84,11 +84,11 @@ class _$FeatureFlagCopyWithImpl<$Res, $Val extends FeatureFlag>
 }
 
 /// @nodoc
-abstract class _$$_FeatureFlagCopyWith<$Res>
+abstract class _$$FeatureFlagImplCopyWith<$Res>
     implements $FeatureFlagCopyWith<$Res> {
-  factory _$$_FeatureFlagCopyWith(
-          _$_FeatureFlag value, $Res Function(_$_FeatureFlag) then) =
-      __$$_FeatureFlagCopyWithImpl<$Res>;
+  factory _$$FeatureFlagImplCopyWith(
+          _$FeatureFlagImpl value, $Res Function(_$FeatureFlagImpl) then) =
+      __$$FeatureFlagImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -99,11 +99,11 @@ abstract class _$$_FeatureFlagCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_FeatureFlagCopyWithImpl<$Res>
-    extends _$FeatureFlagCopyWithImpl<$Res, _$_FeatureFlag>
-    implements _$$_FeatureFlagCopyWith<$Res> {
-  __$$_FeatureFlagCopyWithImpl(
-      _$_FeatureFlag _value, $Res Function(_$_FeatureFlag) _then)
+class __$$FeatureFlagImplCopyWithImpl<$Res>
+    extends _$FeatureFlagCopyWithImpl<$Res, _$FeatureFlagImpl>
+    implements _$$FeatureFlagImplCopyWith<$Res> {
+  __$$FeatureFlagImplCopyWithImpl(
+      _$FeatureFlagImpl _value, $Res Function(_$FeatureFlagImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -114,7 +114,7 @@ class __$$_FeatureFlagCopyWithImpl<$Res>
     Object? enabled = null,
     Object? conditions = null,
   }) {
-    return _then(_$_FeatureFlag(
+    return _then(_$FeatureFlagImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -137,8 +137,8 @@ class __$$_FeatureFlagCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_FeatureFlag extends _FeatureFlag {
-  const _$_FeatureFlag(
+class _$FeatureFlagImpl extends _FeatureFlag {
+  const _$FeatureFlagImpl(
       {required this.id,
       required this.description,
       required this.enabled,
@@ -146,8 +146,8 @@ class _$_FeatureFlag extends _FeatureFlag {
       : _conditions = conditions,
         super._();
 
-  factory _$_FeatureFlag.fromJson(Map<String, dynamic> json) =>
-      _$$_FeatureFlagFromJson(json);
+  factory _$FeatureFlagImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FeatureFlagImplFromJson(json);
 
   @override
   final String id;
@@ -169,10 +169,10 @@ class _$_FeatureFlag extends _FeatureFlag {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_FeatureFlag &&
+            other is _$FeatureFlagImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -189,12 +189,12 @@ class _$_FeatureFlag extends _FeatureFlag {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_FeatureFlagCopyWith<_$_FeatureFlag> get copyWith =>
-      __$$_FeatureFlagCopyWithImpl<_$_FeatureFlag>(this, _$identity);
+  _$$FeatureFlagImplCopyWith<_$FeatureFlagImpl> get copyWith =>
+      __$$FeatureFlagImplCopyWithImpl<_$FeatureFlagImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_FeatureFlagToJson(
+    return _$$FeatureFlagImplToJson(
       this,
     );
   }
@@ -205,11 +205,11 @@ abstract class _FeatureFlag extends FeatureFlag {
       {required final String id,
       required final String description,
       required final bool enabled,
-      required final Map<String, dynamic> conditions}) = _$_FeatureFlag;
+      required final Map<String, dynamic> conditions}) = _$FeatureFlagImpl;
   const _FeatureFlag._() : super._();
 
   factory _FeatureFlag.fromJson(Map<String, dynamic> json) =
-      _$_FeatureFlag.fromJson;
+      _$FeatureFlagImpl.fromJson;
 
   @override
   String get id;
@@ -221,6 +221,6 @@ abstract class _FeatureFlag extends FeatureFlag {
   Map<String, dynamic> get conditions;
   @override
   @JsonKey(ignore: true)
-  _$$_FeatureFlagCopyWith<_$_FeatureFlag> get copyWith =>
+  _$$FeatureFlagImplCopyWith<_$FeatureFlagImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

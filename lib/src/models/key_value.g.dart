@@ -6,7 +6,8 @@ part of 'key_value.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_KeyValue _$$_KeyValueFromJson(Map<String, dynamic> json) => _$_KeyValue(
+_$KeyValueImpl _$$KeyValueImplFromJson(Map<String, dynamic> json) =>
+    _$KeyValueImpl(
       etag: json['etag'] as String,
       key: json['key'] as String,
       locked: json['locked'] as bool,
@@ -17,7 +18,7 @@ _$_KeyValue _$$_KeyValueFromJson(Map<String, dynamic> json) => _$_KeyValue(
       value: json['value'] as String? ?? '',
     );
 
-Map<String, dynamic> _$$_KeyValueToJson(_$_KeyValue instance) =>
+Map<String, dynamic> _$$KeyValueImplToJson(_$KeyValueImpl instance) =>
     <String, dynamic>{
       'etag': instance.etag,
       'key': instance.key,

@@ -12,7 +12,7 @@ part of 'client_filter.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 ClientFilter _$ClientFilterFromJson(Map<String, dynamic> json) {
   return _ClientFilter.fromJson(json);
@@ -68,22 +68,22 @@ class _$ClientFilterCopyWithImpl<$Res, $Val extends ClientFilter>
 }
 
 /// @nodoc
-abstract class _$$_ClientFilterCopyWith<$Res>
+abstract class _$$ClientFilterImplCopyWith<$Res>
     implements $ClientFilterCopyWith<$Res> {
-  factory _$$_ClientFilterCopyWith(
-          _$_ClientFilter value, $Res Function(_$_ClientFilter) then) =
-      __$$_ClientFilterCopyWithImpl<$Res>;
+  factory _$$ClientFilterImplCopyWith(
+          _$ClientFilterImpl value, $Res Function(_$ClientFilterImpl) then) =
+      __$$ClientFilterImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name, Map<String, dynamic> parameters});
 }
 
 /// @nodoc
-class __$$_ClientFilterCopyWithImpl<$Res>
-    extends _$ClientFilterCopyWithImpl<$Res, _$_ClientFilter>
-    implements _$$_ClientFilterCopyWith<$Res> {
-  __$$_ClientFilterCopyWithImpl(
-      _$_ClientFilter _value, $Res Function(_$_ClientFilter) _then)
+class __$$ClientFilterImplCopyWithImpl<$Res>
+    extends _$ClientFilterCopyWithImpl<$Res, _$ClientFilterImpl>
+    implements _$$ClientFilterImplCopyWith<$Res> {
+  __$$ClientFilterImplCopyWithImpl(
+      _$ClientFilterImpl _value, $Res Function(_$ClientFilterImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$_ClientFilterCopyWithImpl<$Res>
     Object? name = null,
     Object? parameters = null,
   }) {
-    return _then(_$_ClientFilter(
+    return _then(_$ClientFilterImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -107,13 +107,13 @@ class __$$_ClientFilterCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_ClientFilter implements _ClientFilter {
-  const _$_ClientFilter(
+class _$ClientFilterImpl implements _ClientFilter {
+  const _$ClientFilterImpl(
       {required this.name, required final Map<String, dynamic> parameters})
       : _parameters = parameters;
 
-  factory _$_ClientFilter.fromJson(Map<String, dynamic> json) =>
-      _$$_ClientFilterFromJson(json);
+  factory _$ClientFilterImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ClientFilterImplFromJson(json);
 
   @override
   final String name;
@@ -131,10 +131,10 @@ class _$_ClientFilter implements _ClientFilter {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ClientFilter &&
+            other is _$ClientFilterImpl &&
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality()
                 .equals(other._parameters, _parameters));
@@ -148,12 +148,12 @@ class _$_ClientFilter implements _ClientFilter {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ClientFilterCopyWith<_$_ClientFilter> get copyWith =>
-      __$$_ClientFilterCopyWithImpl<_$_ClientFilter>(this, _$identity);
+  _$$ClientFilterImplCopyWith<_$ClientFilterImpl> get copyWith =>
+      __$$ClientFilterImplCopyWithImpl<_$ClientFilterImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ClientFilterToJson(
+    return _$$ClientFilterImplToJson(
       this,
     );
   }
@@ -162,10 +162,10 @@ class _$_ClientFilter implements _ClientFilter {
 abstract class _ClientFilter implements ClientFilter {
   const factory _ClientFilter(
       {required final String name,
-      required final Map<String, dynamic> parameters}) = _$_ClientFilter;
+      required final Map<String, dynamic> parameters}) = _$ClientFilterImpl;
 
   factory _ClientFilter.fromJson(Map<String, dynamic> json) =
-      _$_ClientFilter.fromJson;
+      _$ClientFilterImpl.fromJson;
 
   @override
   String get name;
@@ -173,6 +173,6 @@ abstract class _ClientFilter implements ClientFilter {
   Map<String, dynamic> get parameters;
   @override
   @JsonKey(ignore: true)
-  _$$_ClientFilterCopyWith<_$_ClientFilter> get copyWith =>
+  _$$ClientFilterImplCopyWith<_$ClientFilterImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
