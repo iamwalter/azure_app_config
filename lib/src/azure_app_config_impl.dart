@@ -98,14 +98,11 @@ class AzureAppConfigImpl implements AzureAppConfig {
   Future<List<KeyValue>> getKeyValues({String? nextLink}) async {
     final path = (nextLink != null) ? nextLink : '/kv';
 
-    final params = {
-      'label': '*',
-    };
-
     final response = await client.get(
       path: path,
-      params: params,
+      params: <String, String>{},
     );
+
     final data = response.data;
 
     final items = <KeyValue>[];
@@ -144,13 +141,12 @@ class AzureAppConfigImpl implements AzureAppConfig {
   }
 
   @override
-  Future<List<AzureKey>> getKeys() async {
-    const path = '/keys';
-    final params = <String, String>{};
+  Future<List<AzureKey>> getKeys({String? nextLink}) async {
+    final path = (nextLink != null) ? nextLink : '/keys';
 
     final response = await client.get(
       path: path,
-      params: params,
+      params: <String, String>{},
     );
     final data = response.data;
 
@@ -159,6 +155,14 @@ class AzureAppConfigImpl implements AzureAppConfig {
     for (final json in data['items'] as List<dynamic>) {
       final item = AzureKey.fromJson(json as Map<String, Object?>);
       items.add(item);
+    }
+
+    final next = data['@nextLink'] as String?;
+
+    if (next != null) {
+      final newItems = await getKeys(nextLink: next);
+
+      items.addAll(newItems);
     }
 
     return items;

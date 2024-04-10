@@ -1,8 +1,7 @@
-## 0.17.0
-- Fix issue where `FeatureFlag`s could sometimes not be retrieved.
+## 0.16.0 to 0.17.1
 
-## 0.16.0
-- An issue that limited getKeyValues() to retrieving only up to 100 items has been resolved.
+- Fix various pagination issues.
+- Fix issue where `FeatureFlag`s could sometimes not be retrieved.
 
 ## 0.15.2
 
