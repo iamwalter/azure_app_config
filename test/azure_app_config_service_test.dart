@@ -199,13 +199,13 @@ void main() {
         (server) {
           return server.reply(200, {
             'items': [item3, item3]..map((i) => i.toJson()),
-            '@nextLink': '/kv/myNextLink2',
+            '@nextLink': '/kv?api_version=1.0&after=a2V5MzkKanVzdA%3D%3D',
           });
         },
         queryParameters: {'api_version': '1.0'},
       )
       ..onGet(
-        '$endpoint/kv/myNextLink2',
+        '$endpoint/kv?api_version=1.0&after=a2V5MzkKanVzdA%3D%3D',
         (server) {
           return server.reply(200, {
             'items': [item2, item1]..map((i) => i.toJson()),
@@ -238,7 +238,7 @@ void main() {
           ],
         });
       },
-      queryParameters: {'label': '*', 'api_version': '1.0'},
+      queryParameters: {'api_version': '1.0'},
     );
 
     final expected = [testFeatureFlag];
