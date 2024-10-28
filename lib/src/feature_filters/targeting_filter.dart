@@ -31,18 +31,35 @@ class TargetingFilter extends FeatureFilter {
     Map<String, dynamic> parameters,
     String featureKey,
   ) {
-    final audienceUsers = parameters['Audience']['Users'] as List<dynamic>;
+    final audience = parameters['Audience'] as Map<String, dynamic>;
+
+    if (audience['Exclusion'] != null) {
+      final excludedUsers =
+          parameters['Audience']['Exclusion']['Users'] as List<dynamic>;
+
+      if (userIdentifier != null && excludedUsers.contains(userIdentifier)) {
+        return false;
+      }
+
+      final excludedGroups =
+          parameters['Audience']['Exclusion']['Groups'] as List<dynamic>;
+
+      if (groupIdentifier != null && excludedGroups.contains(groupIdentifier)) {
+        return false;
+      }
+    }
+
+    final audienceUsers = audience['Users'] as List<dynamic>;
 
     // When the passed in [userIdentifier] matches, returns true.
     if (userIdentifier != null && audienceUsers.contains(userIdentifier)) {
       return true;
     }
 
-    final audienceGroups = parameters['Audience']['Groups'] as List<dynamic>;
+    final audienceGroups = audience['Groups'] as List<dynamic>;
 
     // Use the default rollout percentage as default.
-    var rolloutPercentage =
-        parameters['Audience']['DefaultRolloutPercentage'] as int;
+    var rolloutPercentage = audience['DefaultRolloutPercentage'] as int;
 
     for (final audienceGroup in audienceGroups) {
       // When the [groupIdentifier] parameter matches, uses the groups percentage.
