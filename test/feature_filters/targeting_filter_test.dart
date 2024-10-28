@@ -15,10 +15,6 @@ void main() {
           'RolloutPercentage': 100,
         }
       ],
-      'Exclusion': {
-        'Users': ['user3'],
-        'Groups': ['group2'],
-      },
       'DefaultRolloutPercentage': 0,
     },
   };
@@ -68,19 +64,28 @@ void main() {
     },
   );
 
-  test('''if user is excluded return false''', () {
-    final filter = TargetingFilter(userIdentifier: 'user3');
+  group('exclusions', () {
+    setUp(() {
+      params['Audience']['Exclusion'] = {
+        'Users': ['user3'],
+        'Groups': ['group2'],
+      };
+    });
 
-    final actual = filter.evaluate(params, '');
+    test('''if user is excluded return false''', () {
+      final filter = TargetingFilter(userIdentifier: 'user3');
 
-    expect(actual, false);
-  });
+      final actual = filter.evaluate(params, '');
 
-  test('''if group is excluded return false''', () {
-    final filter = TargetingFilter(groupIdentifier: 'group2');
+      expect(actual, false);
+    });
 
-    final actual = filter.evaluate(params, '');
+    test('''if group is excluded return false''', () {
+      final filter = TargetingFilter(groupIdentifier: 'group2');
 
-    expect(actual, false);
+      final actual = filter.evaluate(params, '');
+
+      expect(actual, false);
+    });
   });
 }

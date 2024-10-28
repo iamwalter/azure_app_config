@@ -34,18 +34,22 @@ class TargetingFilter extends FeatureFilter {
     final audience = parameters['Audience'] as Map<String, dynamic>;
 
     if (audience['Exclusion'] != null) {
-      final excludedUsers =
-          parameters['Audience']['Exclusion']['Users'] as List<dynamic>;
+      final exclusions = audience['Exclusion'] as Map<String, dynamic>;
+      if (exclusions['Users'] != null) {
+        final excludedUsers = exclusions['Users'] as List<dynamic>;
 
-      if (userIdentifier != null && excludedUsers.contains(userIdentifier)) {
-        return false;
+        if (userIdentifier != null && excludedUsers.contains(userIdentifier)) {
+          return false;
+        }
       }
 
-      final excludedGroups =
-          parameters['Audience']['Exclusion']['Groups'] as List<dynamic>;
+      if (exclusions['Groups'] != null) {
+        final excludedGroups = exclusions['Groups'] as List<dynamic>;
 
-      if (groupIdentifier != null && excludedGroups.contains(groupIdentifier)) {
-        return false;
+        if (groupIdentifier != null &&
+            excludedGroups.contains(groupIdentifier)) {
+          return false;
+        }
       }
     }
 
