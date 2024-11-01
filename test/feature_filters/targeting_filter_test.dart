@@ -2,73 +2,67 @@ import 'package:azure_app_config/src/feature_filters/targeting_filter.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final params = <String, dynamic>{
+  var params = <String, dynamic>{
     'Audience': {
-      'Users': ['user1', 'user2'],
-      'Groups': [
-        {
-          'Name': 'group1',
-          'RolloutPercentage': 100,
-        },
-        {
-          'Name': 'testGroup',
-          'RolloutPercentage': 100,
-        }
-      ],
+      'Users': <String>[],
+      'Groups': <dynamic>[],
       'DefaultRolloutPercentage': 0,
     },
   };
 
-  test(
-    '''if user is provided in the params return true''',
-    () {
-      final filter = TargetingFilter(userIdentifier: 'user1');
+  group('no filters', () {
+    test(
+      '''if user is not provided in the params use the defaultrolloutprecentage''',
+          () {
+        final filter = TargetingFilter(userIdentifier: 'unknownUser');
 
-      final actual = filter.evaluate(params, '');
+        final actual = filter.evaluate(params, '');
 
-      expect(actual, true);
-    },
-  );
+        expect(actual, false);
+      },
+    );
 
-  test(
-    '''if user is not provided in the params use the defaultrolloutprecentage''',
-    () {
-      final filter = TargetingFilter(userIdentifier: 'unknownUser');
+    test(
+      '''if user is not provided in the params still return the same value for the same user (based on seed)''',
+          () {
+        final params = <String, dynamic>{
+          'Audience': {
+            'Users': <String>[],
+            'Groups': <dynamic>[],
+            'DefaultRolloutPercentage': 50,
+          },
+        };
 
-      final actual = filter.evaluate(params, '');
+        final filter = TargetingFilter(userIdentifier: 'unknownUser');
 
-      expect(actual, false);
-    },
-  );
+        var actual = filter.evaluate(params, 'featureKey-a');
 
-  test(
-    '''if user is not provided in the params still return the same value for the same user (based on seed)''',
-    () {
-      final params = <String, dynamic>{
-        'Audience': {
-          'Users': <String>[],
-          'Groups': <Map<String, dynamic>>[],
-          'DefaultRolloutPercentage': 50,
-        },
-      };
+        expect(actual, true);
 
-      final filter = TargetingFilter(userIdentifier: 'unknownUser');
+        actual = filter.evaluate(params, 'featureKey-b');
 
-      var actual = filter.evaluate(params, 'featureKey-a');
+        expect(actual, false);
+      },
+    );
+  });
 
-      expect(actual, true);
-
-      actual = filter.evaluate(params, 'featureKey-b');
-
-      expect(actual, false);
-    },
-  );
-
-  group('exclusions', () {
+  group('inclusions & exclusions', () {
     setUp(() {
-      params['Audience']['Exclusion'] = {
-        'Users': ['user3'],
-        'Groups': ['group2'],
+      params = {
+        'Audience': {
+          'Users': ['user1', 'user2'],
+          'Groups': [
+            {
+              'Name': 'groupNotExcluded',
+              'RolloutPercentage': 100,
+            },
+          ],
+          'DefaultRolloutPercentage': 100,
+          'Exclusion': {
+            'Users': ['user3'],
+            'Groups': ['group2'],
+          },
+        },
       };
     });
 
@@ -80,12 +74,28 @@ void main() {
       expect(actual, false);
     });
 
+    test('''if user is included return true''', () {
+      final filter = TargetingFilter(userIdentifier: 'userNotExcluded');
+
+      final actual = filter.evaluate(params, '');
+
+      expect(actual, true);
+    });
+
     test('''if group is excluded return false''', () {
       final filter = TargetingFilter(groupIdentifier: 'group2');
 
       final actual = filter.evaluate(params, '');
 
       expect(actual, false);
+    });
+
+    test('''if group is included return true''', () {
+      final filter = TargetingFilter(groupIdentifier: 'groupNotExcluded');
+
+      final actual = filter.evaluate(params, '');
+
+      expect(actual, true);
     });
   });
 }
