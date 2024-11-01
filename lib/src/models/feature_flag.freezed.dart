@@ -25,8 +25,12 @@ mixin _$FeatureFlag {
   bool get enabled => throw _privateConstructorUsedError;
   Map<String, dynamic> get conditions => throw _privateConstructorUsedError;
 
+  /// Serializes this FeatureFlag to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of FeatureFlag
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $FeatureFlagCopyWith<FeatureFlag> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -54,6 +58,8 @@ class _$FeatureFlagCopyWithImpl<$Res, $Val extends FeatureFlag>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of FeatureFlag
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -106,6 +112,8 @@ class __$$FeatureFlagImplCopyWithImpl<$Res>
       _$FeatureFlagImpl _value, $Res Function(_$FeatureFlagImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of FeatureFlag
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -181,12 +189,14 @@ class _$FeatureFlagImpl extends _FeatureFlag {
                 .equals(other._conditions, _conditions));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, description, enabled,
       const DeepCollectionEquality().hash(_conditions));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of FeatureFlag
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$FeatureFlagImplCopyWith<_$FeatureFlagImpl> get copyWith =>
@@ -219,8 +229,11 @@ abstract class _FeatureFlag extends FeatureFlag {
   bool get enabled;
   @override
   Map<String, dynamic> get conditions;
+
+  /// Create a copy of FeatureFlag
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FeatureFlagImplCopyWith<_$FeatureFlagImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

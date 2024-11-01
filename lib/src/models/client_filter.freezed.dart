@@ -23,8 +23,12 @@ mixin _$ClientFilter {
   String get name => throw _privateConstructorUsedError;
   Map<String, dynamic> get parameters => throw _privateConstructorUsedError;
 
+  /// Serializes this ClientFilter to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ClientFilter
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ClientFilterCopyWith<ClientFilter> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +52,8 @@ class _$ClientFilterCopyWithImpl<$Res, $Val extends ClientFilter>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ClientFilter
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class __$$ClientFilterImplCopyWithImpl<$Res>
       _$ClientFilterImpl _value, $Res Function(_$ClientFilterImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ClientFilter
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -140,12 +148,14 @@ class _$ClientFilterImpl implements _ClientFilter {
                 .equals(other._parameters, _parameters));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, name, const DeepCollectionEquality().hash(_parameters));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ClientFilter
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ClientFilterImplCopyWith<_$ClientFilterImpl> get copyWith =>
@@ -171,8 +181,11 @@ abstract class _ClientFilter implements ClientFilter {
   String get name;
   @override
   Map<String, dynamic> get parameters;
+
+  /// Create a copy of ClientFilter
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ClientFilterImplCopyWith<_$ClientFilterImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
