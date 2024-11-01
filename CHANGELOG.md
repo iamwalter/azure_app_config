@@ -1,3 +1,7 @@
+## 0.18.0
+
+- `TargetingFilter` now supports group exclusion. ([#14](https://github.com/iamwalter/azure_app_config/pull/14))
+
 ## 0.16.0 to 0.17.1
 
 - Fix various pagination issues.

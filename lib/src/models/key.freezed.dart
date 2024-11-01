@@ -22,8 +22,12 @@ AzureKey _$AzureKeyFromJson(Map<String, dynamic> json) {
 mixin _$AzureKey {
   String get name => throw _privateConstructorUsedError;
 
+  /// Serializes this AzureKey to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AzureKey
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AzureKeyCopyWith<AzureKey> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -46,6 +50,8 @@ class _$AzureKeyCopyWithImpl<$Res, $Val extends AzureKey>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AzureKey
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -79,6 +85,8 @@ class __$$AzureKeyImplCopyWithImpl<$Res>
       _$AzureKeyImpl _value, $Res Function(_$AzureKeyImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AzureKey
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -117,11 +125,13 @@ class _$AzureKeyImpl implements _AzureKey {
             (identical(other.name, name) || other.name == name));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AzureKey
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AzureKeyImplCopyWith<_$AzureKeyImpl> get copyWith =>
@@ -143,8 +153,11 @@ abstract class _AzureKey implements AzureKey {
 
   @override
   String get name;
+
+  /// Create a copy of AzureKey
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AzureKeyImplCopyWith<_$AzureKeyImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
