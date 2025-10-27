@@ -52,8 +52,9 @@ void main() {
       lastModified: '2022-10-28T09:07:51+00:00',
     );
     // arrange
-    final jsonMap = json.decode(fixture('key_value_empty_fixture.json'))
-        as Map<String, dynamic>;
+    final jsonMap =
+        json.decode(fixture('key_value_empty_fixture.json'))
+            as Map<String, dynamic>;
     // act
     final result = KeyValue.fromJson(jsonMap);
     // assert
@@ -61,18 +62,17 @@ void main() {
   });
   final invalidKv = validKv.copyWith(value: '');
 
-  test('asFeatureFlag should convert to a featureFlag if value is valid',
-      () async {
-    final actual = validKv.asFeatureFlag();
-    const expected = tFeatureFlag;
+  test(
+    'asFeatureFlag should convert to a featureFlag if value is valid',
+    () async {
+      final actual = validKv.asFeatureFlag();
+      const expected = tFeatureFlag;
 
-    expect(actual, expected);
-  });
+      expect(actual, expected);
+    },
+  );
 
   test('''asFeatureFlag returns null when value is unparsable''', () async {
-    expect(
-      invalidKv.asFeatureFlag(),
-      null,
-    );
+    expect(invalidKv.asFeatureFlag(), null);
   });
 }

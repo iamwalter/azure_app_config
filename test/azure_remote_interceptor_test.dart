@@ -66,38 +66,43 @@ void main() {
   });
 
   test(
-      'onRequest() should end with a call to handler.next(options) with correct headers',
-      () {
-    // Resolves to a specific time that the interceptor uses
-    // so the calculations will resolve to the expected outputs
-    final timeUsedForTesting =
-        DateTime.fromMicrosecondsSinceEpoch(1666132930809223);
+    'onRequest() should end with a call to handler.next(options) with correct headers',
+    () {
+      // Resolves to a specific time that the interceptor uses
+      // so the calculations will resolve to the expected outputs
+      final timeUsedForTesting = DateTime.fromMicrosecondsSinceEpoch(
+        1666132930809223,
+      );
 
-    final interceptor = AzureRemoteInterceptor(
-      credential: '7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN',
-      secret: '7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=',
-      clock: timeUsedForTesting,
-    );
+      final interceptor = AzureRemoteInterceptor(
+        credential: '7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN',
+        secret: '7a6zzKlWF+HIExno09Xkkympgg6YM0YdAGLr68tbfUs=',
+        clock: timeUsedForTesting,
+      );
 
-    final options = MockRequestOptions();
-    final handler = MockRequestInterceptorHandler();
+      final options = MockRequestOptions();
+      final handler = MockRequestInterceptorHandler();
 
-    stubRequest(options);
+      stubRequest(options);
 
-    interceptor.onRequest(options, handler);
+      interceptor.onRequest(options, handler);
 
-    const expectedAuthorizationHeader = '''
+      const expectedAuthorizationHeader = '''
 HMAC-SHA256 Credential=7Qyz-l9-s0:LforJ2ejnzUGbk9vUzBN&SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=0BoRwX5ieCfF7X4IOhW8MwTznRG+BvZfh/gUnuODlok=''';
-    const expectedContentSha256Header =
-        '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
-    final expectedDateHeader = HttpDate.format(timeUsedForTesting);
+      const expectedContentSha256Header =
+          '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';
+      final expectedDateHeader = HttpDate.format(timeUsedForTesting);
 
-    expect(options.headers['Authorization'], expectedAuthorizationHeader);
-    expect(options.headers['x-ms-content-sha256'], expectedContentSha256Header);
-    expect(options.headers['x-ms-date'], expectedDateHeader);
+      expect(options.headers['Authorization'], expectedAuthorizationHeader);
+      expect(
+        options.headers['x-ms-content-sha256'],
+        expectedContentSha256Header,
+      );
+      expect(options.headers['x-ms-date'], expectedDateHeader);
 
-    verify(handler.next(options)).called(1);
+      verify(handler.next(options)).called(1);
 
-    verifyNoMoreInteractions(handler);
-  });
+      verifyNoMoreInteractions(handler);
+    },
+  );
 }

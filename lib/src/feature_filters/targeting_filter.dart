@@ -9,10 +9,8 @@ import 'package:crypto/crypto.dart';
 /// Microsoft's default Targeting Filter.
 class TargetingFilter extends FeatureFilter {
   /// Instantiate the [TargetingFilter] filter.
-  TargetingFilter({
-    this.userIdentifier,
-    this.groupIdentifier,
-  }) : super(name: 'Microsoft.Targeting');
+  TargetingFilter({this.userIdentifier, this.groupIdentifier})
+    : super(name: 'Microsoft.Targeting');
 
   String? userIdentifier;
   String? groupIdentifier;
@@ -27,10 +25,7 @@ class TargetingFilter extends FeatureFilter {
   }
 
   @override
-  bool evaluate(
-    Map<String, dynamic> parameters,
-    String featureKey,
-  ) {
+  bool evaluate(Map<String, dynamic> parameters, String featureKey) {
     final audience = parameters['Audience'] as Map<String, dynamic>;
 
     if (audience['Exclusion'] != null) {
@@ -78,8 +73,9 @@ class TargetingFilter extends FeatureFilter {
     if (userIdentifier != null) {
       // Hash the feature key and user identifier to ensure a unique result for
       // each feature
-      final userHash =
-          md5.convert(utf8.encode('$featureKey-$userIdentifier')).toString();
+      final userHash = md5
+          .convert(utf8.encode('$featureKey-$userIdentifier'))
+          .toString();
 
       // Get the seed based on the hashed user identifier to ensure consistent
       // results for the same user + feature

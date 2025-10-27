@@ -4,8 +4,7 @@ import 'package:azure_app_config/src/util/connection_string_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('should parse the connection string into Endpoint, Id & Secret',
-      () async {
+  test('should parse the connection string into Endpoint, Id & Secret', () async {
     const connectionString =
         'Endpoint=https://test-url.website.io;Id=7Qsdz_g3-:241FblablaGbk9vUzBN;Secret=7a6zzKlDJKSdhs_--sd++g6YM0dad2SGLr68tbfUs=';
 

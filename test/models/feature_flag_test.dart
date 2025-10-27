@@ -10,9 +10,7 @@ void main() {
   const filter1 = ClientFilter(
     name: 'tName',
     parameters: {
-      'tParam': {
-        'tKey': 'tValue',
-      },
+      'tParam': {'tKey': 'tValue'},
     },
   );
 
@@ -23,10 +21,7 @@ void main() {
     description: 'tDescription',
     enabled: true,
     conditions: {
-      'client_filters': [
-        filter1.toJson(),
-        filter2.toJson(),
-      ],
+      'client_filters': [filter1.toJson(), filter2.toJson()],
     },
   );
 
@@ -38,33 +33,28 @@ void main() {
   });
 
   test('should be parsable from JSON', () async {
-    final jsonMap = json.decode(fixture('featureflag_fixture.json'))
-        as Map<String, dynamic>;
+    final jsonMap =
+        json.decode(fixture('featureflag_fixture.json'))
+            as Map<String, dynamic>;
 
     final actual = FeatureFlag.fromJson(jsonMap);
 
     expect(actual, tFeatureFlag);
   });
 
-  group(
-    'getClientFilters()',
-    () {
-      test(
-        'should get client filters',
-        () async {
-          final expected = [filter1, filter2];
+  group('getClientFilters()', () {
+    test('should get client filters', () async {
+      final expected = [filter1, filter2];
 
-          final actual = tFeatureFlag.getClientFilters();
+      final actual = tFeatureFlag.getClientFilters();
 
-          expect(actual, expected);
+      expect(actual, expected);
 
-          final tFeatureFlag2 = tFeatureFlag.copyWith(conditions: {});
+      final tFeatureFlag2 = tFeatureFlag.copyWith(conditions: {});
 
-          final actual_ = tFeatureFlag2.getClientFilters();
+      final actual_ = tFeatureFlag2.getClientFilters();
 
-          expect(actual_, <ClientFilter>[]);
-        },
-      );
-    },
-  );
+      expect(actual_, <ClientFilter>[]);
+    });
+  });
 }

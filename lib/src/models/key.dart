@@ -6,9 +6,7 @@ part 'key.g.dart';
 /// Represents an App Configuration [Key](https://learn.microsoft.com/en-us/azure/azure-app-configuration/rest-api-keys) resource.
 @freezed
 sealed class AzureKey with _$AzureKey {
-  const factory AzureKey({
-    required String name,
-  }) = _AzureKey;
+  const factory AzureKey({required String name}) = _AzureKey;
 
   factory AzureKey.fromJson(Map<String, Object?> json) =>
       _$AzureKeyFromJson(json);

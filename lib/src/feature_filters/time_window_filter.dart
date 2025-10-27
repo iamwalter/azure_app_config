@@ -11,10 +11,7 @@ class TimeWindowFilter extends FeatureFilter {
   final DateTime? clock;
 
   @override
-  bool evaluate(
-    Map<String, dynamic> parameters,
-    String featureKey,
-  ) {
+  bool evaluate(Map<String, dynamic> parameters, String featureKey) {
     try {
       final now = clock ?? DateTime.now();
 

@@ -7,9 +7,7 @@ import 'package:azure_app_config/src/util/connection_string_parser.dart';
 import 'package:dio/dio.dart';
 
 abstract class Client {
-  factory Client({
-    required String connectionString,
-  }) {
+  factory Client({required String connectionString}) {
     final azureValues = parseConnectionString(connectionString);
 
     if (azureValues['Id'] == null ||
@@ -71,10 +69,7 @@ abstract class Client {
 /// Handles communication with the API. Deals with Authentication & Generic API
 /// Parameters.
 class ClientImpl implements Client {
-  ClientImpl({
-    required this.endpoint,
-    required this.dio,
-  });
+  ClientImpl({required this.endpoint, required this.dio});
 
   @override
   final Dio dio;
@@ -140,10 +135,7 @@ class ClientImpl implements Client {
     return _requestHelper(() async {
       params['api_version'] = '1.0';
 
-      return dio.get<dynamic>(
-        '$endpoint$path',
-        queryParameters: params,
-      );
+      return dio.get<dynamic>('$endpoint$path', queryParameters: params);
     });
   }
 

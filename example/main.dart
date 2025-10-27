@@ -37,13 +37,13 @@ void main() async {
   try {
     // (!!) Make sure to register a FeatureFilter before using it.
     service.registerFeatureFilter(
-      FeatureFilter.targeting(
-        user: 'test.user@company.com',
-      ),
+      FeatureFilter.targeting(user: 'test.user@company.com'),
     );
     // To check if a FeatureFlag is enabled while parsing FeatureFilters, use
-    final isFeatureEnabled =
-        await service.getFeatureEnabled(key: exampleKey, label: exampleLabel);
+    final isFeatureEnabled = await service.getFeatureEnabled(
+      key: exampleKey,
+      label: exampleLabel,
+    );
 
     developer.log('$isFeatureEnabled');
   } catch (err) {

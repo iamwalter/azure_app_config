@@ -20,14 +20,8 @@ abstract class FeatureFilter {
   /// When the [group] parameter matches, the filter uses the groups percentage.
   ///
   /// If no group or user match the filter uses the 'Default Percentage'.
-  factory FeatureFilter.targeting({
-    String? user,
-    String? group,
-  }) =>
-      TargetingFilter(
-        userIdentifier: user,
-        groupIdentifier: group,
-      );
+  factory FeatureFilter.targeting({String? user, String? group}) =>
+      TargetingFilter(userIdentifier: user, groupIdentifier: group);
 
   /// Represents the FeatureFilter name. Make sure this name is the same as the
   /// [FeatureFilter] name in Azure App Configuration.
@@ -41,8 +35,5 @@ abstract class FeatureFilter {
   /// [featureKey] the key string that is being checked.
   /// For a feature flag '.appconfig.featureflag/myKey' the key will equal
   /// 'myKey'.
-  bool evaluate(
-    Map<String, dynamic> parameters,
-    String featureKey,
-  );
+  bool evaluate(Map<String, dynamic> parameters, String featureKey);
 }

@@ -15,8 +15,8 @@ class AzureRemoteInterceptor extends Interceptor {
     required String credential,
     required String secret,
     this.clock,
-  })  : _credential = credential,
-        _secret = secret;
+  }) : _credential = credential,
+       _secret = secret;
 
   /// Access key credential
   final String _credential;
@@ -34,10 +34,7 @@ class AzureRemoteInterceptor extends Interceptor {
       clock == null ? HttpDate.format(DateTime.now()) : HttpDate.format(clock!);
 
   @override
-  void onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final host = options.uri.host;
     final path = options.uri.path;
 

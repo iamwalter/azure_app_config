@@ -16,9 +16,7 @@ import 'package:dio/dio.dart';
 
 class AzureAppConfigImpl implements AzureAppConfig {
   /// Constructs an instance and registers default [FeatureFilter]s.
-  AzureAppConfigImpl({
-    required this.client,
-  });
+  AzureAppConfigImpl({required this.client});
 
   final Client client;
 
@@ -44,8 +42,10 @@ class AzureAppConfigImpl implements AzureAppConfig {
     required String key,
     required String label,
   }) async {
-    final keyValue =
-        await getKeyValue(key: '$_featureFlagPrefix$key', label: label);
+    final keyValue = await getKeyValue(
+      key: '$_featureFlagPrefix$key',
+      label: label,
+    );
 
     final feature = keyValue.asFeatureFlag();
 
@@ -98,10 +98,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
   Future<List<KeyValue>> getKeyValues({String? nextLink}) async {
     final path = (nextLink != null) ? nextLink : '/kv';
 
-    final response = await client.get(
-      path: path,
-      params: <String, String>{},
-    );
+    final response = await client.get(path: path, params: <String, String>{});
 
     final data = response.data;
 
@@ -128,13 +125,8 @@ class AzureAppConfigImpl implements AzureAppConfig {
     required String label,
   }) async {
     final path = '/kv/$key';
-    final params = {
-      'label': label,
-    };
-    final response = await client.get(
-      path: path,
-      params: params,
-    );
+    final params = {'label': label};
+    final response = await client.get(path: path, params: params);
     final data = response.data;
 
     return KeyValue.fromJson(data as Map<String, Object?>);
@@ -144,10 +136,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
   Future<List<AzureKey>> getKeys({String? nextLink}) async {
     final path = (nextLink != null) ? nextLink : '/keys';
 
-    final response = await client.get(
-      path: path,
-      params: <String, String>{},
-    );
+    final response = await client.get(path: path, params: <String, String>{});
     final data = response.data;
 
     final items = <AzureKey>[];
@@ -177,9 +166,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
     Map<String, dynamic>? tags,
   }) async {
     final path = '/kv/$key';
-    final params = {
-      'label': label,
-    };
+    final params = {'label': label};
 
     final data = <String, dynamic>{};
 
@@ -187,31 +174,22 @@ class AzureAppConfigImpl implements AzureAppConfig {
     if (contentType != null) data['content_type'] = contentType;
     if (tags != null) data['tags'] = tags;
 
-    final headers = {
-      'Content-Type': _keyValueContentType,
-    };
+    final headers = {'Content-Type': _keyValueContentType};
 
-    return client.put(
-      path: path,
-      params: params,
-      data: data,
-      headers: headers,
-    );
+    return client.put(path: path, params: params, data: data, headers: headers);
   }
 
   @override
   Future<Response<dynamic>> disableFeature({
     required String key,
     required String label,
-  }) =>
-      setFeatureEnabled(key: key, label: label, isEnabled: false);
+  }) => setFeatureEnabled(key: key, label: label, isEnabled: false);
 
   @override
   Future<Response<dynamic>> enableFeature({
     required String key,
     required String label,
-  }) =>
-      setFeatureEnabled(key: key, label: label, isEnabled: true);
+  }) => setFeatureEnabled(key: key, label: label, isEnabled: true);
 
   @override
   Future<Response<dynamic>> setFeatureEnabled({
@@ -246,10 +224,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
     String label = AzureFilters.any,
   }) async {
     const path = '/kv';
-    final params = {
-      'key': key,
-      'label': label,
-    };
+    final params = {'key': key, 'label': label};
 
     final response = await client.get(path: path, params: params);
 
@@ -265,13 +240,9 @@ class AzureAppConfigImpl implements AzureAppConfig {
   }
 
   @override
-  Future<List<AzureKey>> findKeyBy({
-    String name = AzureFilters.any,
-  }) async {
+  Future<List<AzureKey>> findKeyBy({String name = AzureFilters.any}) async {
     const path = '/keys';
-    final params = {
-      'name': name,
-    };
+    final params = {'name': name};
 
     final response = await client.get(path: path, params: params);
 
@@ -292,15 +263,10 @@ class AzureAppConfigImpl implements AzureAppConfig {
     Map<String, dynamic> Function(O object)? encode,
   }) {
     if (registeredTypes[O] != null) {
-      throw AzureComplexTypeException(
-        'ComplexType $O is already registered',
-      );
+      throw AzureComplexTypeException('ComplexType $O is already registered');
     }
 
-    registeredTypes[O] = RegisteredType<O>(
-      decode: decode,
-      encode: encode,
-    );
+    registeredTypes[O] = RegisteredType<O>(decode: decode, encode: encode);
   }
 
   @override
@@ -309,16 +275,11 @@ class AzureAppConfigImpl implements AzureAppConfig {
   }
 
   @override
-  Future<O> getTyped<O>({
-    required String key,
-    required String label,
-  }) async {
+  Future<O> getTyped<O>({required String key, required String label}) async {
     final keyValue = await getKeyValue(key: key, label: label);
 
     if (registeredTypes[O] == null) {
-      throw AzureComplexTypeException(
-        'ComplexType $O is not registered',
-      );
+      throw AzureComplexTypeException('ComplexType $O is not registered');
     }
 
     if (registeredTypes[O]!.decode == null) {
@@ -327,8 +288,10 @@ class AzureAppConfigImpl implements AzureAppConfig {
       );
     }
 
-    return registeredTypes[O]!
-        .decode!(json.decode(keyValue.value) as Map<String, dynamic>) as O;
+    return registeredTypes[O]!.decode!(
+          json.decode(keyValue.value) as Map<String, dynamic>,
+        )
+        as O;
   }
 
   @override
@@ -342,9 +305,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
     final registeredType = registeredTypes[O] as RegisteredType<O>?;
 
     if (registeredType == null) {
-      throw AzureComplexTypeException(
-        'ComplexType O is not registered',
-      );
+      throw AzureComplexTypeException('ComplexType O is not registered');
     }
     if (registeredType.encode == null) {
       throw AzureComplexTypeException('ComplexType encode not registered!');

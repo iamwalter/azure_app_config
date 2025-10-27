@@ -25,9 +25,7 @@ typedef AzureRemoteService = AzureAppConfig;
 /// instance of [AzureAppConfig].
 abstract class AzureAppConfig {
   /// Instantiate an instance of [AzureAppConfig] using a [connectionString]
-  factory AzureAppConfig({
-    required String connectionString,
-  }) {
+  factory AzureAppConfig({required String connectionString}) {
     final client = Client(connectionString: connectionString);
 
     return AzureAppConfigImpl(client: client);
@@ -55,10 +53,7 @@ abstract class AzureAppConfig {
   ///
   /// Throws a [AzureKeyValueNotParsableAsFeatureFlagException] if the
   /// [KeyValue] is not parsable to [FeatureFlag].
-  Future<bool> getFeatureEnabled({
-    required String key,
-    required String label,
-  });
+  Future<bool> getFeatureEnabled({required String key, required String label});
 
   /// Updates a given Feature to be enabled or disabled based on [isEnabled].
   ///
@@ -123,10 +118,7 @@ abstract class AzureAppConfig {
   /// an [AzureFilterValidationException] is thrown.
   ///
   /// For examples see [Microsoft's API Reference](https://learn.microsoft.com/en-gb/azure/azure-app-configuration/rest-api-key-value#supported-filters).
-  Future<List<KeyValue>> findKeyValuesBy({
-    String key,
-    String label,
-  });
+  Future<List<KeyValue>> findKeyValuesBy({String key, String label});
 
   ///  Retrieve [AzureKey] records based on filters.
   ///
@@ -151,10 +143,7 @@ abstract class AzureAppConfig {
   Future<List<AzureKey>> findKeyBy({String name});
 
   /// Get a specific [KeyValue].
-  Future<KeyValue> getKeyValue({
-    required String key,
-    required String label,
-  });
+  Future<KeyValue> getKeyValue({required String key, required String label});
 
   /// Retrieve a list of [AzureKey]'s.
   Future<List<AzureKey>> getKeys();
@@ -212,10 +201,7 @@ abstract class AzureAppConfig {
   ///
   /// Throws a [AzureComplexTypeException] if the Type is not registered or does
   /// not have a decode mapping.
-  Future<O> getTyped<O>({
-    required String key,
-    required String label,
-  });
+  Future<O> getTyped<O>({required String key, required String label});
 
   /// Set a certain type and use the encode mapping provided
   /// in [registerType].

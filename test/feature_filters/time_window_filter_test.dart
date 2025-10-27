@@ -10,61 +10,59 @@ void main() {
 
   var timewindowFilter = TimeWindowFilter(clock: current);
 
-  test('Time Filter should return good result based on current time and input',
-      () {
-    // START ONLY
-    var params = <String, dynamic>{
-      'Start': HttpDate.format(before),
-    };
+  test(
+    'Time Filter should return good result based on current time and input',
+    () {
+      // START ONLY
+      var params = <String, dynamic>{'Start': HttpDate.format(before)};
 
-    var actual = timewindowFilter.evaluate(params, '');
-    var expected = true;
+      var actual = timewindowFilter.evaluate(params, '');
+      var expected = true;
 
-    expect(actual, expected);
+      expect(actual, expected);
 
-    // END ONLY
-    params = <String, dynamic>{
-      'End': HttpDate.format(after),
-    };
+      // END ONLY
+      params = <String, dynamic>{'End': HttpDate.format(after)};
 
-    actual = timewindowFilter.evaluate(params, '');
-    expected = true;
+      actual = timewindowFilter.evaluate(params, '');
+      expected = true;
 
-    expect(actual, expected);
+      expect(actual, expected);
 
-    // START AND END
-    timewindowFilter = TimeWindowFilter(clock: before);
-    params = {
-      'Start': HttpDate.format(current),
-      'End': HttpDate.format(after),
-    };
+      // START AND END
+      timewindowFilter = TimeWindowFilter(clock: before);
+      params = {
+        'Start': HttpDate.format(current),
+        'End': HttpDate.format(after),
+      };
 
-    actual = timewindowFilter.evaluate(params, '');
-    expected = false;
-    expect(actual, expected);
+      actual = timewindowFilter.evaluate(params, '');
+      expected = false;
+      expect(actual, expected);
 
-    timewindowFilter = TimeWindowFilter(clock: after);
-    params = {
-      'Start': HttpDate.format(before),
-      'End': HttpDate.format(current),
-    };
+      timewindowFilter = TimeWindowFilter(clock: after);
+      params = {
+        'Start': HttpDate.format(before),
+        'End': HttpDate.format(current),
+      };
 
-    actual = timewindowFilter.evaluate(params, '');
-    expected = false;
-    expect(actual, expected);
+      actual = timewindowFilter.evaluate(params, '');
+      expected = false;
+      expect(actual, expected);
 
-    // Invalid Inputs should return true
-    params = <String, dynamic>{};
-    actual = timewindowFilter.evaluate(params, '');
-    expected = true;
+      // Invalid Inputs should return true
+      params = <String, dynamic>{};
+      actual = timewindowFilter.evaluate(params, '');
+      expected = true;
 
-    expect(actual, expected);
+      expect(actual, expected);
 
-    params = <String, dynamic>{'Start': 23};
+      params = <String, dynamic>{'Start': 23};
 
-    actual = timewindowFilter.evaluate(params, '');
-    expected = true;
+      actual = timewindowFilter.evaluate(params, '');
+      expected = true;
 
-    expect(actual, expected);
-  });
+      expect(actual, expected);
+    },
+  );
 }
