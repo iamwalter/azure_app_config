@@ -6,7 +6,7 @@ part 'client_filter.g.dart';
 /// Holds data about the
 /// custom parameters of a FeatureFilter.
 @freezed
-class ClientFilter with _$ClientFilter {
+sealed class ClientFilter with _$ClientFilter {
   /// Instantiate a [ClientFilter].
   const factory ClientFilter({
     required String name,

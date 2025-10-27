@@ -13,7 +13,7 @@ void main() {
   group('no filters', () {
     test(
       '''if user is not provided in the params use the defaultrolloutprecentage''',
-          () {
+      () {
         final filter = TargetingFilter(userIdentifier: 'unknownUser');
 
         final actual = filter.evaluate(params, '');
@@ -24,7 +24,7 @@ void main() {
 
     test(
       '''if user is not provided in the params still return the same value for the same user (based on seed)''',
-          () {
+      () {
         final params = <String, dynamic>{
           'Audience': {
             'Users': <String>[],
@@ -52,10 +52,7 @@ void main() {
         'Audience': {
           'Users': ['user1', 'user2'],
           'Groups': [
-            {
-              'Name': 'groupNotExcluded',
-              'RolloutPercentage': 100,
-            },
+            {'Name': 'groupNotExcluded', 'RolloutPercentage': 100},
           ],
           'DefaultRolloutPercentage': 100,
           'Exclusion': {

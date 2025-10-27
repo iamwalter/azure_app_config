@@ -4,7 +4,7 @@ part 'error_response.freezed.dart';
 part 'error_response.g.dart';
 
 @freezed
-class ErrorResponse with _$ErrorResponse {
+sealed class ErrorResponse with _$ErrorResponse {
   const factory ErrorResponse({
     String? type,
     String? title,

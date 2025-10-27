@@ -16,7 +16,7 @@ part 'key_value.g.dart';
 ///
 /// To create a parsable FeatureFlag, use [asFeatureFlag].
 @freezed
-class KeyValue with _$KeyValue {
+sealed class KeyValue with _$KeyValue {
   const factory KeyValue({
     required String etag,
     required String key,
