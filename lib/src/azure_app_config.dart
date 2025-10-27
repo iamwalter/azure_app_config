@@ -9,9 +9,6 @@ import 'package:azure_app_config/src/models/key_value.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 
-@Deprecated('Use AzureAppConfig instead of AzureRemoteService')
-typedef AzureRemoteService = AzureAppConfig;
-
 /// This class represents the Microsoft Azure App Configuration.
 ///
 /// # Authentication
