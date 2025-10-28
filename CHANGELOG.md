@@ -1,50 +1,46 @@
+## 1.0.0
+- [chore] align SDK constraint to `>=3.8.0 <4.0.0`  
+- [deps] add `intl` (^0.20.2)  
+- [deps] update `dio` from ^5.7.0 → ^5.9.0  
+- [deps] update `freezed_annotation` from ^2.4.4 → ^3.1.0  
+- [deps] update `meta` from ^1.16.0 → ^1.17.0  
+
 ## 0.18.0
+- [feat] `TargetingFilter` now supports exclusion ([#14](https://github.com/iamwalter/azure_app_config/pull/14))  
 
-- `TargetingFilter` now supports group exclusion. ([#14](https://github.com/iamwalter/azure_app_config/pull/14))
-
-## 0.16.0 to 0.17.1
-
-- Fix various pagination issues.
-- Fix issue where `FeatureFlag`s could sometimes not be retrieved.
+## 0.16.0 – 0.17.1
+- [fix] resolve various pagination issues  
+- [fix] ensure `FeatureFlag`s can always be retrieved  
 
 ## 0.15.2
-
-- This version introduces an optional parameter 'name' for the `setFeatureFlag()` method.
+- [feat] add optional parameter `name` to `setFeatureFlag()`  
 
 ## 0.15.1
-
-- Add constant `FeatureFlag.contentType`
+- [feat] add constant `FeatureFlag.contentType`  
 
 ## 0.15.0
-
-- `AzureRemoteService` is deprecated in favor of `AzureAppConfig`.
-- Added method: `setFeatureFlag()`
-- Simplified feature flag methods to use key names only (before: .appconfig.featureflag/mykey, now: mykey).
-- `KeyValue.asFeatureFlag()` now returns null if it's not parsable instead of throwing an `AzureKeyValueNotParsableAsFeatureFlagException`.
-- Update dependencies 
+- [deprecate] `AzureRemoteService` in favor of `AzureAppConfig`  
+- [feat] add `setFeatureFlag()` method  
+- [feat] simplify feature flag key usage (now `mykey` instead of `.appconfig.featureflag/mykey`)  
+- [fix] `KeyValue.asFeatureFlag()` now returns `null` instead of throwing `AzureKeyValueNotParsableAsFeatureFlagException`  
+- [deps] update dependencies  
 
 ## 0.14.0
-
-- Improved Readme 
-- Updated dependencies to latest versions
+- [docs] improve README  
+- [deps] update to latest dependency versions  
 
 ## 0.13.0
-
-- Complete Azure's Default 'Targeting' filter by implementing the 'groups' and 'users' feature. 
+- [feat] complete Azure’s default `Targeting` filter (`groups` and `users` support)  
 
 ## 0.12.0
-
-- Add registering of ComplexTypes for automatic (de)serialization of models.
+- [feat] add registration of `ComplexType`s for automatic (de)serialization  
 
 ## 0.11.0
-
-- Add factory constructor `AzureRemoteService.customAuthentication()` to provide custom way of signing requests.
-- Add ability to find `AzureKey`s by introducing the `findKeyBy` method.
+- [feat] add `AzureRemoteService.customAuthentication()` factory for custom signing  
+- [feat] add `findKeyBy()` method to locate `AzureKey`s  
 
 ## 0.10.0
-
-- Added the ability to find KeyValues by key- and label filters using the `findKeyValuesBy` method.
+- [feat] add `findKeyValuesBy()` method to filter by key and label  
 
 ## 0.9.0
-
-- Initial version.
+- [init] initial release  
