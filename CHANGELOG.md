@@ -1,3 +1,6 @@
+## 1.1.0
+- [feat] remove import on `dart:io` to support web 
+
 ## 1.0.0
 - [chore] align SDK constraint to `>=3.8.0 <4.0.0`  
 - [deps] add `intl` (^0.20.2)  

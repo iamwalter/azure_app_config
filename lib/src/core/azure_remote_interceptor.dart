@@ -2,10 +2,9 @@
 
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'dart:io';
-
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart' show formatHttpDate;
 
 /// Handles configuring the Content & Authorization correct
 /// headers for each API call that is made to Azure.
@@ -30,8 +29,9 @@ class AzureRemoteInterceptor extends Interceptor {
   String hashBody(String body) =>
       base64.encode(sha256.convert(utf8.encode(body)).bytes);
 
-  String utcString() =>
-      clock == null ? HttpDate.format(DateTime.now()) : HttpDate.format(clock!);
+  String utcString() {
+    return formatHttpDate(clock == null ? DateTime.now() : clock!);
+  }
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -39,7 +39,6 @@ class AzureRemoteInterceptor extends Interceptor {
     final path = options.uri.path;
 
     final method = options.method.toUpperCase();
-
     final params = options.uri.query;
 
     final body = options.data as String? ?? '';
@@ -47,11 +46,9 @@ class AzureRemoteInterceptor extends Interceptor {
     final pathAndParams = '$path?$params';
 
     final utc = utcString();
-
     final contentHash = hashBody(body);
 
     final message = '$method\n$pathAndParams\n$utc;$host;$contentHash';
-
     final signedMessage = signature(message);
 
     const signedHeaders = 'x-ms-date;host;x-ms-content-sha256';
@@ -71,7 +68,6 @@ class AzureRemoteInterceptor extends Interceptor {
   String signature(String msg) {
     final hmac = Hmac(sha256, base64.decode(_secret));
     final digest = hmac.convert(utf8.encode(msg));
-
     return base64.encode(digest.bytes);
   }
 }
