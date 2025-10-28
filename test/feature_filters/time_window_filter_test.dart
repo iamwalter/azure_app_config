@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:azure_app_config/src/feature_filters/time_window_filter.dart';
+import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -8,58 +7,59 @@ void main() {
   final current = DateTime.utc(2022, 09, 21, 14, 22, 50);
   final after = DateTime.utc(2022, 10, 21, 14, 22, 50);
 
-  var timewindowFilter = TimeWindowFilter(clock: current);
+  final httpDateFormat = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", 'en_US');
+
+  String formatHttpDate(DateTime date) => httpDateFormat.format(date.toUtc());
+
+  var filter = TimeWindowFilter(clock: current);
 
   test(
     'Time Filter should return good result based on current time and input',
     () {
       // START ONLY
-      var params = <String, dynamic>{'Start': HttpDate.format(before)};
+      var params = <String, dynamic>{'Start': formatHttpDate(before)};
 
-      var actual = timewindowFilter.evaluate(params, '');
+      var actual = filter.evaluate(params, '');
       var expected = true;
 
       expect(actual, expected);
 
       // END ONLY
-      params = <String, dynamic>{'End': HttpDate.format(after)};
+      params = <String, dynamic>{'End': formatHttpDate(after)};
 
-      actual = timewindowFilter.evaluate(params, '');
+      actual = filter.evaluate(params, '');
       expected = true;
 
       expect(actual, expected);
 
       // START AND END
-      timewindowFilter = TimeWindowFilter(clock: before);
-      params = {
-        'Start': HttpDate.format(current),
-        'End': HttpDate.format(after),
-      };
+      filter = TimeWindowFilter(clock: before);
+      params = {'Start': formatHttpDate(current), 'End': formatHttpDate(after)};
 
-      actual = timewindowFilter.evaluate(params, '');
+      actual = filter.evaluate(params, '');
       expected = false;
       expect(actual, expected);
 
-      timewindowFilter = TimeWindowFilter(clock: after);
+      filter = TimeWindowFilter(clock: after);
       params = {
-        'Start': HttpDate.format(before),
-        'End': HttpDate.format(current),
+        'Start': formatHttpDate(before),
+        'End': formatHttpDate(current),
       };
 
-      actual = timewindowFilter.evaluate(params, '');
+      actual = filter.evaluate(params, '');
       expected = false;
       expect(actual, expected);
 
       // Invalid Inputs should return true
       params = <String, dynamic>{};
-      actual = timewindowFilter.evaluate(params, '');
+      actual = filter.evaluate(params, '');
       expected = true;
 
       expect(actual, expected);
 
       params = <String, dynamic>{'Start': 23};
 
-      actual = timewindowFilter.evaluate(params, '');
+      actual = filter.evaluate(params, '');
       expected = true;
 
       expect(actual, expected);
