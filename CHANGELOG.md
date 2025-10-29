@@ -1,9 +1,8 @@
-## 1.1.0
+## 1.1.1
 - [feat] remove import on `dart:io` to support web 
 
 ## 1.0.0
 - [chore] align SDK constraint to `>=3.8.0 <4.0.0`  
-- [deps] add `intl` (^0.20.2)  
 - [deps] update `dio` from ^5.7.0 → ^5.9.0  
 - [deps] update `freezed_annotation` from ^2.4.4 → ^3.1.0  
 - [deps] update `meta` from ^1.16.0 → ^1.17.0  

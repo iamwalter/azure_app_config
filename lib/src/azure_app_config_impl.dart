@@ -20,10 +20,10 @@ class AzureAppConfigImpl implements AzureAppConfig {
 
   final Client client;
 
-  Map<String, FeatureFilter> featureFilters = {};
+  final Map<String, FeatureFilter> _featureFilters = {};
 
   // Map that holds registeredType mapping data.
-  Map<Type, RegisteredType<dynamic>> registeredTypes = {};
+  final Map<Type, RegisteredType<dynamic>> _registeredTypes = {};
 
   @override
   Dio get dio => client.dio;
@@ -34,7 +34,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
 
   @override
   void registerFeatureFilter(FeatureFilter filter) {
-    featureFilters[filter.name] = filter;
+    _featureFilters[filter.name] = filter;
   }
 
   @override
@@ -64,8 +64,8 @@ class AzureAppConfigImpl implements AzureAppConfig {
       final name = clientFilter.name;
       final params = clientFilter.parameters;
 
-      if (featureFilters[name] != null) {
-        final filter = featureFilters[name]!;
+      if (_featureFilters[name] != null) {
+        final filter = _featureFilters[name]!;
 
         enabled = filter.evaluate(params, key);
 
@@ -262,33 +262,33 @@ class AzureAppConfigImpl implements AzureAppConfig {
     O Function(Map<String, dynamic> jsonData)? decode,
     Map<String, dynamic> Function(O object)? encode,
   }) {
-    if (registeredTypes[O] != null) {
+    if (_registeredTypes[O] != null) {
       throw AzureComplexTypeException('ComplexType $O is already registered');
     }
 
-    registeredTypes[O] = RegisteredType<O>(decode: decode, encode: encode);
+    _registeredTypes[O] = RegisteredType<O>(decode: decode, encode: encode);
   }
 
   @override
   void unregisterType<O>() {
-    registeredTypes.remove(O);
+    _registeredTypes.remove(O);
   }
 
   @override
   Future<O> getTyped<O>({required String key, required String label}) async {
     final keyValue = await getKeyValue(key: key, label: label);
 
-    if (registeredTypes[O] == null) {
+    if (_registeredTypes[O] == null) {
       throw AzureComplexTypeException('ComplexType $O is not registered');
     }
 
-    if (registeredTypes[O]!.decode == null) {
+    if (_registeredTypes[O]!.decode == null) {
       throw AzureComplexTypeException(
         'ComplexType $O decode is not registered!',
       );
     }
 
-    return registeredTypes[O]!.decode!(
+    return _registeredTypes[O]!.decode!(
           json.decode(keyValue.value) as Map<String, dynamic>,
         )
         as O;
@@ -302,7 +302,7 @@ class AzureAppConfigImpl implements AzureAppConfig {
   }) async {
     // make sure we're working with registeredType<O> and not
     // registeredType<dynamic>
-    final registeredType = registeredTypes[O] as RegisteredType<O>?;
+    final registeredType = _registeredTypes[O] as RegisteredType<O>?;
 
     if (registeredType == null) {
       throw AzureComplexTypeException('ComplexType O is not registered');

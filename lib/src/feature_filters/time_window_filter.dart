@@ -1,5 +1,5 @@
 import 'package:azure_app_config/src/feature_filters/feature_filter.dart';
-import 'package:intl/intl.dart';
+import 'package:http_parser/http_parser.dart';
 
 /// Microsoft's default TimeWindow Filter.
 class TimeWindowFilter extends FeatureFilter {
@@ -9,15 +9,10 @@ class TimeWindowFilter extends FeatureFilter {
   /// Optional time for the timewindow to use. Used for testing.
   final DateTime? clock;
 
-  static final _httpDateFormat = DateFormat(
-    "EEE, dd MMM yyyy HH:mm:ss 'GMT'",
-    'en_US',
-  );
-
   DateTime? _tryParseHttpDate(String? value) {
     if (value == null) return null;
     try {
-      return _httpDateFormat.parseUtc(value);
+      return parseHttpDate(value);
     } catch (_) {
       return null;
     }
