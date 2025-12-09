@@ -8,15 +8,15 @@ part of 'feature_flag.dart';
 
 _FeatureFlag _$FeatureFlagFromJson(Map<String, dynamic> json) => _FeatureFlag(
   id: json['id'] as String,
-  description: json['description'] as String,
   enabled: json['enabled'] as bool,
-  conditions: json['conditions'] as Map<String, dynamic>,
+  description: json['description'] as String?,
+  conditions: json['conditions'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$FeatureFlagToJson(_FeatureFlag instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'description': instance.description,
       'enabled': instance.enabled,
+      'description': instance.description,
       'conditions': instance.conditions,
     };
