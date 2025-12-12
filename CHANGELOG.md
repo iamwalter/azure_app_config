@@ -1,3 +1,6 @@
+## 1.2.0
+- [bugfix] make FeatureFlag's `description` and `conditions` nullable.
+
 ## 1.1.1
 - [feat] remove import on `dart:io` to support web 
 
