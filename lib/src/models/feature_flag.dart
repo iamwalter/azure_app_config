@@ -2,6 +2,7 @@ import 'package:azure_app_config/src/models/client_filter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'feature_flag.freezed.dart';
+
 part 'feature_flag.g.dart';
 
 /// This class represents a FeatureFlag.
@@ -15,9 +16,9 @@ sealed class FeatureFlag with _$FeatureFlag {
   /// Instantiate a [FeatureFlag]
   const factory FeatureFlag({
     required String id,
-    required String description,
     required bool enabled,
-    required Map<String, dynamic> conditions,
+    String? description,
+    Map<String, dynamic>? conditions,
   }) = _FeatureFlag;
 
   const FeatureFlag._();
@@ -27,7 +28,7 @@ sealed class FeatureFlag with _$FeatureFlag {
 
   /// Gets the filters associated to the [FeatureFlag].
   List<ClientFilter> getClientFilters() {
-    final clientFilters = conditions['client_filters'] as List<dynamic>?;
+    final clientFilters = conditions?['client_filters'] as List<dynamic>?;
 
     final filters = <ClientFilter>[];
 

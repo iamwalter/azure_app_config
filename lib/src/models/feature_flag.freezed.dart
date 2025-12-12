@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FeatureFlag {
 
- String get id; String get description; bool get enabled; Map<String, dynamic> get conditions;
+ String get id; bool get enabled; String? get description; Map<String, dynamic>? get conditions;
 /// Create a copy of FeatureFlag
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $FeatureFlagCopyWith<FeatureFlag> get copyWith => _$FeatureFlagCopyWithImpl<Feat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeatureFlag&&(identical(other.id, id) || other.id == id)&&(identical(other.description, description) || other.description == description)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other.conditions, conditions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeatureFlag&&(identical(other.id, id) || other.id == id)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.conditions, conditions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,description,enabled,const DeepCollectionEquality().hash(conditions));
+int get hashCode => Object.hash(runtimeType,id,enabled,description,const DeepCollectionEquality().hash(conditions));
 
 @override
 String toString() {
-  return 'FeatureFlag(id: $id, description: $description, enabled: $enabled, conditions: $conditions)';
+  return 'FeatureFlag(id: $id, enabled: $enabled, description: $description, conditions: $conditions)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $FeatureFlagCopyWith<$Res>  {
   factory $FeatureFlagCopyWith(FeatureFlag value, $Res Function(FeatureFlag) _then) = _$FeatureFlagCopyWithImpl;
 @useResult
 $Res call({
- String id, String description, bool enabled, Map<String, dynamic> conditions
+ String id, bool enabled, String? description, Map<String, dynamic>? conditions
 });
 
 
@@ -65,13 +65,13 @@ class _$FeatureFlagCopyWithImpl<$Res>
 
 /// Create a copy of FeatureFlag
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? description = null,Object? enabled = null,Object? conditions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? enabled = null,Object? description = freezed,Object? conditions = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,enabled: null == enabled ? _self.enabled : enabled // ignore: cast_nullable_to_non_nullable
-as bool,conditions: null == conditions ? _self.conditions : conditions // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as bool,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,conditions: freezed == conditions ? _self.conditions : conditions // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
@@ -153,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String description,  bool enabled,  Map<String, dynamic> conditions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  bool enabled,  String? description,  Map<String, dynamic>? conditions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FeatureFlag() when $default != null:
-return $default(_that.id,_that.description,_that.enabled,_that.conditions);case _:
+return $default(_that.id,_that.enabled,_that.description,_that.conditions);case _:
   return orElse();
 
 }
@@ -174,10 +174,10 @@ return $default(_that.id,_that.description,_that.enabled,_that.conditions);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String description,  bool enabled,  Map<String, dynamic> conditions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  bool enabled,  String? description,  Map<String, dynamic>? conditions)  $default,) {final _that = this;
 switch (_that) {
 case _FeatureFlag():
-return $default(_that.id,_that.description,_that.enabled,_that.conditions);}
+return $default(_that.id,_that.enabled,_that.description,_that.conditions);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +191,10 @@ return $default(_that.id,_that.description,_that.enabled,_that.conditions);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String description,  bool enabled,  Map<String, dynamic> conditions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  bool enabled,  String? description,  Map<String, dynamic>? conditions)?  $default,) {final _that = this;
 switch (_that) {
 case _FeatureFlag() when $default != null:
-return $default(_that.id,_that.description,_that.enabled,_that.conditions);case _:
+return $default(_that.id,_that.enabled,_that.description,_that.conditions);case _:
   return null;
 
 }
@@ -206,17 +206,19 @@ return $default(_that.id,_that.description,_that.enabled,_that.conditions);case 
 @JsonSerializable()
 
 class _FeatureFlag extends FeatureFlag {
-  const _FeatureFlag({required this.id, required this.description, required this.enabled, required final  Map<String, dynamic> conditions}): _conditions = conditions,super._();
+  const _FeatureFlag({required this.id, required this.enabled, this.description, final  Map<String, dynamic>? conditions}): _conditions = conditions,super._();
   factory _FeatureFlag.fromJson(Map<String, dynamic> json) => _$FeatureFlagFromJson(json);
 
 @override final  String id;
-@override final  String description;
 @override final  bool enabled;
- final  Map<String, dynamic> _conditions;
-@override Map<String, dynamic> get conditions {
+@override final  String? description;
+ final  Map<String, dynamic>? _conditions;
+@override Map<String, dynamic>? get conditions {
+  final value = _conditions;
+  if (value == null) return null;
   if (_conditions is EqualUnmodifiableMapView) return _conditions;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(_conditions);
+  return EqualUnmodifiableMapView(value);
 }
 
 
@@ -233,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeatureFlag&&(identical(other.id, id) || other.id == id)&&(identical(other.description, description) || other.description == description)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other._conditions, _conditions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeatureFlag&&(identical(other.id, id) || other.id == id)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._conditions, _conditions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,description,enabled,const DeepCollectionEquality().hash(_conditions));
+int get hashCode => Object.hash(runtimeType,id,enabled,description,const DeepCollectionEquality().hash(_conditions));
 
 @override
 String toString() {
-  return 'FeatureFlag(id: $id, description: $description, enabled: $enabled, conditions: $conditions)';
+  return 'FeatureFlag(id: $id, enabled: $enabled, description: $description, conditions: $conditions)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$FeatureFlagCopyWith<$Res> implements $FeatureFlagCopyWith
   factory _$FeatureFlagCopyWith(_FeatureFlag value, $Res Function(_FeatureFlag) _then) = __$FeatureFlagCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String description, bool enabled, Map<String, dynamic> conditions
+ String id, bool enabled, String? description, Map<String, dynamic>? conditions
 });
 
 
@@ -270,13 +272,13 @@ class __$FeatureFlagCopyWithImpl<$Res>
 
 /// Create a copy of FeatureFlag
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? description = null,Object? enabled = null,Object? conditions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? enabled = null,Object? description = freezed,Object? conditions = freezed,}) {
   return _then(_FeatureFlag(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,enabled: null == enabled ? _self.enabled : enabled // ignore: cast_nullable_to_non_nullable
-as bool,conditions: null == conditions ? _self._conditions : conditions // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as bool,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,conditions: freezed == conditions ? _self._conditions : conditions // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
